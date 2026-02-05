@@ -1,13 +1,5 @@
 import * as React from 'react';
 import { useResizeObserver } from 'usehooks-ts';
-
-import {
-  HorizontalScrollbar,
-  ScrollAreaRoot,
-  ScrollAreaViewport,
-  ScrollThumb,
-  VerticalScrollbar,
-} from '../../../atoms/ScrollArea';
 import { cn } from '@/utils';
 import { GridContext } from '../contexts/grid.context';
 import { type GridContextValue } from '../contexts/grid.context.types';

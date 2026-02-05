@@ -1,9 +1,7 @@
-import { useAutoneTranslation } from '@autone/translations';
-import { fNumberWithCommas } from '@autone/utils';
 import React, { useRef } from 'react';
 
-import { Button, Skeleton } from '../../../atoms';
-import { ArrowLeftIcon, ArrowRightIcon } from '../../../icons';
+import { ArrowLeftIcon, ArrowRightIcon } from '@/components/icons';
+import { fNumberWithCommas } from '@/utils';
 
 export interface PaginationProps {
   getNextPage: () => void;

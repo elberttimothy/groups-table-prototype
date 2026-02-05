@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useIntersectionObserver } from 'usehooks-ts';
 
-import { LoadingIcon } from '../../../icons';
 import { cn } from '@/utils';
 import { useGridContext } from '../contexts/grid.context';
 import { cssVariables } from '../utilities/css-variables';

@@ -1,4 +1,4 @@
-import { simpleMemoise } from '@autone/utils';
+import { simpleMemoise } from '@/utils';
 import { type RowData, type RowModel } from '@tanstack/react-table';
 import { type Virtualizer } from '@tanstack/react-virtual';
 import { useCallback } from 'react';
