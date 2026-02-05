@@ -2,13 +2,152 @@
 @tailwind components;
 @tailwind utilities;
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* shadcn semantic color tokens */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  /* #ffffff - --white */
+  --background: 1 0 0;
+  /* #00050a - --black */
+  --foreground: 0.1082 0.0225 233.51;
+  /* #ffffff - --white */
+  --card: 1 0 0;
+  /* #00050a - --black */
+  --card-foreground: 0.1082 0.0225 233.51;
+  /* #ffffff - --white */
+  --popover: 1 0 0;
+  /* #00050a - --black */
+  --popover-foreground: 0.1082 0.0225 233.51;
+  /* #0267ff - --primary-800 */
+  --primary: 0.5655 0.2395 260.77; /* oklch channels */
+  /* #ffffff - --white */
+  --primary-foreground: 1 0 0; /* oklch channels */
+  /* #004EC3 */
+  --primary-accent: 0.4642 0.1945 260.49;
+  /* #F8F8F8 - base-100 */
+  --secondary: 0.9791 0 0;
+  /* #E9EAEB - base-200 */
+  --secondary-accent: 0.9366 0.0017 247.84;
+  /* 00050A  - black */
+  --secondary-foreground: 0.1082 0.0225 233.51;
+  /* #A234DA - purple-600 */
+  --tertiary: 0.5647 0.2404 311.05;
+
+  /* #067970 - --secondary-700 */
+  /* --secondary: 0.5189 0.0899 185.72;  */
+  /* #023834 */
+  /* --secondary-accent: 0.3073 0.0525 186.94; */
+  /* #ffffff - --white */
+  /* --secondary-foreground: 1 0 0;  */
+  /* #f8f8f8 */
+  --muted: 0.9791 0 0;
+  /* #4B535C */
+  --muted-foreground: 0.4385 0.018 251.35;
+  /* #f8f8f8 - --base-100 */
+  --accent: 0.9791 0 0; /* oklch channels */
+  /* #00050a - --black */
+  --accent-foreground: 0.1082 0.0225 233.51; /* oklch channels */
+  /* #e30d3c - --red-800 */
+  --destructive: 0.5822 0.2298 20.26; /* oklch channels */
+  /* #a00023 */
+  --destructive-accent: 0.4459 0.179454 21.3602;
+  /* #e9eaeb - --base-300 */
+  --border: 0.9366 0.0017 247.84;
+  /* #f8f8f8 - --base-100 */
+  --ring: 0.9791 0 0;
+
+  /* GENERIC COLORS */
+  --white: 1 0 0;
+  --black: 0 0 0;
+
+  /* Semantic colors */
+  --success: 0.6263 0.1401 160.05; /* #08A16A - green-800 */
+  --success-accent: 0.3715 0.0816 161.47; /* #014D32 - green-900 */
+  --warning: 0.7597 0.1516 64.72; /* #F29A35 - yellow-800 */
+  --warning-accent: 0.5478 0.1371 54.1; /* #AC5600 - yellow-900 */
+
+  /* Sidebar colors */
+  --sidebar: 1 0 0; /* #ffffff - white */
+  --sidebar-foreground: 0.1082 0.0225 233.51; /* #00050a - black */
+  --sidebar-primary: 1 0 0; /* #ffffff - white */
+  --sidebar-primary-foreground: 0.1082 0.0225 233.51; /* #00050a - black */
+  --sidebar-accent: 0.9791 0 0; /* #f8f8f8 - base-100 */
+  --sidebar-accent-foreground: 0.5655 0.2395 260.77; /* #0267ff - primary-800 */
+  --sidebar-border: 0.9366 0.0017 247.84; /* #e9eaeb - base-200 */
+  --sidebar-ring: 0.5655 0.2395 260.77; /* #0267ff - primary-800 */
+}
+
+.dark {
+  --background: 0.2028 0.016 256.82; /* #12171E - gray-800 */
+  --foreground: 1 0 0; /* #ffffff - white */
+  --card: 0.2028 0.016 256.82; /* #12171E - gray-800 */
+  --card-foreground: 1 0 0; /* #ffffff - white */
+  --popover: 0.2028 0.016 256.82; /* #12171E - gray-800 */
+  --popover-foreground: 1 0 0; /* #ffffff - white */
+  --primary: 0.5655 0.2395 260.77; /* #0267ff - primary-800 */
+  --primary-foreground: 1 0 0; /* #ffffff - --white */
+  --primary-accent: 0.4642 0.1945 260.49; /* #004EC3 - primary-900*/
+  --secondary: 0.2846 0.0246 251.11; /* #212b36 - base-900 */
+  --secondary-foreground: 1 0 0; /* #ffffff - white */
+  --secondary-accent: 0.1082 0.0225 233.51; /* 00050A  - black */
+
+  --muted: 0.269 0 0;
+  --muted-foreground: 0.708 0 0;
+  --accent: 0.2846 0.0246 251.11; /* #212b36 - base-900 */
+  --accent-foreground: 1 0 0; /* #ffffff - white */
+  --destructive-accent: 0.4459 0.179454 21.3602; /* #a00023 - red-900 */
+  --destructive: 0.7345 0.1598 16.18; /* #fd7a86 - red-500 */
+  --border: 0.2846 0.0246 251.11; /* #212b36 - base-900 */
+  --ring: 0.4385 0.018 251.35; /* #4b535c - base-600 */
+
+  /* Dark mode sidebar colors */
+  --sidebar: 0.2028 0.016 256.82; /* #12171E - gray-800 */
+  --sidebar-foreground: 0.556 0 0; /*#72777d - --base-700 */
+  --sidebar-accent: 0.2846 0.0246 251.11; /* #212b36 - base-900 */
+  --sidebar-accent-foreground: 0.2846 0.0246 251.11; /* #212b36 - base-900 */
+  --sidebar-primary: 0.5655 0.2395 260.77; /* #0267ff - primary-800 */
+  --sidebar-primary-foreground: 1 0 0; /* #ffffff - white */
+  --sidebar-border: 0.2846 0.0246 251.11; /* #212b36 - base-900 */
+  --sidebar-ring: 0.4385 0.018 251.35; /* #4b535c - base-600 */
+}
+
+body {
+  overflow: hidden;
+}
+
 @layer base {
-  :root {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color-scheme: light dark;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 1350 !important;
+}
+
+/* Override default behaviour of tailwind container */
+@layer components {
+  .container {
+    @apply max-w-[1600px] self-center sm:px-8 px-4 mx-auto;
   }
 }
