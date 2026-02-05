@@ -1,0 +1,374 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as PrimitivesStories from './stories/Primitives.stories';
+import * as AutoneGridStories from './stories/AutoneGrid.stories';
+
+<Meta of={AutoneGridStories} />
+
+# AutoneGrid
+
+`AutoneGrid` is a high-performance data grid component library built on top of [TanStack Table v8](https://tanstack.com/table/v8). It provides a headless-ui-like composition model with powerful virtualization capabilities for both rows and columns.
+
+The library offers three levels of abstraction:
+1. **`Presets`**: `AutoneGridPreset` and `AutoneGridDynamicPreset` for the fastest way to build standard grids.
+2. **`AutoneGrid`**: High-level semantic components (`AutoneGrid.Header`, `AutoneGrid.Body`, etc.) for building custom grids in our design system.
+3. **`GridPrimitives`**: Lower-level primitives handling the raw DOM elements, positioning, and accessibility.
+
+## Quick Start
+
+The core of the grid is powered by the `useDataGrid` hook, which manages the virtualization state and table instance.
+
+<Canvas of={AutoneGridStories.BasicMinimalTable} />
+
+### Basic Usage
+
+For most standard use cases, you should use the provided `AutoneGridPreset`. This provides a set of components that handle the boilerplate of setting up the correct pinning groups (`Left`, `Center`, `Right`) and virtualization.
+
+```tsx
+import { useMemo } from 'react';
+import { getCoreRowModel, flexRender } from '@tanstack/react-table';
+import {
+  useDataGrid,
+  AutoneGridPreset,
+  assertNoGroupColumnDefs,
+} from '@autone/ui-next'; // Adjust import based on your exports
+
+const MyTable = () => {
+  // 1. Initialize the grid hook
+  const [scrollElementRef, gridState, gridConfig] = useDataGrid({
+    mode: 'fixed',
+    tableOptions: {
+      data: myData,
+      columns: assertNoGroupColumnDefs(myColumns),
+    },
+    headerHeight: 44,
+    footerHeight: 44,
+    rowHeight: 48,
+  });
+
+  const virtualHeaders = gridState.getVirtualHeaders();
+  const virtualRows = gridState.getVirtualRows();
+  const virtualFooters = gridState.getVirtualFooters(); // Optional
+
+  // 2. Render the grid components
+  return (
+    <AutoneGridPreset.Root
+      className="w-full h-[500px]"
+      gridConfig={gridConfig}
+      ref={scrollElementRef}
+    >
+      {/* Automatically handles left/center/right pinned groups */}
+      <AutoneGridPreset.Header virtualHeaders={virtualHeaders} />
+
+      <AutoneGridPreset.Body>
+        {virtualRows.map((virtualRow) => (
+          <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
+            {({ cell, cellRect, index }) => (
+              <AutoneGridPreset.Cell colIndex={index} cellRect={cellRect}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </AutoneGridPreset.Cell>
+            )}
+          </AutoneGridPreset.Row>
+        ))}
+      </AutoneGridPreset.Body>
+
+      {/* Optional footer */}
+      {/* Note: Footer rendering is similar to Header but using AutoneGrid.Footer components if needed, or implement a FooterPreset if available */}
+    </AutoneGridPreset.Root>
+  );
+};
+```
+
+Using presets ensures consistent layout and behavior across different grids while significantly reducing the amount of code needed.
+
+## API Summary
+
+### `useDataGrid` Hook
+
+The `useDataGrid` hook is the entry point. It accepts configuration for virtualization and table state.
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>mode</code></td>
+      <td><code>'fixed' | 'dynamic'</code></td>
+      <td>Determines the row height strategy.</td>
+    </tr>
+    <tr>
+      <td><code>tableOptions</code></td>
+      <td><code>TableOptions</code></td>
+      <td>Standard TanStack Table options (data, columns, etc).</td>
+    </tr>
+    <tr>
+      <td><code>headerHeight</code></td>
+      <td><code>number</code></td>
+      <td>Height of the header row in pixels.</td>
+    </tr>
+    <tr>
+      <td><code>footerHeight</code></td>
+      <td><code>number</code></td>
+      <td>Height of the footer row in pixels.</td>
+    </tr>
+    <tr>
+      <td><code>rowHeight</code></td>
+      <td><code>number</code></td>
+      <td>(Fixed mode only) Height of each row.</td>
+    </tr>
+    <tr>
+      <td><code>estimateRowHeight</code></td>
+      <td><code>(index: number) => number</code></td>
+      <td>(Dynamic mode only) Function to estimate row height.</td>
+    </tr>
+    <tr>
+      <td><code>overscan</code></td>
+      <td><code>{`{ row?: number, col?: number }`}</code></td>
+      <td>Number of items to render outside the viewport. Note: `col` is ignored in dynamic mode.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Component Structure
+
+The `AutoneGrid` namespace exports composable components, while `AutoneGridPreset` and `AutoneGridDynamicPreset` provide higher-level abstractions:
+
+*   **Structure**: `Root`, `Header`, `Body`, `Footer`
+*   **Rows**: `HeaderRow`, `Row`, `DynamicRow`, `FooterRow`
+*   **Cells**: `HeaderCell`, `Cell`, `DynamicCell`, `FooterCell`
+*   **Pinning Groups**: `LeftHeaderGroup`, `CenterHeaderGroup`, `RightHeaderGroup` (and similar for Body/Footer)
+*   **Presets**: `AutoneGridPreset` (Fixed height), `AutoneGridDynamicPreset` (Dynamic height)
+
+## Features
+
+### Column Grouping & Invariants
+
+**The grid explicitly expects NO nested columns.**
+
+This design decision simplifies virtualization logic and structure. This invariant is enforced at runtime using the `assertNoGroupColumnDefs` utility. You must wrap your column definitions with this function before passing them to the grid.
+
+```typescript
+// @frontend-ui-next/src/components/autone-grid/utilities/invariants.ts
+import { assertNoGroupColumnDefs } from './utilities/invariants';
+
+// ❌ Throws error if nested
+const badColumns = [{ header: 'Group', columns: [...] }];
+
+// ✅ Passes
+const validColumns = assertNoGroupColumnDefs(myFlatColumns);
+```
+
+### Dynamic Row Heights
+
+When working with variable content length, use `mode: 'dynamic'`. This requires specific components to measure content correctly.
+
+1.  **Configuration**: Set `mode: 'dynamic'` and provide `estimateRowHeight`.
+2.  **Components**: You **must** use `AutoneGridDynamicPreset` components (specifically `DynamicRow` and `DynamicCell`) instead of the standard `Row` and `Cell`.
+
+<Canvas of={AutoneGridStories.VariableRowHeights} />
+
+#### Virtualization Trade-offs
+
+When `mode` is set to `'dynamic'`, **column virtualization is effectively turned off**.
+
+The `useDataGrid` hook handles this automatically:
+
+```typescript
+// From useDataGrid.ts
+// with dynamic row heights, we turn off column virtualisation by setting the overscan to the number of columns + 1
+// this is because the row heights can vary based on which cells are mounted and we don't want row
+// heights to change as users scroll in the x-axis
+return {
+  row: options.overscan?.row ?? 0,
+  col: options.tableOptions.columns.length + 1,
+};
+```
+
+This ensures that row heights remain stable even if horizontal scrolling would otherwise unmount cells that determine the row's height.
+
+### Column Pinning
+
+`AutoneGrid` supports column pinning via TanStack Table's state. The grid components provide specialized groups to handle the layout of pinned columns (sticking them to left/right).
+
+<Canvas of={AutoneGridStories.ColumnPinning} />
+
+Use the `*HeaderGroup`, `*BodyGroup`, and `*FooterGroup` components to organize your cells:
+
+```tsx
+<AutoneGrid.Row>
+  <AutoneGrid.LeftBodyGroup>
+    {/* Pinned Left Cells */}
+  </AutoneGrid.LeftBodyGroup>
+
+  <AutoneGrid.CenterBodyGroup>
+    {/* Scrollable Center Cells */}
+  </AutoneGrid.CenterBodyGroup>
+
+  <AutoneGrid.RightBodyGroup>
+    {/* Pinned Right Cells */}
+  </AutoneGrid.RightBodyGroup>
+</AutoneGrid.Row>
+```
+
+### Column Reordering
+
+`AutoneGrid` supports drag-and-drop column reordering, powered by `@dnd-kit/core` for interactions and `motion` for animations.
+
+<Canvas of={AutoneGridStories.ColumnReordering} />
+
+#### Implementing Draggable Columns
+
+To enable column reordering, you must:
+
+1.  **Add `ColumnDragHandle`**: You must include the `ColumnDragHandle` component in your column header definition. This provides the drag handle UI and functionality.
+2.  **Add `ColumnDragOverlay`**: Include `ColumnDragOverlay` inside the `Root` component to render the drag "ghost".
+
+```tsx
+// 1. In your column definitions
+import { ColumnDragHandle } from '@autone/ui-next';
+
+const columns = [
+  columnHelper.accessor('sku', {
+    header: () => (
+      <div className="flex items-center">
+        {/* The handle must be present for the column to be draggable */}
+        <ColumnDragHandle className="-translate-x-1" />
+        <span>SKU</span>
+      </div>
+    ),
+  }),
+  // ...
+];
+
+// 2. In your component
+<AutoneGridPreset.Root {...props}>
+  {/* ... headers and body ... */}
+
+  <AutoneGridPreset.ColumnDragOverlay
+    columnDisplayText={{
+      sku: 'SKU',
+      name: 'Product Name',
+      // ... map column IDs to display names
+    }}
+  />
+</AutoneGridPreset.Root>
+```
+
+#### Disabling Reordering
+
+You can disable column reordering globally by passing `disableColumnDnd` to the `Root` component.
+
+```tsx
+<AutoneGridPreset.Root disableColumnDnd={!isReorderingEnabled} {...otherProps}>
+```
+
+#### The FLIP Technique
+
+To ensure smooth 60fps animations even with large datasets, we use the **FLIP** (First, Last, Invert, Play) technique. We avoid animating layout-triggering properties like `left` or `width`, which cause expensive browser reflows. Instead, we use CSS `transform`, which runs on the compositor thread.
+
+1.  **First**: The column is at its original position.
+2.  **Last**: When the order changes, TanStack Table updates the `left` position immediately in the DOM.
+3.  **Invert**: We calculate the `delta` (difference) between the old and new positions. We instantly apply a transform of `-delta` to the column, visually placing it back at its starting position.
+4.  **Play**: We animate the transform from `-delta` to `0`, creating a smooth sliding effect to the new position.
+
+This logic is encapsulated in the `useFlipMotionValue` hook, ensuring animations never block the main thread.
+
+### Dynamic Column Widths
+
+Columns always fill available space using `getDynamicColumnWidths` internally.
+
+<Canvas of={AutoneGridStories.DynamicColumnWidths} />
+
+### Infinite Scroll
+
+`AutoneGrid` supports infinite scrolling via the `InfiniteScrollSentinel` component. This component observes the scroll position and triggers a callback when the user scrolls near the bottom of the list.
+
+<Canvas of={AutoneGridStories.InfiniteScroll} />
+
+Usage involves placing the `InfiniteScrollSentinel` inside the `Root` component, typically after the `Body`.
+
+```tsx
+import { useCallback } from 'react';
+import {
+  useDataGrid,
+  AutoneGridPreset,
+} from '@autone/ui-next';
+
+const InfiniteScrollTable = () => {
+  // 1. Setup your data fetching (e.g. react-query's useInfiniteQuery)
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isLoading
+  } = useMyInfiniteQuery();
+
+  // 2. Configure the grid
+  const [scrollElementRef, gridState, gridConfig] = useDataGrid({
+    mode: 'fixed',
+    tableOptions: {
+      data: flatData, // Flatten your pages
+      columns,
+    },
+    // ... other options
+  });
+
+  const onSentinelEnter = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+
+  return (
+    <AutoneGridPreset.Root
+      gridConfig={gridConfig}
+      ref={scrollElementRef}
+      className="h-[500px]"
+    >
+      <AutoneGridPreset.Header virtualHeaders={gridState.getVirtualHeaders()} />
+
+      <AutoneGridPreset.Body>
+         {/* ... render rows as usual ... */}
+      </AutoneGridPreset.Body>
+
+      {/* 3. Add the sentinel */}
+      <AutoneGridPreset.InfiniteScrollSentinel
+        canGetNextPage={hasNextPage}
+        onSentinelEnter={onSentinelEnter}
+        isFetching={isFetching}
+        isLoading={isLoading}
+      />
+    </AutoneGridPreset.Root>
+  );
+};
+```
+
+### Pagination
+
+For paginated data, wrap the `Root` component in `AutoneGridPreset.Container` alongside `AutoneGridPreset.Pagination`.
+
+<Canvas of={AutoneGridStories.WithPagination} />
+
+```tsx
+<AutoneGridPreset.Container className="w-full">
+  <AutoneGridPreset.Root
+    className="w-full h-[500px]"
+    gridConfig={gridConfig}
+    ref={scrollElementRef}
+  >
+    {/* ... Header, Body ... */}
+  </AutoneGridPreset.Root>
+
+  <AutoneGridPreset.Pagination
+    page={page}
+    pageSize={pageSize}
+    onPageChange={setPage}
+    onPageSizeChange={setPageSize}
+    totalRows={totalCount}
+    loading={isLoading}
+  />
+</AutoneGridPreset.Container>
+```

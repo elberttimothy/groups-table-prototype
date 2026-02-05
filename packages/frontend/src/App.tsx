@@ -1,20 +1,21 @@
 import { useState } from 'react'
 import { Button } from './components/Button/Button'
-import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="app">
-      <h1>Autone Prototypes</h1>
-      <div className="card">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-8">
+      <h1 className="text-5xl font-bold bg-gradient-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent">
+        Autone Prototypes
+      </h1>
+      <div className="p-8">
         <Button onClick={() => setCount((count) => count + 1)}>
           Count is {count}
         </Button>
       </div>
-      <p className="read-the-docs">
-        Edit <code>src/App.tsx</code> and save to test HMR
+      <p className="text-gray-400 text-sm">
+        Edit <code className="bg-white/10 px-2 py-1 rounded font-mono">src/App.tsx</code> and save to test HMR
       </p>
     </div>
   )
