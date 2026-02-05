@@ -6,8 +6,7 @@ import { useMockInfiniteApi } from '../../../hooks/useMockInfiniteApi';
 import { useMockPaginatedApi } from '../../../hooks/useMockPaginatedApi';
 import {
   isDataTableLoadingObject,
-  useDataTableLoadingGuard,
-} from '../../table';
+} from '@/utils';
 import {
   AutoneGrid,
   AutoneGridDynamicPreset,
@@ -19,6 +18,7 @@ import { mockProducts } from '../mocks/mock-data';
 import { variableColumns } from '../mocks/variable-content-columns';
 import { variableMockProducts } from '../mocks/variable-content-mock-data';
 import { assertNoGroupColumnDefs } from '../utilities/invariants';
+import { useDataTableLoadingGuard } from '@/hooks/use-data-table-loading-guard';
 
 // ========================= STORY HELPERS =========================
 

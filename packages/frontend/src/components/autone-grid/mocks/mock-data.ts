@@ -31,8 +31,8 @@ const generateProduct = (): Product => ({
   ]),
   supplier: faker.company.name(),
   warehouse: faker.location.city(),
-  weight: faker.number.float({ min: 0.1, max: 50, precision: 0.01 }),
-  rating: faker.number.float({ min: 1, max: 5, precision: 0.1 }),
+  weight: faker.number.float({ min: 0.1, max: 50, fractionDigits: 2 }),
+  rating: faker.number.float({ min: 1, max: 5, fractionDigits: 1 }),
   lastUpdated: new Date('2026-01-20T00:00:00.000Z'),
 });
 

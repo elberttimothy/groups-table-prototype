@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
 
-import { ArrowLeftIcon, ArrowRightIcon } from '@/components/icons';
 import { fNumberWithCommas } from '@/utils';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+import { Skeleton } from '@/atoms';
+import { Button } from '@/atoms';
 
 export interface PaginationProps {
   getNextPage: () => void;
@@ -25,7 +27,6 @@ export const Pagination = React.memo(
     totalRows,
     loading,
   }: PaginationProps) => {
-    const { common } = useAutoneTranslation();
     const lastValidTotalRows = useRef(0);
 
     if (totalRows) {
@@ -34,8 +35,8 @@ export const Pagination = React.memo(
 
     const totalRowsCount = lastValidTotalRows.current;
     const totalPages = Math.ceil(totalRowsCount / pageSize);
-    const totalRecordsLabel = `${fNumberWithCommas(totalRowsCount)} ${common('pagination.rows')}`;
-    const pageRangeLabel = `${pageIndex + 1} ${common('pagination.of')} ${totalPages}`;
+    const totalRecordsLabel = `${fNumberWithCommas(totalRowsCount)} rows`;
+    const pageRangeLabel = `${pageIndex + 1} of ${totalPages}`;
 
     if (loading) {
       return (

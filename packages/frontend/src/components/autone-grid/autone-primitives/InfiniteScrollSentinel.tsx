@@ -4,6 +4,7 @@ import { useIntersectionObserver } from 'usehooks-ts';
 import { cn } from '@/utils';
 import { useGridContext } from '../contexts/grid.context';
 import { cssVariables } from '../utilities/css-variables';
+import { Loader } from 'lucide-react';
 
 export interface InfiniteScrollSentinelProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -54,7 +55,7 @@ export const InfiniteScrollSentinel = ({
       style={{ width: `var(${cssVariables.rootWidthVar})` }}
       {...props}
     >
-      {isFetching && <LoadingIcon className="animate-spin" />}
+      {isFetching && <Loader className="animate-spin" />}
     </div>
   );
 };

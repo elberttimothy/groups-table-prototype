@@ -4,6 +4,7 @@ import { cn } from '@/utils';
 import { GridContext } from '../contexts/grid.context';
 import { type GridContextValue } from '../contexts/grid.context.types';
 import { cssVariables } from '../utilities/css-variables';
+import { ScrollAreaRoot, ScrollAreaViewport, VerticalScrollbar, ScrollThumb, HorizontalScrollbar } from '@/atoms';
 
 export interface GridRootPrimitiveProps {
   gridConfig: Omit<GridContextValue, 'scrollElement'>;

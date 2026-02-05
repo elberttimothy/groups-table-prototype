@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import {
   createColumnLoadingGuards,
   type DataTableLoadingObject,
-} from '../../table';
+} from '@/utils';
 import { ColumnDragHandle } from '../autone-primitives/ColumnDragHandle';
 
 import { type VariableProduct } from './variable-content-mock-data';

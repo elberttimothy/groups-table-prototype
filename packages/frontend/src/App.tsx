@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button } from '@/atoms';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -9,7 +10,7 @@ function App() {
         Autone Prototypes
       </h1>
       <div className="p-8">
-        <Button onClick={() => setCount((count) => count + 1)}>
+        <Button onClick={() => setCount((count) => count + 1)} aria-label="Increment count" id="increment-count">
           Count is {count}
         </Button>
       </div>
