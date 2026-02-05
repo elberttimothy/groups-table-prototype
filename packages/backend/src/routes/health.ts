@@ -1,12 +1,12 @@
-import { Router, type Router as RouterType } from 'express'
-import { prisma } from '../lib/prisma.js'
+import { Router, type Router as RouterType } from 'express';
+import { prisma } from '../lib/prisma.js';
 
 export const healthRouter: RouterType = Router()
 
 healthRouter.get('/', async (_req, res) => {
   try {
     // Test database connection by counting users
-    await prisma.user.count()
+    await prisma.user.count();
 
     res.json({
       status: 'healthy',
