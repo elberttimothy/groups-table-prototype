@@ -1,0 +1,27 @@
+{
+  "name": "autone-prototypes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:frontend": "turbo dev --filter=@autone/frontend",
+    "dev:backend": "turbo dev --filter=@autone/backend",
+    "build": "turbo build",
+    "build:frontend": "turbo build --filter=@autone/frontend",
+    "build:backend": "turbo build --filter=@autone/backend",
+    "storybook": "pnpm --filter @autone/frontend storybook",
+    "db:migrate": "pnpm --filter @autone/backend db:migrate",
+    "db:push": "pnpm --filter @autone/backend db:push",
+    "db:studio": "pnpm --filter @autone/backend db:studio",
+    "db:generate": "pnpm --filter @autone/backend db:generate"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@9.15.4"
+}
+
