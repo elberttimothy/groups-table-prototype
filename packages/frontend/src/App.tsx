@@ -1,7 +1,12 @@
+import { LocationAggregation, ProductAggregation } from '@autone/backend/schemas';
 import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
+import { useState } from 'react';
 
 function App() {
   const { data } = useGetHealthQuery();
+  const [productAggregation, setProductAggregation] = useState<ProductAggregation>('sku_id');
+  const [locationAggregation, setLocationAggregation] =
+    useState<LocationAggregation>('location_id');
   const { data: skuLocations, isLoading: isLoadingSkuLocations } = useGetSkuLocationsQuery({
     product_aggregation: 'sku_id',
     location_aggregation: 'location_id',

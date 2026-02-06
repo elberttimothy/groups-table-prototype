@@ -24,6 +24,7 @@ build/
 *.swo
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 
 # OS
 .DS_Store
