@@ -1,0 +1,26 @@
+\copy public.sku_locations (
+	product_id, 
+	department_id, 
+	department_desc, 
+	sub_department_id, 
+	sub_department_desc, 
+	style_id, 
+	style_desc, 
+	season_id, 
+	season_desc, 
+	gender_id, 
+	gender_desc, 
+	product_groups, 
+	sku_id, 
+	size_id, 
+	location_id, 
+	location_desc, 
+	country_id, 
+	country_desc, 
+	location_type_id, 
+	location_type_desc, 
+	region_id, 
+	region_desc, 
+	location_groups
+) FROM '/Users/elberttimothy/Desktop/autone-prototypes/prototypes/packages/backend/data/zadig_sku_locations.csv' 
+DELIMITER ',' CSV HEADER ENCODING 'UTF8' QUOTE '"' NULL 'NULL' ESCAPE '"'

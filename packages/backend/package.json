@@ -14,7 +14,8 @@
     "db:seed": "prisma db seed",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "docker:logs": "docker compose logs -f postgres"
+    "docker:logs": "docker compose logs -f postgres",
+    "sync-db": "prisma db pull && prisma generate"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",
