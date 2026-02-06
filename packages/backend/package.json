@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./schemas": {
+      "types": "./src/api/schemas/index.ts",
+      "default": "./src/api/schemas/index.ts"
+    }
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

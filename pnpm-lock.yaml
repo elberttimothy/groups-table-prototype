@@ -81,6 +81,9 @@ importers:
 
   packages/frontend:
     dependencies:
+      '@autone/backend':
+        specifier: workspace:^
+        version: link:../backend
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
