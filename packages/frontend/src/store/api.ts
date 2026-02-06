@@ -1,4 +1,4 @@
-import { HealthResponse } from '@autone/backend/schemas';
+import { GenericAggregationResponse, HealthResponse, SkuLocationBody } from '@autone/backend/schemas';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
@@ -17,7 +17,14 @@ export const api = createApi({
       query: () => '/health/test',
       transformResponse: (response: HealthResponse) => response,
     }),
+    getSkuLocations: builder.query<GenericAggregationResponse[], SkuLocationBody>({
+      query: (body) => ({
+        url: '/sku-locations',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetHealthQuery } = api;
+export const { useGetHealthQuery, useGetSkuLocationsQuery } = api;

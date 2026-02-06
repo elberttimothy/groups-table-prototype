@@ -85,3 +85,5 @@ export const GenericAggregationResponseSchema = z.object({
     user_ia: z.coerce.number().nullable(),
   }),
 })
+
+export type GenericAggregationResponse = z.infer<typeof GenericAggregationResponseSchema>

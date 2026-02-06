@@ -1,20 +1,22 @@
-import { useState } from 'react'
-import { Button } from '@/atoms';
-import { useGetHealthQuery } from './store/api';
+import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
 
 function App() {
-  const [count, setCount] = useState(0)
-  const { data, isLoading, error } = useGetHealthQuery()
-
-  console.log(data)
+  const { data } = useGetHealthQuery()
+  const { data: skuLocations, isLoading: isLoadingSkuLocations } = useGetSkuLocationsQuery({
+    product_aggregation: 'sku_id',
+    location_aggregation: 'location_id',
+  })
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-8">
       <div className='flex flex-col'>
         <h1>Health: {data?.status}</h1>
-        <p>Timestamp: {data?.timestamp}</p>
         <p>Database: {data?.database}</p>
-        <p>Error: {data?.error}</p>
+      </div>
+      <div className='flex flex-col'>
+        <h1>SKU Locations</h1>
+        <p>Loading: {isLoadingSkuLocations ? 'Yes' : 'No'}</p>
+        <pre>{JSON.stringify(skuLocations, null, 2)}</pre>
       </div>
     </div>
   )
