@@ -1,12 +1,13 @@
-import { Router, type Router as RouterType } from 'express';
-import { prisma } from '../lib/prisma.js';
+import { zodiosRouter } from '@zodios/express'
+import { healthApi } from '../api/contract.js'
+import { prisma } from '../lib/prisma.js'
 
-export const healthRouter: RouterType = Router()
+export const healthRouter = zodiosRouter(healthApi)
 
 healthRouter.get('/', async (_req, res) => {
   try {
     // Test database connection by counting users
-    await prisma.user.count();
+    await prisma.user.count()
 
     res.json({
       status: 'healthy',

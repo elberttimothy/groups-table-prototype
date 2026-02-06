@@ -1,11 +1,12 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import { zodiosApp } from '@zodios/express'
 import { prisma } from './lib/prisma.js'
 import { healthRouter } from './routes/health.js'
 import { usersRouter } from './routes/users.js'
 
-const app = express()
+const app = zodiosApp()
 const port = process.env.PORT || 3000
 
 export { prisma }
