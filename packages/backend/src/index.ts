@@ -1,10 +1,11 @@
+import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
-import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
-import { prisma } from './lib/prisma.js'
 import { openApiDocument } from './lib/openapi.js'
+import { prisma } from './lib/prisma.js'
 import { healthRouter } from './routes/health.js'
+import { skuLocationsRouter } from './routes/sku-locations.js'
 import { usersRouter } from './routes/users.js'
 
 const app = express()
@@ -23,6 +24,7 @@ app.get('/api/openapi.json', (_req, res) => res.json(openApiDocument))
 // Routes (Zodios routers work with Express)
 app.use('/api/health', healthRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/sku-locations', skuLocationsRouter)
 
 // Graceful shutdown
 process.on('SIGINT', async () => {

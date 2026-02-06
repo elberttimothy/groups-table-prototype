@@ -1,0 +1,27 @@
+import { z } from 'zod'
+
+export const SkuLocationSchema = z.object({
+  sku_id: z.string(),
+  size_id: z.string().nullable(),
+  product_id: z.string().nullable(),
+  department_id: z.string().nullable(),
+  department_desc: z.string().nullable(),
+  sub_department_id: z.string().nullable(),
+  sub_department_desc: z.string().nullable(),
+  style_id: z.string().nullable(),
+  style_desc: z.string().nullable(),
+  season_id: z.string().nullable(),
+  season_desc: z.string().nullable(),
+  gender_id: z.string().nullable(),
+  gender_desc: z.string().nullable(),
+  product_groups: z.array(z.string()),
+  location_id: z.string(),
+  location_desc: z.string().nullable(),
+  country_id: z.string().nullable(),
+  country_desc: z.string().nullable(),
+  location_type_id: z.string().nullable(),
+  location_type_desc: z.string().nullable(),
+  region_id: z.string().nullable(),
+  region_desc: z.string().nullable(),
+  location_groups: z.array(z.string()),
+})

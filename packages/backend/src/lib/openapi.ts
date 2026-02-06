@@ -1,5 +1,5 @@
 import { openApiBuilder } from '@zodios/openapi'
-import { healthApi, usersApi } from '../api/contract.js'
+import { healthApi, skuLocationsApi, usersApi } from '../api/contract.js'
 
 export const openApiDocument = openApiBuilder({
   title: 'Autone Backend API',
@@ -10,4 +10,6 @@ export const openApiDocument = openApiBuilder({
   .addPublicApi(healthApi)
   .addServer({ url: '/api/users', description: 'Users API' })
   .addPublicApi(usersApi)
+  .addServer({ url: '/api/sku-locations', description: 'SKU Locations API' })
+  .addPublicApi(skuLocationsApi)
   .build()

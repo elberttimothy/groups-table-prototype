@@ -4,7 +4,7 @@ import { prisma } from '../lib/prisma.js'
 
 export const healthRouter = zodiosRouter(healthApi)
 
-healthRouter.get('/', async (_req, res) => {
+healthRouter.get('/test', async (_req, res) => {
   try {
     // Test database connection by counting users
     await prisma.user.count()

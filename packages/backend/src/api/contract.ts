@@ -1,18 +1,19 @@
 import { makeApi } from '@zodios/core'
 import { z } from 'zod'
 import {
-  UserSchema,
   CreateUserSchema,
-  UpdateUserSchema,
-  HealthResponseSchema,
   ErrorSchema,
+  HealthResponseSchema,
   IdParamSchema,
+  SkuLocationSchema,
+  UpdateUserSchema,
+  UserSchema,
 } from './schemas/index.js'
 
 export const healthApi = makeApi([
   {
     method: 'get',
-    path: '/',
+    path: '/test',
     alias: 'getHealth',
     description: 'Get health status of the API',
     response: HealthResponseSchema,
@@ -145,6 +146,33 @@ export const usersApi = makeApi([
         description: 'User not found',
         schema: ErrorSchema,
       },
+      {
+        status: 500,
+        description: 'Internal server error',
+        schema: ErrorSchema,
+      },
+    ],
+  },
+])
+
+export const skuLocationsApi = makeApi([
+  {
+    method: 'post',
+    path: '/',
+    alias: 'getSkuLocations',
+    description: 'Get all SKU locations',
+    response: z.array(SkuLocationSchema),
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.object({
+          product_aggregation: z.string(),
+          location_aggregation: z.string(),
+        }),
+      }
+    ],
+    errors: [
       {
         status: 500,
         description: 'Internal server error',
