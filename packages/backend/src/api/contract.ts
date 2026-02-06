@@ -3,11 +3,12 @@ import { z } from 'zod'
 import {
   CreateUserSchema,
   ErrorSchema,
+  GenericAggregationResponseSchema,
   HealthResponseSchema,
   IdParamSchema,
-  SkuLocationSchema,
+  SkuLocationBodySchema,
   UpdateUserSchema,
-  UserSchema,
+  UserSchema
 } from './schemas/index.js'
 
 export const healthApi = makeApi([
@@ -160,19 +161,21 @@ export const skuLocationsApi = makeApi([
     method: 'post',
     path: '/',
     alias: 'getSkuLocations',
-    description: 'Get all SKU locations',
-    response: z.array(SkuLocationSchema),
+    description: 'Get aggregated SKU location metrics',
+    response: z.array(GenericAggregationResponseSchema),
     parameters: [
       {
         name: 'body',
         type: 'Body',
-        schema: z.object({
-          product_aggregation: z.string(),
-          location_aggregation: z.string(),
-        }),
+        schema: SkuLocationBodySchema,
       }
     ],
     errors: [
+      {
+        status: 400,
+        description: 'Invalid aggregation parameter',
+        schema: ErrorSchema,
+      },
       {
         status: 500,
         description: 'Internal server error',

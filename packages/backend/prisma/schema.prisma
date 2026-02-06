@@ -16,30 +16,30 @@ model User {
 }
 
 model SkuLocation {
-  sku_id              String
-  size_id             String?
-  product_id          String?
-  department_id       String?
-  department_desc     String?
-  sub_department_id   String?
-  sub_department_desc String?
-  style_id            String?
-  style_desc          String?
-  season_id           String?
-  season_desc         String?
-  gender_id           String?
-  gender_desc         String?
-  product_groups      String[]            @default([])
-  location_id         String
-  location_desc       String?
-  country_id          String?
-  country_desc        String?
-  location_type_id    String?
-  location_type_desc  String?
-  region_id           String?
-  region_desc         String?
-  location_groups     String[]            @default([])
-  skuLocationMetrics  SkuLocationMetric[]
+  sku_id               String
+  size_id              String?
+  product_id           String?
+  department_id        String?
+  department_desc      String?
+  sub_department_id    String?
+  sub_department_desc  String?
+  style_id             String?
+  style_desc           String?
+  season_id            String?
+  season_desc          String?
+  gender_id            String?
+  gender_desc          String?
+  product_groups       String[]           @default([])
+  location_id          String
+  location_desc        String?
+  country_id           String?
+  country_desc         String?
+  location_type_id     String?
+  location_type_desc   String?
+  region_id            String?
+  region_desc          String?
+  location_groups      String[]           @default([])
+  sku_location_metrics SkuLocationMetric?
 
   @@id([sku_id, location_id])
   @@map("sku_locations")
