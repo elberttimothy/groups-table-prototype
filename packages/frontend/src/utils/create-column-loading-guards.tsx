@@ -14,9 +14,7 @@ export interface DataTableLoadingObject {
   [DataTableLoadingSymbol]: true;
 }
 
-export const isDataTableLoadingObject = (
-  val: unknown,
-): val is DataTableLoadingObject => {
+export const isDataTableLoadingObject = (val: unknown): val is DataTableLoadingObject => {
   return (
     val !== null &&
     typeof val === 'object' &&
@@ -26,7 +24,7 @@ export const isDataTableLoadingObject = (
 };
 
 export const createDataTableLoadingObject = <T extends object>(
-  obj: T,
+  obj: T
 ): DataTableLoadingObject & T => {
   return {
     [DataTableLoadingSymbol]: true,
@@ -36,31 +34,17 @@ export const createDataTableLoadingObject = <T extends object>(
 
 export type DataTableLoadingSymbolType = typeof DataTableLoadingSymbol;
 
-interface ColumnCellGuardProps<
-  TData,
-  TValue,
-  LoadingObject extends DataTableLoadingObject,
-> {
+interface ColumnCellGuardProps<TData, TValue, LoadingObject extends DataTableLoadingObject> {
   ctx: CellContext<TData, TValue>;
   renderCell: (
-    ctx: CellContext<
-      Exclude<TData, LoadingObject>,
-      Exclude<TValue, LoadingObject>
-    >,
+    ctx: CellContext<Exclude<TData, LoadingObject>, Exclude<TValue, LoadingObject>>
   ) => ReactNode;
   renderLoader?: (
-    ctx: CellContext<
-      Extract<TData, LoadingObject>,
-      Extract<TValue, LoadingObject>
-    >,
+    ctx: CellContext<Extract<TData, LoadingObject>, Extract<TValue, LoadingObject>>
   ) => ReactNode;
 }
 
-interface ColumnHeaderGuardProps<
-  TData,
-  TValue,
-  LoadingObject extends DataTableLoadingObject,
-> {
+interface ColumnHeaderGuardProps<TData, TValue, LoadingObject extends DataTableLoadingObject> {
   ctx: HeaderContext<TData, TValue>;
   /**
    * If `all`, the header will be rendered as loading if all rows are loading.
@@ -69,16 +53,10 @@ interface ColumnHeaderGuardProps<
    */
   mode?: 'all' | 'some';
   renderCell: (
-    ctx: HeaderContext<
-      Exclude<TData, LoadingObject>,
-      Exclude<TValue, LoadingObject>
-    >,
+    ctx: HeaderContext<Exclude<TData, LoadingObject>, Exclude<TValue, LoadingObject>>
   ) => ReactNode;
   renderLoader?: (
-    ctx: HeaderContext<
-      Extract<TData, LoadingObject>,
-      Extract<TValue, LoadingObject>
-    >,
+    ctx: HeaderContext<Extract<TData, LoadingObject>, Extract<TValue, LoadingObject>>
   ) => ReactNode;
 }
 
@@ -140,13 +118,8 @@ export const createColumnLoadingGuards = <
   /**
    * Guard an accessor function to prevent it from being called if the row is loading.
    */
-  const accessorFnGuard = <TValue,>(
-    accessorFn: (row: TData, index: number) => TValue,
-  ) => {
-    return (
-      row: TData | LoadingObject,
-      index: number,
-    ): TValue | LoadingObject => {
+  const accessorFnGuard = <TValue,>(accessorFn: (row: TData, index: number) => TValue) => {
+    return (row: TData | LoadingObject, index: number): TValue | LoadingObject => {
       if (isDataTableLoadingObject(row)) {
         return row;
       } else {
@@ -164,23 +137,19 @@ export const createColumnLoadingGuards = <
     ctx,
     renderCell,
     renderLoader = () => <Skeleton className="w-full h-full rounded-sm" />,
-  }: ColumnCellGuardProps<
-    GuardTData,
-    GuardTValue,
-    LoadingObject
-  >): React.ReactNode => {
+  }: ColumnCellGuardProps<GuardTData, GuardTValue, LoadingObject>): React.ReactNode => {
     return isDataTableLoadingObject(ctx.row.original)
       ? renderLoader(
           ctx as CellContext<
             Extract<GuardTData, LoadingObject>,
             Extract<GuardTValue, LoadingObject>
-          >,
+          >
         )
       : renderCell(
           ctx as CellContext<
             Exclude<GuardTData, LoadingObject>,
             Exclude<GuardTValue, LoadingObject>
-          >,
+          >
         );
   };
 
@@ -198,29 +167,22 @@ export const createColumnLoadingGuards = <
     ctx,
     mode = 'all',
     renderCell,
-    renderLoader = () => (
-      <Skeleton className="w-full h-full rounded-full bg-grey-20 opacity-50" />
-    ),
-  }: ColumnHeaderGuardProps<
-    GuardTData,
-    GuardTValue,
-    LoadingObject
-  >): React.ReactNode => {
-    const isHeaderCellLoading =
-      mode === 'all' ? areAllRowsLoading : areSomeRowsLoading;
+    renderLoader = () => <Skeleton className="w-full h-full rounded-full bg-grey-20 opacity-50" />,
+  }: ColumnHeaderGuardProps<GuardTData, GuardTValue, LoadingObject>): React.ReactNode => {
+    const isHeaderCellLoading = mode === 'all' ? areAllRowsLoading : areSomeRowsLoading;
 
     return isHeaderCellLoading(ctx.table.getCoreRowModel().rows)
       ? renderLoader(
           ctx as HeaderContext<
             Extract<GuardTData, LoadingObject>,
             Extract<GuardTValue, LoadingObject>
-          >,
+          >
         )
       : renderCell(
           ctx as HeaderContext<
             Exclude<GuardTData, LoadingObject>,
             Exclude<GuardTValue, LoadingObject>
-          >,
+          >
         );
   };
 

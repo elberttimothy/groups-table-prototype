@@ -6,8 +6,10 @@ import { useGridContext } from '../contexts/grid.context';
 import { cssVariables } from '../utilities/css-variables';
 import { Loader } from 'lucide-react';
 
-export interface InfiniteScrollSentinelProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface InfiniteScrollSentinelProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'children'
+> {
   isLoading?: boolean;
   isFetching?: boolean;
   canGetNextPage?: boolean;
@@ -38,7 +40,7 @@ export const InfiniteScrollSentinel = ({
           onSentinelLeave?.();
         }
       },
-      [onSentinelEnter, onSentinelLeave],
+      [onSentinelEnter, onSentinelLeave]
     ),
   });
 
@@ -50,7 +52,7 @@ export const InfiniteScrollSentinel = ({
       className={cn(
         'sticky left-0 w-full h-12 flex flex-col items-center justify-center',
         'bg-accent animate-pulse',
-        className,
+        className
       )}
       style={{ width: `var(${cssVariables.rootWidthVar})` }}
       {...props}

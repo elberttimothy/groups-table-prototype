@@ -11,19 +11,14 @@ import {
 } from './useDataGrid.types';
 
 const createCellRect = simpleMemoise(
-  (
-    position: 'relative' | 'absolute',
-    width: number,
-    height: number,
-    x: number,
-  ): CellRect => {
+  (position: 'relative' | 'absolute', width: number, height: number, x: number): CellRect => {
     return {
       position,
       width,
       height,
       x,
     };
-  },
+  }
 );
 
 const createRowRect = simpleMemoise(
@@ -33,7 +28,7 @@ const createRowRect = simpleMemoise(
       height,
       y,
     };
-  },
+  }
 );
 
 interface UseGetVirtualRowsProps<TData extends RowData> {
@@ -60,7 +55,7 @@ export const useGetVirtualRows = <TData extends RowData>({
           'relative',
           cell.column.getSize(),
           virtualRow.size,
-          0,
+          0
         );
         return {
           key: cell.id,
@@ -75,7 +70,7 @@ export const useGetVirtualRows = <TData extends RowData>({
           'relative',
           cell.column.getSize(),
           virtualRow.size,
-          0,
+          0
         );
         return {
           key: cell.id,
@@ -85,30 +80,24 @@ export const useGetVirtualRows = <TData extends RowData>({
         };
       }) satisfies VirtualCell[];
 
-      const virtualCenterVisibleCells = columnVirtualiser
-        .getVirtualItems()
-        .map((virtualColumn) => {
-          const cell = centerVisibleCells[virtualColumn.index];
+      const virtualCenterVisibleCells = columnVirtualiser.getVirtualItems().map((virtualColumn) => {
+        const cell = centerVisibleCells[virtualColumn.index];
 
-          const cellRect: CellRect = createCellRect(
-            'absolute',
-            virtualColumn.size,
-            virtualRow.size,
-            virtualColumn.start,
-          );
-          return {
-            key: cell.id,
-            index: cell.column.getIndex(),
-            cell,
-            cellRect,
-          };
-        }) satisfies VirtualCell[];
+        const cellRect: CellRect = createCellRect(
+          'absolute',
+          virtualColumn.size,
+          virtualRow.size,
+          virtualColumn.start
+        );
+        return {
+          key: cell.id,
+          index: cell.column.getIndex(),
+          cell,
+          cellRect,
+        };
+      }) satisfies VirtualCell[];
 
-      const rowRect: RowRect = createRowRect(
-        'absolute',
-        virtualRow.size,
-        virtualRow.start,
-      );
+      const rowRect: RowRect = createRowRect('absolute', virtualRow.size, virtualRow.start);
 
       return {
         key: row.id,

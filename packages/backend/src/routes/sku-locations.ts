@@ -1,14 +1,17 @@
-import { zodiosRouter } from '@zodios/express'
-import { skuLocationsApi } from '../api/contract.js'
-import { getAggregatedSkuLocations } from '../api/queries/index.js'
+import { zodiosRouter } from '@zodios/express';
+import { skuLocationsApi } from '../api/contract.js';
+import { getAggregatedSkuLocations } from '../api/queries/index.js';
 
-export const skuLocationsRouter = zodiosRouter(skuLocationsApi)
+export const skuLocationsRouter = zodiosRouter(skuLocationsApi);
 
 skuLocationsRouter.post('/', async (req, res) => {
-  const { product_aggregation, location_aggregation } = req.body
+  const { product_aggregation, location_aggregation } = req.body;
 
-  const skuLocationsAggregated = await getAggregatedSkuLocations(product_aggregation, location_aggregation)
-  const skuLocationsAggregatedResponse = skuLocationsAggregated.map(skuLocation => ({
+  const skuLocationsAggregated = await getAggregatedSkuLocations(
+    product_aggregation,
+    location_aggregation
+  );
+  const skuLocationsAggregatedResponse = skuLocationsAggregated.map((skuLocation) => ({
     aggregations: [
       {
         dimension: 'product',
@@ -31,7 +34,7 @@ skuLocationsRouter.post('/', async (req, res) => {
       unconstrained_ia: skuLocation.unconstrained_ia,
       user_ia: skuLocation.user_ia,
     },
-  }))
+  }));
 
-  res.json(skuLocationsAggregatedResponse)
-})
+  res.json(skuLocationsAggregatedResponse);
+});

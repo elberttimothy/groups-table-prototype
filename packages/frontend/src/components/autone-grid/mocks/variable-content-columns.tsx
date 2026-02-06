@@ -1,18 +1,12 @@
 import { createColumnHelper } from '@tanstack/react-table';
 
-import {
-  createColumnLoadingGuards,
-  type DataTableLoadingObject,
-} from '@/utils';
+import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { ColumnDragHandle } from '../autone-primitives/ColumnDragHandle';
 
 import { type VariableProduct } from './variable-content-mock-data';
 
-const { columnCellGuard, accessorFnGuard } =
-  createColumnLoadingGuards<VariableProduct>();
-const columnHelper = createColumnHelper<
-  VariableProduct | DataTableLoadingObject
->();
+const { columnCellGuard, accessorFnGuard } = createColumnLoadingGuards<VariableProduct>();
+const columnHelper = createColumnHelper<VariableProduct | DataTableLoadingObject>();
 
 export const variableColumns = [
   columnHelper.accessor(
@@ -29,11 +23,9 @@ export const variableColumns = [
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => (
-            <span className="font-mono text-xs">{ctx.getValue()}</span>
-          ),
+          renderCell: (ctx) => <span className="font-mono text-xs">{ctx.getValue()}</span>,
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.name),
@@ -49,11 +41,9 @@ export const variableColumns = [
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => (
-            <div className="py-2 whitespace-normal">{ctx.getValue()}</div>
-          ),
+          renderCell: (ctx) => <div className="py-2 whitespace-normal">{ctx.getValue()}</div>,
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.description),
@@ -75,7 +65,7 @@ export const variableColumns = [
             </div>
           ),
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.category),
@@ -93,7 +83,7 @@ export const variableColumns = [
           ctx,
           renderCell: (ctx) => ctx.getValue(),
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.tags),
@@ -112,17 +102,14 @@ export const variableColumns = [
           renderCell: (ctx) => (
             <div className="py-2 flex flex-wrap gap-1">
               {ctx.getValue().map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-1.5 py-0.5 bg-muted rounded text-xs"
-                >
+                <span key={i} className="px-1.5 py-0.5 bg-muted rounded text-xs">
                   {tag}
                 </span>
               ))}
             </div>
           ),
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.price),
@@ -144,7 +131,7 @@ export const variableColumns = [
               currency: 'USD',
             }),
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.stock),
@@ -162,7 +149,7 @@ export const variableColumns = [
           ctx,
           renderCell: (ctx) => ctx.getValue().toLocaleString(),
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.notes),
@@ -181,14 +168,10 @@ export const variableColumns = [
           renderCell: (ctx) => {
             const notes = ctx.getValue();
             if (!notes) return <span className="text-muted-foreground">—</span>;
-            return (
-              <div className="py-2 whitespace-normal text-xs italic">
-                {notes}
-              </div>
-            );
+            return <div className="py-2 whitespace-normal text-xs italic">{notes}</div>;
           },
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.supplier),
@@ -206,7 +189,7 @@ export const variableColumns = [
           ctx,
           renderCell: (ctx) => ctx.getValue(),
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.status),
@@ -231,6 +214,6 @@ export const variableColumns = [
             );
           },
         }),
-    },
+    }
   ),
 ];

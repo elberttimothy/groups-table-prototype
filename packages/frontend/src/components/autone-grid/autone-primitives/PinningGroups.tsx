@@ -14,7 +14,7 @@ export const LeftHeaderGroup = React.memo(
     <GridPrimitives.LeftPinnedGroup
       className={cn(
         'z-[var(--autone-grid-header-pinned-left-z-index)] shadow-left-col flex flex-row items-start bg-secondary',
-        className,
+        className
       )}
       ref={ref}
       {...props}
@@ -23,7 +23,7 @@ export const LeftHeaderGroup = React.memo(
         {children}
       </IsReorderableRegionContextProvider>
     </GridPrimitives.LeftPinnedGroup>
-  )),
+  ))
 );
 LeftHeaderGroup.displayName = 'AutoneGrid.LeftHeaderGroup';
 
@@ -35,14 +35,14 @@ export const CenterHeaderGroup = React.memo(
     <GridPrimitives.CenterGroup
       className={cn(
         'z-[var(--autone-grid-header-pinned-center-z-index)] relative w-full flex flex-row bg-secondary',
-        className,
+        className
       )}
       ref={ref}
       {...props}
     >
       {children}
     </GridPrimitives.CenterGroup>
-  )),
+  ))
 );
 CenterHeaderGroup.displayName = 'AutoneGrid.CenterHeaderGroup';
 
@@ -54,7 +54,7 @@ export const RightHeaderGroup = React.memo(
     <GridPrimitives.RightPinnedGroup
       className={cn(
         'z-[var(--autone-grid-header-pinned-right-z-index)] shadow-right-col flex flex-row bg-secondary',
-        className,
+        className
       )}
       ref={ref}
       {...props}
@@ -63,7 +63,7 @@ export const RightHeaderGroup = React.memo(
         {children}
       </IsReorderableRegionContextProvider>
     </GridPrimitives.RightPinnedGroup>
-  )),
+  ))
 );
 RightHeaderGroup.displayName = 'AutoneGrid.RightHeaderGroup';
 
@@ -77,7 +77,7 @@ export const LeftBodyGroup = React.memo(
     <GridPrimitives.LeftPinnedGroup
       className={cn(
         'z-[var(--autone-grid-body-pinned-left-z-index)] shadow-left-col bg-white',
-        className,
+        className
       )}
       ref={ref}
       {...props}
@@ -86,7 +86,7 @@ export const LeftBodyGroup = React.memo(
         {children}
       </IsReorderableRegionContextProvider>
     </GridPrimitives.LeftPinnedGroup>
-  )),
+  ))
 );
 LeftBodyGroup.displayName = 'AutoneGrid.LeftBodyGroup';
 
@@ -98,14 +98,14 @@ export const CenterBodyGroup = React.memo(
     <GridPrimitives.CenterGroup
       className={cn(
         'z-[var(--autone-grid-body-pinned-center-z-index)] flex bg-white group-hover:bg-secondary transition-colors',
-        className,
+        className
       )}
       ref={ref}
       {...props}
     >
       {children}
     </GridPrimitives.CenterGroup>
-  )),
+  ))
 );
 CenterBodyGroup.displayName = 'AutoneGrid.CenterBodyGroup';
 
@@ -117,7 +117,7 @@ export const RightBodyGroup = React.memo(
     <GridPrimitives.RightPinnedGroup
       className={cn(
         'z-[var(--autone-grid-body-pinned-right-z-index)] shadow-right-col bg-white',
-        className,
+        className
       )}
       ref={ref}
       {...props}
@@ -126,7 +126,7 @@ export const RightBodyGroup = React.memo(
         {children}
       </IsReorderableRegionContextProvider>
     </GridPrimitives.RightPinnedGroup>
-  )),
+  ))
 );
 RightBodyGroup.displayName = 'AutoneGrid.RightBodyGroup';
 
@@ -140,7 +140,7 @@ export const LeftFooterGroup = React.memo(
     <GridPrimitives.LeftPinnedGroup
       className={cn(
         'z-[var(--autone-grid-footer-pinned-left-z-index)] shadow-left-col flex flex-row bg-secondary',
-        className,
+        className
       )}
       ref={ref}
       {...props}
@@ -149,7 +149,7 @@ export const LeftFooterGroup = React.memo(
         {children}
       </IsReorderableRegionContextProvider>
     </GridPrimitives.LeftPinnedGroup>
-  )),
+  ))
 );
 LeftFooterGroup.displayName = 'AutoneGrid.LeftFooterGroup';
 
@@ -161,14 +161,14 @@ export const CenterFooterGroup = React.memo(
     <GridPrimitives.CenterGroup
       className={cn(
         'z-[var(--autone-grid-footer-pinned-center-z-index)] relative w-full flex flex-row bg-secondary',
-        className,
+        className
       )}
       ref={ref}
       {...props}
     >
       {children}
     </GridPrimitives.CenterGroup>
-  )),
+  ))
 );
 CenterFooterGroup.displayName = 'AutoneGrid.CenterFooterGroup';
 
@@ -180,7 +180,7 @@ export const RightFooterGroup = React.memo(
     <GridPrimitives.RightPinnedGroup
       className={cn(
         'z-[var(--autone-grid-footer-pinned-right-z-index)] shadow-right-col flex flex-row bg-secondary',
-        className,
+        className
       )}
       ref={ref}
       {...props}
@@ -189,6 +189,6 @@ export const RightFooterGroup = React.memo(
         {children}
       </IsReorderableRegionContextProvider>
     </GridPrimitives.RightPinnedGroup>
-  )),
+  ))
 );
 RightFooterGroup.displayName = 'AutoneGrid.RightFooterGroup';

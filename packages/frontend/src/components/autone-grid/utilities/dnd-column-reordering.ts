@@ -1,8 +1,4 @@
-import {
-  type CollisionDetection,
-  type Modifier,
-  pointerWithin,
-} from '@dnd-kit/core';
+import { type CollisionDetection, type Modifier, pointerWithin } from '@dnd-kit/core';
 
 export const pointerWithinAccountingOverlay: CollisionDetection = (args) => {
   const { droppableContainers } = args;
@@ -34,9 +30,7 @@ export const pointerWithinAccountingOverlay: CollisionDetection = (args) => {
   });
 };
 
-const getActivatorCoordinates = (
-  event: Event,
-): { x: number; y: number } | null => {
+const getActivatorCoordinates = (event: Event): { x: number; y: number } | null => {
   if ('touches' in event) {
     const touchEvent = event as TouchEvent;
     const touch = touchEvent.touches?.[0] ?? touchEvent.changedTouches?.[0];

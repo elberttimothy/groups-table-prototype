@@ -2,11 +2,7 @@ import { type Header, type RowData } from '@tanstack/react-table';
 import { type Virtualizer } from '@tanstack/react-virtual';
 import React from 'react';
 
-import {
-  type FooterGroup,
-  type PinnedFooter,
-  type VirtualFooter,
-} from './useDataGrid.types';
+import { type FooterGroup, type PinnedFooter, type VirtualFooter } from './useDataGrid.types';
 
 interface UseGetVirtualFootersProps<TData extends RowData> {
   leftVisibleLeafFooters: Header<TData, unknown>[];
@@ -48,10 +44,7 @@ export const useGetVirtualFooters = <TData extends RowData>({
     })) satisfies PinnedFooter[];
     const centerVirtualFooters = columnVirtualiser
       .getVirtualItems()
-      .map(
-        (virtualItem) =>
-          [virtualItem, centerVisibleLeafFooters[virtualItem.index]] as const,
-      )
+      .map((virtualItem) => [virtualItem, centerVisibleLeafFooters[virtualItem.index]] as const)
       .map(([virtualItem, virtualFooter]) => ({
         key: virtualFooter.id,
         footer: virtualFooter,

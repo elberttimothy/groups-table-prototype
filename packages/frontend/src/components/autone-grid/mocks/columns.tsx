@@ -1,9 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 
-import {
-  createColumnLoadingGuards,
-  type DataTableLoadingObject,
-} from '@/utils';
+import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { ColumnDragHandle } from '../autone-primitives/ColumnDragHandle';
 
 import { type Product } from './mock-data';
@@ -27,14 +24,10 @@ export const columns = [
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => (
-            <span className="font-mono text-xs">{ctx.getValue()}</span>
-          ),
+          renderCell: (ctx) => <span className="font-mono text-xs">{ctx.getValue()}</span>,
         }),
-      footer: () => (
-        <span className="text-xs font-medium text-muted-foreground">Total</span>
-      ),
-    },
+      footer: () => <span className="text-xs font-medium text-muted-foreground">Total</span>,
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.name),
@@ -53,7 +46,7 @@ export const columns = [
           renderCell: (ctx) => ctx.getValue(),
         }),
       footer: () => <span className="text-xs text-muted-foreground">—</span>,
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.category),
@@ -72,7 +65,7 @@ export const columns = [
           renderCell: (ctx) => ctx.getValue(),
         }),
       footer: () => <span className="text-xs text-muted-foreground">—</span>,
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.price),
@@ -103,10 +96,7 @@ export const columns = [
           renderCell: (ctx) => {
             const total = ctx.table
               .getFilteredRowModel()
-              .rows.reduce(
-                (sum, row) => sum + row.getValue<number>('price'),
-                0,
-              );
+              .rows.reduce((sum, row) => sum + row.getValue<number>('price'), 0);
             return (
               <span className="block w-full text-right text-xs font-medium">
                 {total.toLocaleString('en-US', {
@@ -117,7 +107,7 @@ export const columns = [
             );
           },
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.stock),
@@ -134,9 +124,7 @@ export const columns = [
         columnCellGuard({
           ctx,
           renderCell: (ctx) => (
-            <span className="block w-full text-right">
-              {ctx.getValue().toLocaleString()}
-            </span>
+            <span className="block w-full text-right">{ctx.getValue().toLocaleString()}</span>
           ),
         }),
       footer: (ctx) =>
@@ -145,10 +133,7 @@ export const columns = [
           renderCell: (ctx) => {
             const total = ctx.table
               .getFilteredRowModel()
-              .rows.reduce(
-                (sum, row) => sum + row.getValue<number>('stock'),
-                0,
-              );
+              .rows.reduce((sum, row) => sum + row.getValue<number>('stock'), 0);
             return (
               <span className="block w-full text-right text-xs font-medium">
                 {total.toLocaleString()}
@@ -156,7 +141,7 @@ export const columns = [
             );
           },
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.status),
@@ -182,7 +167,7 @@ export const columns = [
           },
         }),
       footer: () => <span className="text-xs text-muted-foreground">—</span>,
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.supplier),
@@ -201,7 +186,7 @@ export const columns = [
           renderCell: (ctx) => ctx.getValue(),
         }),
       footer: () => <span className="text-xs text-muted-foreground">—</span>,
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.warehouse),
@@ -220,7 +205,7 @@ export const columns = [
           renderCell: (ctx) => ctx.getValue(),
         }),
       footer: () => <span className="text-xs text-muted-foreground">—</span>,
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.weight),
@@ -236,9 +221,7 @@ export const columns = [
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => (
-            <span className="block w-full text-right">{ctx.getValue()} kg</span>
-          ),
+          renderCell: (ctx) => <span className="block w-full text-right">{ctx.getValue()} kg</span>,
         }),
       footer: (ctx) =>
         columnHeaderGuard({
@@ -246,10 +229,7 @@ export const columns = [
           renderCell: (ctx) => {
             const total = ctx.table
               .getFilteredRowModel()
-              .rows.reduce(
-                (sum, row) => sum + row.getValue<number>('weight'),
-                0,
-              );
+              .rows.reduce((sum, row) => sum + row.getValue<number>('weight'), 0);
             return (
               <span className="block w-full text-right text-xs font-medium">
                 {total.toFixed(2)} kg
@@ -257,7 +237,7 @@ export const columns = [
             );
           },
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.rating),
@@ -273,9 +253,7 @@ export const columns = [
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => (
-            <span className="block w-full text-right">{ctx.getValue()} ★</span>
-          ),
+          renderCell: (ctx) => <span className="block w-full text-right">{ctx.getValue()} ★</span>,
         }),
       footer: (ctx) =>
         columnHeaderGuard({
@@ -283,10 +261,7 @@ export const columns = [
           renderCell: (ctx) => {
             const total = ctx.table
               .getFilteredRowModel()
-              .rows.reduce(
-                (sum, row) => sum + row.getValue<number>('rating'),
-                0,
-              );
+              .rows.reduce((sum, row) => sum + row.getValue<number>('rating'), 0);
             return (
               <span className="block w-full text-right text-xs font-medium">
                 {total.toFixed(1)} ★
@@ -294,7 +269,7 @@ export const columns = [
             );
           },
         }),
-    },
+    }
   ),
   columnHelper.accessor(
     accessorFnGuard((row) => row.lastUpdated),
@@ -318,6 +293,6 @@ export const columns = [
             }),
         }),
       footer: () => <span className="text-xs text-muted-foreground">—</span>,
-    },
+    }
   ),
 ];

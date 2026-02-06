@@ -4,7 +4,13 @@ import { cn } from '@/utils';
 import { GridContext } from '../contexts/grid.context';
 import { type GridContextValue } from '../contexts/grid.context.types';
 import { cssVariables } from '../utilities/css-variables';
-import { ScrollAreaRoot, ScrollAreaViewport, VerticalScrollbar, ScrollThumb, HorizontalScrollbar } from '@/atoms';
+import {
+  ScrollAreaRoot,
+  ScrollAreaViewport,
+  VerticalScrollbar,
+  ScrollThumb,
+  HorizontalScrollbar,
+} from '@/atoms';
 
 export interface GridRootPrimitiveProps {
   gridConfig: Omit<GridContextValue, 'scrollElement'>;
@@ -24,14 +30,8 @@ export const Root = React.forwardRef<
     onResize: React.useCallback(() => {
       const rootRect = rootRef.current?.getBoundingClientRect();
       if (rootRect && scrollRootRef.current) {
-        scrollRootRef.current.style.setProperty(
-          cssVariables.rootHeightVar,
-          `${rootRect.height}px`,
-        );
-        scrollRootRef.current.style.setProperty(
-          cssVariables.rootWidthVar,
-          `${rootRect.width}px`,
-        );
+        scrollRootRef.current.style.setProperty(cssVariables.rootHeightVar, `${rootRect.height}px`);
+        scrollRootRef.current.style.setProperty(cssVariables.rootWidthVar, `${rootRect.width}px`);
       }
     }, []),
   });
@@ -41,29 +41,18 @@ export const Root = React.forwardRef<
   // when the header/footer is mounted
   React.useLayoutEffect(() => {
     if (scrollRootRef.current) {
-      scrollRootRef.current.style.setProperty(
-        cssVariables.headerHeightVar,
-        `0px`,
-      );
-      scrollRootRef.current.style.setProperty(
-        cssVariables.footerHeightVar,
-        `0px`,
-      );
+      scrollRootRef.current.style.setProperty(cssVariables.headerHeightVar, `0px`);
+      scrollRootRef.current.style.setProperty(cssVariables.footerHeightVar, `0px`);
     }
   }, []);
 
   return (
-    <GridContext.Provider
-      value={{ ...gridConfig, scrollElement: scrollRootRef.current }}
-    >
+    <GridContext.Provider value={{ ...gridConfig, scrollElement: scrollRootRef.current }}>
       <ScrollAreaRoot
         type={'scroll'}
         scrollHideDelay={2500}
         ref={scrollRootRef}
-        className={cn(
-          'w-fit h-fit !border-none !outline-none !ring-0 !shadow-none',
-          className,
-        )}
+        className={cn('w-fit h-fit !border-none !outline-none !ring-0 !shadow-none', className)}
       >
         <ScrollAreaViewport asChild>
           <div

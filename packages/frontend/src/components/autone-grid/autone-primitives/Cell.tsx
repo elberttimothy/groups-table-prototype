@@ -23,13 +23,13 @@ const NonDndCell = React.memo(
         className={cn(
           'bg-white py-3 px-4 flex items-center text-sm',
           'group-hover:bg-secondary transition-colors border-b border-border',
-          className,
+          className
         )}
         cellRect={cellRect}
         {...props}
       />
     );
-  }),
+  })
 );
 NonDndCell.displayName = 'AutoneGrid.NonDndCell';
 
@@ -42,7 +42,7 @@ const DndCell = React.memo(
       columnId,
       rowIndex,
       cellRect.x,
-      ref,
+      ref
     );
 
     return (
@@ -50,7 +50,7 @@ const DndCell = React.memo(
         ref={setNodeRef}
         className={cn(
           columnIsDragging && `z-[var(--autone-grid-body-dragging-z-index)]`,
-          className,
+          className
         )}
         style={{
           x,
@@ -59,7 +59,7 @@ const DndCell = React.memo(
         {...props}
       />
     );
-  }),
+  })
 );
 DndCell.displayName = 'AutoneGrid.DndCell';
 
@@ -72,13 +72,7 @@ export const Cell = React.forwardRef<
     return <NonDndCell ref={ref} cellRect={cellRect} {...props} />;
   }
   return (
-    <DndCell
-      ref={ref}
-      columnId={columnId}
-      rowIndex={rowIndex}
-      cellRect={cellRect}
-      {...props}
-    />
+    <DndCell ref={ref} columnId={columnId} rowIndex={rowIndex} cellRect={cellRect} {...props} />
   );
 });
 Cell.displayName = 'AutoneGrid.Cell';
@@ -94,27 +88,26 @@ const NonDndDynamicCell = React.memo(
         className={cn(
           'bg-white py-3 px-4 flex items-center text-sm',
           'group-hover:bg-secondary transition-colors border-border',
-          className,
+          className
         )}
         cellRect={cellRect}
         {...props}
       />
     );
-  }),
+  })
 );
 NonDndDynamicCell.displayName = 'AutoneGrid.NonDndDynamicCell';
 
 const DndDynamicCell = React.memo(
   React.forwardRef<
     React.ElementRef<typeof GridPrimitives.DynamicCell>,
-    React.ComponentPropsWithoutRef<typeof GridPrimitives.DynamicCell> &
-      AutoneCellProps
+    React.ComponentPropsWithoutRef<typeof GridPrimitives.DynamicCell> & AutoneCellProps
   >(({ className, columnId, rowIndex, cellRect, ...props }, ref) => {
     const { x, columnIsDragging, setNodeRef } = useReorderableDropzone(
       columnId,
       rowIndex,
       cellRect.x,
-      ref,
+      ref
     );
 
     return (
@@ -122,7 +115,7 @@ const DndDynamicCell = React.memo(
         ref={setNodeRef}
         className={cn(
           columnIsDragging && `z-[var(--autone-grid-body-dragging-z-index)]`,
-          className,
+          className
         )}
         style={{
           x,
@@ -131,14 +124,13 @@ const DndDynamicCell = React.memo(
         {...props}
       />
     );
-  }),
+  })
 );
 DndDynamicCell.displayName = 'AutoneGrid.DndDynamicCell';
 
 export const DynamicCell = React.forwardRef<
   React.ElementRef<typeof GridPrimitives.DynamicCell>,
-  React.ComponentPropsWithoutRef<typeof GridPrimitives.DynamicCell> &
-    AutoneCellProps
+  React.ComponentPropsWithoutRef<typeof GridPrimitives.DynamicCell> & AutoneCellProps
 >(({ columnId, rowIndex, cellRect, ...props }, ref) => {
   const isReorderableRegion = useIsReorderableRegion();
   if (!isReorderableRegion) {

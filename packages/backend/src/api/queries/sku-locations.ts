@@ -1,11 +1,18 @@
-import z from "zod"
-import { Prisma } from "../../generated/prisma/client"
-import { prisma } from "../../lib/prisma"
-import { LocationAggregation, ProductAggregation, SkuLocationAggregatedSchema } from "../schemas/sku-locations"
+import z from 'zod';
+import { Prisma } from '../../generated/prisma/client';
+import { prisma } from '../../lib/prisma';
+import {
+  LocationAggregation,
+  ProductAggregation,
+  SkuLocationAggregatedSchema,
+} from '../schemas/sku-locations';
 
-export const getAggregatedSkuLocations = async (product_aggregation: ProductAggregation, location_aggregation: LocationAggregation) => {
-  const productCol = Prisma.raw(`sl.${product_aggregation}`)
-  const locationCol = Prisma.raw(`sl.${location_aggregation}`)
+export const getAggregatedSkuLocations = async (
+  product_aggregation: ProductAggregation,
+  location_aggregation: LocationAggregation
+) => {
+  const productCol = Prisma.raw(`sl.${product_aggregation}`);
+  const locationCol = Prisma.raw(`sl.${location_aggregation}`);
 
   const skuLocationsAggregatedRaw = await prisma.$queryRaw`
   SELECT 
@@ -27,6 +34,6 @@ export const getAggregatedSkuLocations = async (product_aggregation: ProductAggr
     AND sl.location_id = slm.location_id
   GROUP BY ${productCol}, ${locationCol}
   LIMIT 100
-`
-  return z.array(SkuLocationAggregatedSchema).parse(skuLocationsAggregatedRaw)
-}
+`;
+  return z.array(SkuLocationAggregatedSchema).parse(skuLocationsAggregatedRaw);
+};

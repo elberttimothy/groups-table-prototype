@@ -8,4 +8,3 @@ export {
   VerticalScrollbar,
 } from './ScrollArea';
 export { Skeleton, type SkeletonProps } from './Skeleton';
-

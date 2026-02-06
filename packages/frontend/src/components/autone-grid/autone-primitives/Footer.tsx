@@ -9,14 +9,10 @@ export const Footer = React.memo(
     React.ComponentPropsWithoutRef<typeof GridPrimitives.Footer>
   >(({ className, ...props }, ref) => (
     <GridPrimitives.Footer
-      className={cn(
-        'bg-accent',
-        'z-[var(--autone-grid-footer-z-index)]',
-        className,
-      )}
+      className={cn('bg-accent', 'z-[var(--autone-grid-footer-z-index)]', className)}
       ref={ref}
       {...props}
     />
-  )),
+  ))
 );
 Footer.displayName = 'AutoneGrid.Footer';

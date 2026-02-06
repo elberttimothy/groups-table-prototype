@@ -59,7 +59,7 @@ export const DynamicRow = forwardRef<
       }
       rowVirtualiser.measureElement(el);
     },
-    [ref, rowVirtualiser],
+    [ref, rowVirtualiser]
   );
 
   return (

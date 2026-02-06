@@ -71,10 +71,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 500; // equals total
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       expect(result).toEqual([100, 200, 200]);
     });
@@ -87,10 +84,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 800; // less than total (1200)
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       expect(result).toEqual([300, 400, 500]);
     });
@@ -109,10 +103,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 800; // 2x total (400)
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Each column should be scaled by 2x
       expect(result).toEqual([200, 200, 400]);
@@ -126,10 +117,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 1000; // total is 500
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Scale factor is 2x
       expect(result).toEqual([100, 300, 600]);
@@ -139,10 +127,7 @@ describe('getDynamicColumnWidths', () => {
       const headers = [createMockHeader('col1', 100)];
       const viewportWidth = 500;
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       expect(result).toEqual([500]);
     });
@@ -156,10 +141,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 800; // total is 400
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Each column should be 200 (800 / 4)
       expect(result).toEqual([200, 200, 200, 200]);
@@ -173,10 +155,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 1000; // total is 300, scale factor ~3.33
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Sum should equal viewport width
       const sum = result.reduce((a, b) => a + b, 0);
@@ -195,48 +174,30 @@ describe('getDynamicColumnWidths', () => {
 
   describe('edge cases', () => {
     it('handles zero-width viewport', () => {
-      const headers = [
-        createMockHeader('col1', 100),
-        createMockHeader('col2', 200),
-      ];
+      const headers = [createMockHeader('col1', 100), createMockHeader('col2', 200)];
       const viewportWidth = 0;
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Total (300) >= viewport (0), so use pre-defined sizes
       expect(result).toEqual([100, 200]);
     });
 
     it('handles very small viewport', () => {
-      const headers = [
-        createMockHeader('col1', 100),
-        createMockHeader('col2', 200),
-      ];
+      const headers = [createMockHeader('col1', 100), createMockHeader('col2', 200)];
       const viewportWidth = 1;
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Total (300) >= viewport (1), so use pre-defined sizes
       expect(result).toEqual([100, 200]);
     });
 
     it('handles very large viewport', () => {
-      const headers = [
-        createMockHeader('col1', 100),
-        createMockHeader('col2', 100),
-      ];
+      const headers = [createMockHeader('col1', 100), createMockHeader('col2', 100)];
       const viewportWidth = 10000;
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Scale factor is 50x
       expect(result).toEqual([5000, 5000]);
@@ -250,10 +211,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = 200;
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       // Total is 100, viewport is 200, so scale by 2x
       // col1: 0 * 2 = 0, col2: 100 * 2 = 200, col3: 0 * 2 = 0
@@ -268,10 +226,7 @@ describe('getDynamicColumnWidths', () => {
       ];
       const viewportWidth = null;
 
-      const result = getDynamicColumnWidths(
-        headers as AnyHeader[],
-        viewportWidth,
-      );
+      const result = getDynamicColumnWidths(headers as AnyHeader[], viewportWidth);
 
       expect(result).toEqual([100, 200, 150]);
     });

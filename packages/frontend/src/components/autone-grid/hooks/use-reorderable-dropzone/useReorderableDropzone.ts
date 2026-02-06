@@ -9,7 +9,7 @@ export const useReorderableDropzone = (
   columnId: string,
   rowIndex: number,
   currentX: number,
-  ref: React.ForwardedRef<HTMLDivElement>,
+  ref: React.ForwardedRef<HTMLDivElement>
 ) => {
   const [isAnimating, setIsAnimating] = React.useState(false);
 
@@ -33,7 +33,7 @@ export const useReorderableDropzone = (
         }
       }
     },
-    [droppable, ref],
+    [droppable, ref]
   );
 
   const x = useFlipMotionValue(currentX, columnIsDragging);
@@ -43,7 +43,7 @@ export const useReorderableDropzone = (
     'animationStart',
     React.useCallback(() => {
       setIsAnimating(true);
-    }, []),
+    }, [])
   );
   useMotionValueEvent(
     x,
@@ -51,7 +51,7 @@ export const useReorderableDropzone = (
     React.useCallback(() => {
       setIsAnimating(false);
       dndContext.measureDroppableContainers([droppableId]);
-    }, [dndContext, droppableId]),
+    }, [dndContext, droppableId])
   );
 
   return { x, columnIsDragging, setNodeRef };

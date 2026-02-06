@@ -1,21 +1,21 @@
 :root {
-    --autone-grid-header-z-index: 300;
-    --autone-grid-header-pinned-left-z-index: 325;
-    --autone-grid-header-pinned-center-z-index: 320;
-    --autone-grid-header-pinned-right-z-index: 330;
-    --autone-grid-header-dragging-z-index: 350;
+  --autone-grid-header-z-index: 300;
+  --autone-grid-header-pinned-left-z-index: 325;
+  --autone-grid-header-pinned-center-z-index: 320;
+  --autone-grid-header-pinned-right-z-index: 330;
+  --autone-grid-header-dragging-z-index: 350;
 
-    --autone-grid-footer-z-index: 200;
-    --autone-grid-footer-pinned-left-z-index: 225;
-    --autone-grid-footer-pinned-center-z-index: 220;
-    --autone-grid-footer-pinned-right-z-index: 230;
-    --autone-grid-footer-dragging-z-index: 250;
+  --autone-grid-footer-z-index: 200;
+  --autone-grid-footer-pinned-left-z-index: 225;
+  --autone-grid-footer-pinned-center-z-index: 220;
+  --autone-grid-footer-pinned-right-z-index: 230;
+  --autone-grid-footer-dragging-z-index: 250;
 
-    --autone-grid-body-z-index: 100;
-    --autone-grid-body-pinned-left-z-index: 125;
-    --autone-grid-body-pinned-center-z-index: 120;
-    --autone-grid-body-pinned-right-z-index: 130;
-    --autone-grid-body-dragging-z-index: 150;
+  --autone-grid-body-z-index: 100;
+  --autone-grid-body-pinned-left-z-index: 125;
+  --autone-grid-body-pinned-center-z-index: 120;
+  --autone-grid-body-pinned-right-z-index: 130;
+  --autone-grid-body-dragging-z-index: 150;
 
-    --autone-grid-scroll-z-index: 500;
+  --autone-grid-scroll-z-index: 500;
 }

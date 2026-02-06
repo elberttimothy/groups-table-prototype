@@ -32,10 +32,7 @@ import { draggingTransition, othersTransition } from '../../utilities/motion';
  * difference between the original and new target `left`. This is the `deltaX` value we
  * FLIP during the animation.
  */
-export const useFlipMotionValue = (
-  initialValue: number,
-  isDragging: boolean,
-) => {
+export const useFlipMotionValue = (initialValue: number, isDragging: boolean) => {
   const transition = isDragging ? draggingTransition : othersTransition;
   const delta = useDelta(initialValue);
   const motionValue = useMotionValue(delta);

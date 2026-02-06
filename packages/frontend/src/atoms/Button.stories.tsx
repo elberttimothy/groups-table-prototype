@@ -31,14 +31,7 @@ export const Default: StoryObj = {
     },
     variant: {
       control: 'select',
-      options: [
-        'default',
-        'destructive',
-        'outline',
-        'secondary',
-        'ghost',
-        'link',
-      ],
+      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'],
     },
     size: {
       control: 'select',
@@ -71,9 +64,7 @@ const GridContainer: FC<PropsWithChildren> = ({ children }) => {
 };
 
 const ButtonSizeRangeContainer: FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <div className="flex gap-2 justify-center items-baseline">{children}</div>
-  );
+  return <div className="flex gap-2 justify-center items-baseline">{children}</div>;
 };
 
 const ButtonVariantStory = () => {
@@ -116,12 +107,7 @@ const ButtonVariantStory = () => {
             </Button>
           </ButtonSizeRangeContainer>
           <ButtonSizeRangeContainer>
-            <Button
-              aria-label="default hover lg"
-              id="default-hover-lg"
-              variant="default"
-              size="lg"
-            >
+            <Button aria-label="default hover lg" id="default-hover-lg" variant="default" size="lg">
               Button
             </Button>
             <Button
@@ -132,12 +118,7 @@ const ButtonVariantStory = () => {
             >
               Button
             </Button>
-            <Button
-              aria-label="default hover sm"
-              id="default-hover-sm"
-              variant="default"
-              size="sm"
-            >
+            <Button aria-label="default hover sm" id="default-hover-sm" variant="default" size="sm">
               Button
             </Button>
           </ButtonSizeRangeContainer>
@@ -343,12 +324,7 @@ const ButtonVariantStory = () => {
             </Button>
           </ButtonSizeRangeContainer>
           <ButtonSizeRangeContainer>
-            <Button
-              aria-label="outline hover lg"
-              id="outline-hover-lg"
-              variant="outline"
-              size="lg"
-            >
+            <Button aria-label="outline hover lg" id="outline-hover-lg" variant="outline" size="lg">
               Button
             </Button>
             <Button
@@ -359,12 +335,7 @@ const ButtonVariantStory = () => {
             >
               Button
             </Button>
-            <Button
-              aria-label="outline hover sm"
-              id="outline-hover-sm"
-              variant="outline"
-              size="sm"
-            >
+            <Button aria-label="outline hover sm" id="outline-hover-sm" variant="outline" size="sm">
               Button
             </Button>
           </ButtonSizeRangeContainer>
@@ -431,12 +402,7 @@ const ButtonVariantStory = () => {
         <GridContainer>
           <p className="font-bold text-foreground">Ghost</p>
           <ButtonSizeRangeContainer>
-            <Button
-              aria-label="ghost default lg"
-              id="ghost-default-lg"
-              variant="ghost"
-              size="lg"
-            >
+            <Button aria-label="ghost default lg" id="ghost-default-lg" variant="ghost" size="lg">
               Button
             </Button>
             <Button
@@ -447,22 +413,12 @@ const ButtonVariantStory = () => {
             >
               Button
             </Button>
-            <Button
-              aria-label="ghost default sm"
-              id="ghost-default-sm"
-              variant="ghost"
-              size="sm"
-            >
+            <Button aria-label="ghost default sm" id="ghost-default-sm" variant="ghost" size="sm">
               Button
             </Button>
           </ButtonSizeRangeContainer>
           <ButtonSizeRangeContainer>
-            <Button
-              aria-label="ghost hover lg"
-              id="ghost-hover-lg"
-              variant="ghost"
-              size="lg"
-            >
+            <Button aria-label="ghost hover lg" id="ghost-hover-lg" variant="ghost" size="lg">
               Button
             </Button>
             <Button
@@ -473,12 +429,7 @@ const ButtonVariantStory = () => {
             >
               Button
             </Button>
-            <Button
-              aria-label="ghost hover sm"
-              id="ghost-hover-sm"
-              variant="ghost"
-              size="sm"
-            >
+            <Button aria-label="ghost hover sm" id="ghost-hover-sm" variant="ghost" size="sm">
               Button
             </Button>
           </ButtonSizeRangeContainer>
@@ -545,12 +496,7 @@ const ButtonVariantStory = () => {
         <GridContainer>
           <p className="font-bold text-foreground">Link</p>
           <ButtonSizeRangeContainer>
-            <Button
-              aria-label="link default lg"
-              id="link-default-lg"
-              variant="link"
-              size="lg"
-            >
+            <Button aria-label="link default lg" id="link-default-lg" variant="link" size="lg">
               Button
             </Button>
             <Button
@@ -561,22 +507,12 @@ const ButtonVariantStory = () => {
             >
               Button
             </Button>
-            <Button
-              aria-label="link default sm"
-              id="link-default-sm"
-              variant="link"
-              size="sm"
-            >
+            <Button aria-label="link default sm" id="link-default-sm" variant="link" size="sm">
               Button
             </Button>
           </ButtonSizeRangeContainer>
           <ButtonSizeRangeContainer>
-            <Button
-              aria-label="link hover lg"
-              id="link-hover-lg"
-              variant="link"
-              size="lg"
-            >
+            <Button aria-label="link hover lg" id="link-hover-lg" variant="link" size="lg">
               Button
             </Button>
             <Button
@@ -587,12 +523,7 @@ const ButtonVariantStory = () => {
             >
               Button
             </Button>
-            <Button
-              aria-label="link hover sm"
-              id="link-hover-sm"
-              variant="link"
-              size="sm"
-            >
+            <Button aria-label="link hover sm" id="link-hover-sm" variant="link" size="sm">
               Button
             </Button>
           </ButtonSizeRangeContainer>

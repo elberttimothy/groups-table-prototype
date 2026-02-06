@@ -1,11 +1,7 @@
 import { type RowData, type TableOptions } from '@tanstack/react-table';
 import { type CSSProperties } from 'react';
 
-import {
-  type AnyCell,
-  type AnyHeader,
-  type AnyRow,
-} from '../../AutoneGrid.types';
+import { type AnyCell, type AnyHeader, type AnyRow } from '../../AutoneGrid.types';
 import { type UngroupedColumnDef } from '../../utilities/invariants';
 
 export type TableOptionsWithoutInitialState<TData extends RowData> = Omit<

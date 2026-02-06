@@ -8,6 +8,6 @@ export const FooterRow = React.memo(
     React.ComponentPropsWithoutRef<typeof GridPrimitives.FooterRow>
   >(({ className, ...props }, ref) => (
     <GridPrimitives.FooterRow className={className} ref={ref} {...props} />
-  )),
+  ))
 );
 FooterRow.displayName = 'AutoneGrid.FooterRow';

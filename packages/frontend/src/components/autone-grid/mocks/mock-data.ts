@@ -24,11 +24,7 @@ const generateProduct = (): Product => ({
   category: faker.commerce.department(),
   price: parseFloat(faker.commerce.price({ min: 10, max: 500 })),
   stock: faker.number.int({ min: 0, max: 1000 }),
-  status: faker.helpers.arrayElement([
-    'active',
-    'discontinued',
-    'out_of_stock',
-  ]),
+  status: faker.helpers.arrayElement(['active', 'discontinued', 'out_of_stock']),
   supplier: faker.company.name(),
   warehouse: faker.location.city(),
   weight: faker.number.float({ min: 0.1, max: 50, fractionDigits: 2 }),
@@ -36,7 +32,4 @@ const generateProduct = (): Product => ({
   lastUpdated: new Date('2026-01-20T00:00:00.000Z'),
 });
 
-export const mockProducts: Product[] = Array.from(
-  { length: 500 },
-  generateProduct,
-);
+export const mockProducts: Product[] = Array.from({ length: 500 }, generateProduct);

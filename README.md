@@ -63,24 +63,26 @@ pnpm storybook  # http://localhost:6006
 
 ## Available Scripts
 
-| Script | Description |
-|--------|-------------|
-| `pnpm dev` | Run frontend and backend concurrently |
-| `pnpm dev:frontend` | Run only the frontend |
-| `pnpm dev:backend` | Run only the backend |
-| `pnpm build` | Build all packages |
-| `pnpm storybook` | Run Storybook |
-| `pnpm db:migrate` | Run Prisma migrations |
-| `pnpm db:push` | Push schema changes to database |
-| `pnpm db:studio` | Open Prisma Studio |
-| `pnpm db:generate` | Generate Prisma client |
+| Script              | Description                           |
+| ------------------- | ------------------------------------- |
+| `pnpm dev`          | Run frontend and backend concurrently |
+| `pnpm dev:frontend` | Run only the frontend                 |
+| `pnpm dev:backend`  | Run only the backend                  |
+| `pnpm build`        | Build all packages                    |
+| `pnpm storybook`    | Run Storybook                         |
+| `pnpm db:migrate`   | Run Prisma migrations                 |
+| `pnpm db:push`      | Push schema changes to database       |
+| `pnpm db:studio`    | Open Prisma Studio                    |
+| `pnpm db:generate`  | Generate Prisma client                |
 
 ## API Endpoints
 
 ### Health Check
+
 - `GET /api/health` - Check server and database status
 
 ### Users
+
 - `GET /api/users` - List all users
 - `GET /api/users/:id` - Get user by ID
 - `POST /api/users` - Create a new user
@@ -90,18 +92,20 @@ pnpm storybook  # http://localhost:6006
 ## Tech Stack
 
 **Monorepo:**
+
 - Turborepo (build orchestration & caching)
 - pnpm workspaces
 
 **Frontend:**
+
 - React 18
 - Vite 6
 - Storybook 8
 - TypeScript
 
 **Backend:**
+
 - Express 4
 - Prisma 6
 - SQLite
 - TypeScript
-

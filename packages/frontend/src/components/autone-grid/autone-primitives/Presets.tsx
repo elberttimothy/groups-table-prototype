@@ -32,15 +32,10 @@ import { DynamicRow, Row } from './Row';
 
 export interface HeaderPresetProps {
   virtualHeaders: HeaderGroup;
-  children: (
-    headerItem: HeaderGroup['left' | 'center' | 'right'][number],
-  ) => React.ReactNode;
+  children: (headerItem: HeaderGroup['left' | 'center' | 'right'][number]) => React.ReactNode;
 }
 
-export const HeaderPreset = ({
-  virtualHeaders,
-  children,
-}: HeaderPresetProps) => {
+export const HeaderPreset = ({ virtualHeaders, children }: HeaderPresetProps) => {
   return (
     <Header>
       <HeaderRow>
@@ -64,9 +59,7 @@ export const HeaderPreset = ({
   );
 };
 
-export const HeaderWithCellsPreset = ({
-  virtualHeaders,
-}: Omit<HeaderPresetProps, 'children'>) => {
+export const HeaderWithCellsPreset = ({ virtualHeaders }: Omit<HeaderPresetProps, 'children'>) => {
   return (
     <HeaderPreset virtualHeaders={virtualHeaders}>
       {({ header, headerRect }) => (
@@ -87,10 +80,7 @@ interface BodyPresetProps {
   highlightedRowIdOnMount?: string;
 }
 
-export const BodyPreset = ({
-  virtualRows,
-  highlightedRowIdOnMount,
-}: BodyPresetProps) => {
+export const BodyPreset = ({ virtualRows, highlightedRowIdOnMount }: BodyPresetProps) => {
   const { table, rowVirtualiser } = useGridContext();
 
   React.useEffect(() => {
@@ -159,10 +149,7 @@ export const BodyPreset = ({
   );
 };
 
-export const DynamicBodyPreset = ({
-  virtualRows,
-  highlightedRowIdOnMount,
-}: BodyPresetProps) => {
+export const DynamicBodyPreset = ({ virtualRows, highlightedRowIdOnMount }: BodyPresetProps) => {
   const { table, rowVirtualiser } = useGridContext();
 
   React.useEffect(() => {
@@ -231,11 +218,7 @@ export const DynamicBodyPreset = ({
   );
 };
 
-export const FooterPreset = ({
-  virtualFooters,
-}: {
-  virtualFooters: FooterGroup;
-}) => {
+export const FooterPreset = ({ virtualFooters }: { virtualFooters: FooterGroup }) => {
   return (
     <Footer>
       <FooterRow>
@@ -280,17 +263,14 @@ export const FooterPreset = ({
   );
 };
 
-export interface RowPresetProps<V extends VirtualRow>
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof GridPrimitives.Row>,
-    'children' | 'rowIndex' | 'rowRect'
-  > {
+export interface RowPresetProps<V extends VirtualRow> extends Omit<
+  React.ComponentPropsWithoutRef<typeof GridPrimitives.Row>,
+  'children' | 'rowIndex' | 'rowRect'
+> {
   highlightOnMount?: boolean;
   isDisabled?: boolean;
   virtualRow: V;
-  children: (
-    cell: V['cells']['center' | 'left' | 'right'][number],
-  ) => React.ReactNode;
+  children: (cell: V['cells']['center' | 'left' | 'right'][number]) => React.ReactNode;
 }
 
 export const RowPreset = <V extends VirtualRow>({
@@ -360,11 +340,7 @@ export const DynamicRowWithCellsPreset = <V extends VirtualRow>({
   ...props
 }: Omit<RowPresetProps<V>, 'children'>) => {
   return (
-    <DynamicRowPreset
-      virtualRow={virtualRow}
-      highlightOnMount={highlightOnMount}
-      {...props}
-    >
+    <DynamicRowPreset virtualRow={virtualRow} highlightOnMount={highlightOnMount} {...props}>
       {({ cell, cellRect, index }) => (
         <DynamicCell
           columnId={cell.column.id}

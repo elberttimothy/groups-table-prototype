@@ -17,7 +17,7 @@ const ColumnDragHandleImpl = React.memo(
           className={cn(
             'relative text-secondary-foreground opacity-25 group-hover:opacity-80 w-4 h-fit transition-opacity shrink-0 hover:cursor-grab active:cursor-grabbing',
             draggable.isDragging && 'opacity-80',
-            className,
+            className
           )}
           {...props}
           {...draggable.listeners}
@@ -30,8 +30,8 @@ const ColumnDragHandleImpl = React.memo(
           />
         </button>
       );
-    },
-  ),
+    }
+  )
 );
 ColumnDragHandleImpl.displayName = 'AutoneGrid.ColumnDragHandleImpl';
 
@@ -44,10 +44,8 @@ export const ColumnDragHandle = React.memo(
         return null;
       }
 
-      return (
-        <ColumnDragHandleImpl ref={ref} className={className} {...props} />
-      );
-    },
-  ),
+      return <ColumnDragHandleImpl ref={ref} className={className} {...props} />;
+    }
+  )
 );
 ColumnDragHandle.displayName = 'AutoneGrid.ColumnDragHandle';

@@ -1,8 +1,4 @@
-import {
-  type ColumnOrderState,
-  type RowData,
-  type VisibilityState,
-} from '@tanstack/react-table';
+import { type ColumnOrderState, type RowData, type VisibilityState } from '@tanstack/react-table';
 import React, { useMemo } from 'react';
 
 import { type TableOptionsWithoutInitialState } from './useDataGrid.types';
@@ -14,17 +10,12 @@ export const useTableOptionsWithLocalState = <TData extends RowData>({
   onColumnVisibilityChange,
   ...tableOptions
 }: TableOptionsWithoutInitialState<TData>) => {
-  const columnIds = useMemo(
-    () => columns.map((column) => column.id ?? ''),
-    [columns],
-  );
+  const columnIds = useMemo(() => columns.map((column) => column.id ?? ''), [columns]);
 
-  const [localColumnOrder, setLocalColumnOrder] =
-    React.useState<ColumnOrderState>(columnIds);
-  const [localColumnVisibility, setLocalColumnVisibility] =
-    React.useState<VisibilityState>(
-      Object.fromEntries(columnIds.map((columnId) => [columnId, true])),
-    );
+  const [localColumnOrder, setLocalColumnOrder] = React.useState<ColumnOrderState>(columnIds);
+  const [localColumnVisibility, setLocalColumnVisibility] = React.useState<VisibilityState>(
+    Object.fromEntries(columnIds.map((columnId) => [columnId, true]))
+  );
 
   return useMemo(() => {
     return {
@@ -36,8 +27,7 @@ export const useTableOptionsWithLocalState = <TData extends RowData>({
         ...state,
       },
       onColumnOrderChange: onColumnOrderChange ?? setLocalColumnOrder,
-      onColumnVisibilityChange:
-        onColumnVisibilityChange ?? setLocalColumnVisibility,
+      onColumnVisibilityChange: onColumnVisibilityChange ?? setLocalColumnVisibility,
     };
   }, [
     tableOptions,

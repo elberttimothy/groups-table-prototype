@@ -4,14 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useMockInfiniteApi } from '../../../hooks/useMockInfiniteApi';
 import { useMockPaginatedApi } from '../../../hooks/useMockPaginatedApi';
-import {
-  isDataTableLoadingObject,
-} from '@/utils';
-import {
-  AutoneGrid,
-  AutoneGridDynamicPreset,
-  AutoneGridPreset,
-} from '../autone-primitives';
+import { isDataTableLoadingObject } from '@/utils';
+import { AutoneGrid, AutoneGridDynamicPreset, AutoneGridPreset } from '../autone-primitives';
 import { useDataGrid } from '../hooks/use-data-grid';
 import { columns } from '../mocks/columns';
 import { mockProducts } from '../mocks/mock-data';
@@ -235,10 +229,7 @@ export const ColumnVisibility: Story = {
         {/* Column visibility toggles */}
         <div className="flex flex-wrap gap-3 p-3 bg-secondary rounded-md">
           {allColumns.map((column) => (
-            <label
-              key={column.id}
-              className="flex items-center gap-2 text-sm cursor-pointer"
-            >
+            <label key={column.id} className="flex items-center gap-2 text-sm cursor-pointer">
               <input
                 type="checkbox"
                 checked={column.getIsVisible()}
@@ -262,19 +253,13 @@ export const ColumnVisibility: Story = {
                 colIndex={header.column.getIndex()}
                 headerRect={headerRect}
               >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
+                {flexRender(header.column.columnDef.header, header.getContext())}
               </AutoneGrid.HeaderCell>
             )}
           </AutoneGridPreset.Header>
           <AutoneGridPreset.Body>
             {virtualRows.map((virtualRow) => (
-              <AutoneGridPreset.Row
-                key={virtualRow.key}
-                virtualRow={virtualRow}
-              >
+              <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                 {({ cell, cellRect, index }) => (
                   <AutoneGridPreset.Cell
                     columnId={cell.column.id}
@@ -303,10 +288,7 @@ export const DynamicColumnWidths: Story = {
   render: () => {
     // Pick specific columns: sku (0), name (1), price (3), stock (4)
     // Total width: 100 + 220 + 100 + 80 = 500px, table is 800px wide
-    const narrowColumns = useMemo(
-      () => [columns[0], columns[1], columns[3], columns[4]],
-      [],
-    );
+    const narrowColumns = useMemo(() => [columns[0], columns[1], columns[3], columns[4]], []);
 
     const [scrollElementRef, gridState, gridConfig] = useDataGrid({
       mode: 'fixed',
@@ -329,14 +311,14 @@ export const DynamicColumnWidths: Story = {
     // Calculate total column width for display
     const totalColumnWidth = narrowColumns.reduce(
       (sum, col) => sum + ((col as { size?: number }).size ?? 150),
-      0,
+      0
     );
 
     return (
       <div className="flex flex-col gap-4">
         <div className="text-sm text-muted-foreground p-3 bg-secondary rounded-md">
-          Total defined column width: <strong>{totalColumnWidth}px</strong> |
-          Table width: <strong>800px</strong>
+          Total defined column width: <strong>{totalColumnWidth}px</strong> | Table width:{' '}
+          <strong>800px</strong>
           <br />
           <span className="text-xs">
             Columns will expand proportionally to fill the available space.
@@ -355,19 +337,13 @@ export const DynamicColumnWidths: Story = {
                 colIndex={header.column.getIndex()}
                 headerRect={headerRect}
               >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
+                {flexRender(header.column.columnDef.header, header.getContext())}
               </AutoneGrid.HeaderCell>
             )}
           </AutoneGridPreset.Header>
           <AutoneGridPreset.Body>
             {virtualRows.map((virtualRow) => (
-              <AutoneGridPreset.Row
-                key={virtualRow.key}
-                virtualRow={virtualRow}
-              >
+              <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                 {({ cell, cellRect, index }) => (
                   <AutoneGridPreset.Cell
                     columnId={cell.column.id}
@@ -435,10 +411,7 @@ export const VariableRowHeights: Story = {
         </AutoneGridDynamicPreset.Header>
         <AutoneGridDynamicPreset.Body>
           {virtualRows.map((virtualRow) => (
-            <AutoneGridDynamicPreset.Row
-              key={virtualRow.key}
-              virtualRow={virtualRow}
-            >
+            <AutoneGridDynamicPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
               {({ cell, cellRect, index }) => (
                 <AutoneGridDynamicPreset.Cell
                   columnId={cell.column.id}
@@ -532,10 +505,7 @@ export const WithFooters: Story = {
                   colIndex={footer.column.getIndex()}
                   footerRect={footerRect}
                 >
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext(),
-                  )}
+                  {flexRender(footer.column.columnDef.footer, footer.getContext())}
                 </AutoneGrid.FooterCell>
               ))}
             </AutoneGrid.LeftFooterGroup>
@@ -547,10 +517,7 @@ export const WithFooters: Story = {
                   colIndex={footer.column.getIndex()}
                   footerRect={footerRect}
                 >
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext(),
-                  )}
+                  {flexRender(footer.column.columnDef.footer, footer.getContext())}
                 </AutoneGrid.FooterCell>
               ))}
             </AutoneGrid.CenterFooterGroup>
@@ -562,10 +529,7 @@ export const WithFooters: Story = {
                   colIndex={footer.column.getIndex()}
                   footerRect={footerRect}
                 >
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext(),
-                  )}
+                  {flexRender(footer.column.columnDef.footer, footer.getContext())}
                 </AutoneGrid.FooterCell>
               ))}
             </AutoneGrid.RightFooterGroup>
@@ -589,8 +553,7 @@ export const WithHighlightedRowOnMount: Story = {
             left: ['sku'],
           },
         },
-        getRowId: (row, idx) =>
-          isDataTableLoadingObject(row) ? idx.toString() : row.id,
+        getRowId: (row, idx) => (isDataTableLoadingObject(row) ? idx.toString() : row.id),
       },
     });
 
@@ -656,8 +619,11 @@ const infiniteScrollVariableData = variableMockProducts.slice(0, 100);
 
 export const InfiniteScroll: Story = {
   render: () => {
-    const { pages, loadNextPage, canLoadNextPage, isFetching, isLoading } =
-      useMockInfiniteApi(infiniteScrollData, 25, 2000);
+    const { pages, loadNextPage, canLoadNextPage, isFetching, isLoading } = useMockInfiniteApi(
+      infiniteScrollData,
+      25,
+      2000
+    );
 
     const allData = useMemo(() => pages.flat(), [pages]);
 
@@ -736,8 +702,11 @@ export const InfiniteScroll: Story = {
 
 export const InfiniteScrollDynamicRowHeights: Story = {
   render: () => {
-    const { pages, loadNextPage, canLoadNextPage, isFetching, isLoading } =
-      useMockInfiniteApi(infiniteScrollVariableData, 25, 1500);
+    const { pages, loadNextPage, canLoadNextPage, isFetching, isLoading } = useMockInfiniteApi(
+      infiniteScrollVariableData,
+      25,
+      1500
+    );
 
     const allData = useMemo(() => pages.flat(), [pages]);
 
@@ -796,10 +765,7 @@ export const InfiniteScrollDynamicRowHeights: Story = {
           {isLoading
             ? // on mount, we abide to the heights set by the estimateRowHeight function
               virtualRows.map((virtualRow) => (
-                <AutoneGridPreset.Row
-                  key={virtualRow.key}
-                  virtualRow={virtualRow}
-                >
+                <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                   {({ cell, cellRect, index }) => (
                     <AutoneGridPreset.Cell
                       columnId={cell.column.id}
@@ -807,20 +773,14 @@ export const InfiniteScrollDynamicRowHeights: Story = {
                       cellRect={cellRect}
                       rowIndex={virtualRow.index}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </AutoneGridPreset.Cell>
                   )}
                 </AutoneGridPreset.Row>
               ))
             : // after the initial load, we use the dynamic row to measure the row heights
               virtualRows.map((virtualRow) => (
-                <AutoneGridDynamicPreset.Row
-                  key={virtualRow.key}
-                  virtualRow={virtualRow}
-                >
+                <AutoneGridDynamicPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                   {({ cell, cellRect, index }) => (
                     <AutoneGridDynamicPreset.Cell
                       columnId={cell.column.id}
@@ -828,10 +788,7 @@ export const InfiniteScrollDynamicRowHeights: Story = {
                       colIndex={index}
                       cellRect={cellRect}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </AutoneGridDynamicPreset.Cell>
                   )}
                 </AutoneGridDynamicPreset.Row>
@@ -859,8 +816,11 @@ const paginatedData = mockProducts.slice(0, 105);
  */
 export const WithPagination: Story = {
   render: () => {
-    const { isLoading, currentPage, totalCount, pagination } =
-      useMockPaginatedApi(paginatedData, 25, 1000);
+    const { isLoading, currentPage, totalCount, pagination } = useMockPaginatedApi(
+      paginatedData,
+      25,
+      1000
+    );
 
     const { memoisedData, getRowIdLoadingGuard } = useDataTableLoadingGuard({
       mode: 'fixed',
@@ -908,19 +868,13 @@ export const WithPagination: Story = {
                 colIndex={header.column.getIndex()}
                 headerRect={headerRect}
               >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
+                {flexRender(header.column.columnDef.header, header.getContext())}
               </AutoneGrid.HeaderCell>
             )}
           </AutoneGridPreset.Header>
           <AutoneGridPreset.Body>
             {virtualRows.map((virtualRow) => (
-              <AutoneGridPreset.Row
-                key={virtualRow.key}
-                virtualRow={virtualRow}
-              >
+              <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                 {({ cell, cellRect, index }) => (
                   <AutoneGridPreset.Cell
                     columnId={cell.column.id}
@@ -936,11 +890,7 @@ export const WithPagination: Story = {
           </AutoneGridPreset.Body>
           <StoryColumnDragOverlay />
         </AutoneGridPreset.Root>
-        <AutoneGridPreset.Pagination
-          {...pagination}
-          totalRows={totalCount}
-          loading={isLoading}
-        />
+        <AutoneGridPreset.Pagination {...pagination} totalRows={totalCount} loading={isLoading} />
       </AutoneGridPreset.Container>
     );
   },
@@ -1031,19 +981,13 @@ export const ColumnReordering: Story = {
                 colIndex={header.column.getIndex()}
                 headerRect={headerRect}
               >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
+                {flexRender(header.column.columnDef.header, header.getContext())}
               </AutoneGrid.HeaderCell>
             )}
           </AutoneGridPreset.Header>
           <AutoneGridPreset.Body>
             {virtualRows.map((virtualRow) => (
-              <AutoneGridPreset.Row
-                key={virtualRow.key}
-                virtualRow={virtualRow}
-              >
+              <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                 {({ cell, cellRect, index }) => (
                   <AutoneGridPreset.Cell
                     columnId={cell.column.id}

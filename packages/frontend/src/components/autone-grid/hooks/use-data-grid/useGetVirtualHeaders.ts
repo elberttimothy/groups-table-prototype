@@ -2,11 +2,7 @@ import { type Header, type RowData } from '@tanstack/react-table';
 import { type Virtualizer } from '@tanstack/react-virtual';
 import React from 'react';
 
-import {
-  type HeaderGroup,
-  type PinnedHeader,
-  type VirtualHeader,
-} from './useDataGrid.types';
+import { type HeaderGroup, type PinnedHeader, type VirtualHeader } from './useDataGrid.types';
 
 interface UseGetVirtualHeadersProps<TData extends RowData> {
   leftVisibleLeafHeaders: Header<TData, unknown>[];
@@ -48,10 +44,7 @@ export const useGetVirtualHeaders = <TData extends RowData>({
     })) satisfies PinnedHeader[];
     const centerVirtualHeaders = columnVirtualiser
       .getVirtualItems()
-      .map(
-        (virtualItem) =>
-          [virtualItem, centerVisibleLeafHeaders[virtualItem.index]] as const,
-      )
+      .map((virtualItem) => [virtualItem, centerVisibleLeafHeaders[virtualItem.index]] as const)
       .map(([virtualItem, virtualHeader]) => ({
         key: virtualHeader.id,
         header: virtualHeader,

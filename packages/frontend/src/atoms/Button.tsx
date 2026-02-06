@@ -18,8 +18,7 @@ export const buttonVariants = cva(
           'border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground text-foreground focus-visible:ring-input focus-visible:border-input',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary-accent focus-visible:ring-input',
-        ghost:
-          'hover:bg-accent hover:text-accent-foreground focus-visible:ring-input',
+        ghost: 'hover:bg-accent hover:text-accent-foreground focus-visible:ring-input',
         link: 'underline-offset-4 underline hover:text-primary focus-visible:ring-input',
       },
       size: {
@@ -35,7 +34,7 @@ export const buttonVariants = cva(
       variant: 'default',
       size: 'default',
     },
-  },
+  }
 );
 
 const rippleVariants = cva('absolute rounded-full size-5 pointer-events-none', {
@@ -61,10 +60,8 @@ type Ripple = {
 };
 
 interface ButtonProps
-  extends Omit<
-      HTMLMotionProps<'button'>,
-      'color' | 'aria-label' | 'id' | 'ref'
-    >,
+  extends
+    Omit<HTMLMotionProps<'button'>, 'color' | 'aria-label' | 'id' | 'ref'>,
     VariantProps<typeof buttonVariants> {
   children: React.ReactNode;
   loading?: boolean;
@@ -74,50 +71,32 @@ interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      children,
-      onClick,
-      className,
-      variant,
-      size,
-      loading,
-      disableRipple,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ children, onClick, className, variant, size, loading, disableRipple, ...props }, ref) => {
     const [ripples, setRipples] = React.useState<Ripple[]>([]);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
 
-    React.useImperativeHandle(
-      ref,
-      () => buttonRef.current as HTMLButtonElement,
-    );
+    React.useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
 
-    const createRipple = React.useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        const button = buttonRef.current;
-        if (!button) return;
+    const createRipple = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+      const button = buttonRef.current;
+      if (!button) return;
 
-        const rect = button.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+      const rect = button.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-        const newRipple: Ripple = {
-          id: Date.now(),
-          x,
-          y,
-        };
+      const newRipple: Ripple = {
+        id: Date.now(),
+        x,
+        y,
+      };
 
-        setRipples((prev) => [...prev, newRipple]);
+      setRipples((prev) => [...prev, newRipple]);
 
-        setTimeout(() => {
-          setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
-        }, 600);
-      },
-      [],
-    );
+      setTimeout(() => {
+        setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
+      }, 600);
+    }, []);
 
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -126,7 +105,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onClick(event);
         }
       },
-      [createRipple, onClick],
+      [createRipple, onClick]
     );
 
     return (
@@ -139,7 +118,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             variant,
             size,
             className,
-          }),
+          })
         )}
         {...props}
         disabled={loading || props.disabled}
@@ -148,10 +127,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? (
           <>
-            <Loader2
-              className="absolute h-4 w-4 animate-spin"
-              data-testid="loading-spinner"
-            />
+            <Loader2 className="absolute h-4 w-4 animate-spin" data-testid="loading-spinner" />
             <span className="invisible">{children}</span>
           </>
         ) : (
@@ -178,7 +154,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </motion.button>
     );
-  },
+  }
 );
 
 export { Button, type ButtonProps };

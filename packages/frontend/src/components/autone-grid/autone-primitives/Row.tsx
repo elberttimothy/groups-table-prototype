@@ -18,7 +18,7 @@ export const Row = React.memo(
   >(({ className, rowIndex, highlightOnMount, isDisabled, ...props }, ref) => {
     const highlightedRowIdxRef = useHighlightedRow();
     const [highlighted, setHighlighted] = React.useState(
-      highlightOnMount && highlightedRowIdxRef.current !== rowIndex,
+      highlightOnMount && highlightedRowIdxRef.current !== rowIndex
     );
 
     React.useEffect(() => {
@@ -39,22 +39,21 @@ export const Row = React.memo(
             ? '[&_[role=gridcell]]:bg-primary/20 [&_[role=gridcell]]:animate-pulse [&_[role=gridcell]]:duration-[2000] [&_[role=gridcell]]:transition-colors'
             : 'group',
           className,
-          isDisabled ? 'opacity-50 cursor-default' : '',
+          isDisabled ? 'opacity-50 cursor-default' : ''
         )}
         ref={ref}
         rowIndex={rowIndex}
         {...props}
       />
     );
-  }),
+  })
 );
 Row.displayName = 'AutoneGrid.Row';
 
 export const DynamicRow = React.memo(
   React.forwardRef<
     React.ElementRef<typeof GridPrimitives.DynamicRow>,
-    React.ComponentPropsWithoutRef<typeof GridPrimitives.DynamicRow> &
-      AutoneRowProps
+    React.ComponentPropsWithoutRef<typeof GridPrimitives.DynamicRow> & AutoneRowProps
   >(({ className, rowIndex, highlightOnMount, ...props }, ref) => {
     const [highlighted, setHighlighted] = React.useState(highlightOnMount);
 
@@ -74,13 +73,13 @@ export const DynamicRow = React.memo(
           highlighted
             ? '[&_[role=gridcell]]:bg-primary/20 [&_[role=gridcell]]:animate-pulse [&_[role=gridcell]]:duration-[2000] [&_[role=gridcell]]:transition-colors'
             : 'group',
-          className,
+          className
         )}
         ref={ref}
         rowIndex={rowIndex}
         {...props}
       />
     );
-  }),
+  })
 );
 DynamicRow.displayName = 'AutoneGrid.DynamicRow';

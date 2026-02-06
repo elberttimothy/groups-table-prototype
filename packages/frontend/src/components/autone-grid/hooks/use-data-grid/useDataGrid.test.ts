@@ -47,7 +47,7 @@ const DEFAULT_FOOTER_HEIGHT = 40;
 const DEFAULT_ROW_HEIGHT = 50;
 
 const createTableOptions = (
-  overrides: Partial<TableOptionsWithoutInitialState<TestRow>> = {},
+  overrides: Partial<TableOptionsWithoutInitialState<TestRow>> = {}
 ): TableOptionsWithoutInitialState<TestRow> => ({
   data: testData,
   columns: flatColumns,
@@ -79,7 +79,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [setScrollElement, gridState, gridConfig] = result.current;
@@ -113,7 +113,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -138,7 +138,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           estimateRowHeight: () => DEFAULT_ROW_HEIGHT,
           overscan: { row: 0 },
-        }),
+        })
       );
 
       const [setScrollElement, gridState, gridConfig] = result.current;
@@ -167,7 +167,7 @@ describe('useDataGrid', () => {
           headerHeight: DEFAULT_HEADER_HEIGHT,
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           estimateRowHeight: () => DEFAULT_ROW_HEIGHT,
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -192,7 +192,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -211,7 +211,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -230,7 +230,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -259,17 +259,14 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
       const headers = gridState.getVirtualHeaders();
 
       expect(headers.left).toHaveLength(2);
-      expect(headers.left.map((h) => h.header.column.id)).toEqual([
-        'id',
-        'name',
-      ]);
+      expect(headers.left.map((h) => h.header.column.id)).toEqual(['id', 'name']);
     });
 
     it('returns empty right pinned headers', () => {
@@ -285,7 +282,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -306,17 +303,14 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
       const footers = gridState.getVirtualFooters();
 
       expect(footers.left).toHaveLength(2);
-      expect(footers.left.map((f) => f.footer.column.id)).toEqual([
-        'id',
-        'name',
-      ]);
+      expect(footers.left.map((f) => f.footer.column.id)).toEqual(['id', 'name']);
     });
 
     it('correctly identifies column pinning state', () => {
@@ -332,7 +326,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -358,7 +352,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -387,17 +381,14 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
       const headers = gridState.getVirtualHeaders();
 
       expect(headers.right).toHaveLength(2);
-      expect(headers.right.map((h) => h.header.column.id)).toEqual([
-        'category',
-        'status',
-      ]);
+      expect(headers.right.map((h) => h.header.column.id)).toEqual(['category', 'status']);
     });
 
     it('returns empty left pinned headers', () => {
@@ -413,7 +404,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -434,17 +425,14 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
       const footers = gridState.getVirtualFooters();
 
       expect(footers.right).toHaveLength(2);
-      expect(footers.right.map((f) => f.footer.column.id)).toEqual([
-        'category',
-        'status',
-      ]);
+      expect(footers.right.map((f) => f.footer.column.id)).toEqual(['category', 'status']);
     });
 
     it('correctly identifies column pinning state', () => {
@@ -460,7 +448,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -492,7 +480,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -518,7 +506,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -544,7 +532,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -576,7 +564,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState, gridConfig] = result.current;
@@ -611,7 +599,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -639,7 +627,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState, gridConfig] = result.current;
@@ -676,7 +664,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState, gridConfig] = result.current;
@@ -714,13 +702,11 @@ describe('useDataGrid', () => {
             category: true,
             status: true,
           },
-        },
+        }
       );
 
       // Initially all 5 columns visible
-      expect(
-        result.current[2].table.getCenterVisibleLeafColumns(),
-      ).toHaveLength(5);
+      expect(result.current[2].table.getCenterVisibleLeafColumns()).toHaveLength(5);
 
       // Hide 2 columns
       rerender({
@@ -732,9 +718,7 @@ describe('useDataGrid', () => {
       });
 
       // Now only 3 columns should be visible
-      expect(
-        result.current[2].table.getCenterVisibleLeafColumns(),
-      ).toHaveLength(3);
+      expect(result.current[2].table.getCenterVisibleLeafColumns()).toHaveLength(3);
     });
 
     it('hidden columns are excluded from leaf columns', () => {
@@ -756,18 +740,14 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
 
       const visibleColumns = gridConfig.table.getCenterVisibleLeafColumns();
       expect(visibleColumns).toHaveLength(3);
-      expect(visibleColumns.map((c) => c.id)).toEqual([
-        'id',
-        'name',
-        'category',
-      ]);
+      expect(visibleColumns.map((c) => c.id)).toEqual(['id', 'name', 'category']);
     });
   });
 
@@ -785,7 +765,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -807,7 +787,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, , gridConfig] = result.current;
@@ -831,7 +811,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 10, col: 5 },
-        }),
+        })
       );
 
       // Just verify the hook doesn't crash with custom overscan
@@ -847,7 +827,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           estimateRowHeight: () => DEFAULT_ROW_HEIGHT,
           overscan: { row: 10 },
-        }),
+        })
       );
 
       // Just verify the hook doesn't crash with custom overscan
@@ -862,7 +842,7 @@ describe('useDataGrid', () => {
           headerHeight: DEFAULT_HEADER_HEIGHT,
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
-        }),
+        })
       );
 
       // Just verify the hook doesn't crash with default overscan
@@ -877,7 +857,7 @@ describe('useDataGrid', () => {
           headerHeight: DEFAULT_HEADER_HEIGHT,
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           estimateRowHeight: () => DEFAULT_ROW_HEIGHT,
-        }),
+        })
       );
 
       // Just verify the hook doesn't crash with default overscan
@@ -903,7 +883,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -926,7 +906,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -952,7 +932,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -975,7 +955,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;
@@ -999,7 +979,7 @@ describe('useDataGrid', () => {
           footerHeight: DEFAULT_FOOTER_HEIGHT,
           rowHeight: DEFAULT_ROW_HEIGHT,
           overscan: { row: 0, col: 0 },
-        }),
+        })
       );
 
       const [, gridState] = result.current;

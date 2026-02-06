@@ -1,5 +1,5 @@
-import { makeApi } from '@zodios/core'
-import { z } from 'zod'
+import { makeApi } from '@zodios/core';
+import { z } from 'zod';
 import {
   CreateUserSchema,
   ErrorSchema,
@@ -8,8 +8,8 @@ import {
   IdParamSchema,
   SkuLocationBodySchema,
   UpdateUserSchema,
-  UserSchema
-} from './schemas/index.js'
+  UserSchema,
+} from './schemas/index.js';
 
 export const healthApi = makeApi([
   {
@@ -26,7 +26,7 @@ export const healthApi = makeApi([
       },
     ],
   },
-])
+]);
 
 export const usersApi = makeApi([
   {
@@ -154,7 +154,7 @@ export const usersApi = makeApi([
       },
     ],
   },
-])
+]);
 
 export const skuLocationsApi = makeApi([
   {
@@ -168,7 +168,7 @@ export const skuLocationsApi = makeApi([
         name: 'body',
         type: 'Body',
         schema: SkuLocationBodySchema,
-      }
+      },
     ],
     errors: [
       {
@@ -183,4 +183,4 @@ export const skuLocationsApi = makeApi([
       },
     ],
   },
-])
+]);

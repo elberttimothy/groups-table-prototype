@@ -9,6 +9,6 @@ export const HeaderRow = React.memo(
     React.ComponentPropsWithoutRef<typeof GridPrimitives.HeaderRow>
   >(({ className, ...props }, ref) => (
     <GridPrimitives.HeaderRow className={cn(className)} ref={ref} {...props} />
-  )),
+  ))
 );
 HeaderRow.displayName = 'AutoneGrid.HeaderRow';

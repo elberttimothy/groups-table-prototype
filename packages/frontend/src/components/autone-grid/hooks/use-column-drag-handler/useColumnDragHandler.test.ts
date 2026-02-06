@@ -15,7 +15,7 @@ const CTX = 'test-ctx';
 const createMockDragEvent = (
   activeId: string,
   overId: string | null,
-  deltaX: number,
+  deltaX: number
 ): DragOverEvent =>
   ({
     active: { id: createDroppableId(activeId, CTX) },
@@ -42,7 +42,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       act(() => {
@@ -62,13 +62,11 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       act(() => {
-        result.current.handleDragMove(
-          createMockDragEvent('unknown', 'col2', 100),
-        );
+        result.current.handleDragMove(createMockDragEvent('unknown', 'col2', 100));
       });
 
       expect(onColumnOrderChange).not.toHaveBeenCalled();
@@ -84,13 +82,11 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       act(() => {
-        result.current.handleDragMove(
-          createMockDragEvent('col1', 'unknown', 100),
-        );
+        result.current.handleDragMove(createMockDragEvent('col1', 'unknown', 100));
       });
 
       expect(onColumnOrderChange).not.toHaveBeenCalled();
@@ -106,7 +102,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // col1 is at index 0, col2 is at index 1
@@ -128,7 +124,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // col3 is at index 2, col2 is at index 1
@@ -156,7 +152,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // col1 is at index 0, col3 is at index 2
@@ -165,11 +161,7 @@ describe('useColumnDragHandler', () => {
         result.current.handleDragMove(createMockDragEvent('col1', 'col3', 100));
       });
 
-      expect(onColumnOrderChange).toHaveBeenCalledWith([
-        'col2',
-        'col3',
-        'col1',
-      ]);
+      expect(onColumnOrderChange).toHaveBeenCalledWith(['col2', 'col3', 'col1']);
       expect(onColumnMeasure).toHaveBeenCalled();
     });
 
@@ -182,22 +174,16 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // col3 is at index 2, col1 is at index 0
       // Dragging left (negative delta) and col3 > col1, should swap
       act(() => {
-        result.current.handleDragMove(
-          createMockDragEvent('col3', 'col1', -100),
-        );
+        result.current.handleDragMove(createMockDragEvent('col3', 'col1', -100));
       });
 
-      expect(onColumnOrderChange).toHaveBeenCalledWith([
-        'col3',
-        'col1',
-        'col2',
-      ]);
+      expect(onColumnOrderChange).toHaveBeenCalledWith(['col3', 'col1', 'col2']);
       expect(onColumnMeasure).toHaveBeenCalled();
     });
 
@@ -210,18 +196,14 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       act(() => {
         result.current.handleDragMove(createMockDragEvent('col1', 'col2', 50));
       });
 
-      expect(onColumnOrderChange).toHaveBeenCalledWith([
-        'col2',
-        'col1',
-        'col3',
-      ]);
+      expect(onColumnOrderChange).toHaveBeenCalledWith(['col2', 'col1', 'col3']);
       expect(onColumnMeasure).toHaveBeenCalled();
     });
 
@@ -234,18 +216,14 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       act(() => {
         result.current.handleDragMove(createMockDragEvent('col2', 'col1', -50));
       });
 
-      expect(onColumnOrderChange).toHaveBeenCalledWith([
-        'col2',
-        'col1',
-        'col3',
-      ]);
+      expect(onColumnOrderChange).toHaveBeenCalledWith(['col2', 'col1', 'col3']);
       expect(onColumnMeasure).toHaveBeenCalled();
     });
   });
@@ -264,7 +242,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // First move with deltaX = 100, should trigger swap (moving right)
@@ -284,7 +262,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // First move: deltaX = 50, lastClientX becomes 50
@@ -313,7 +291,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // First move: deltaX = 100
@@ -350,7 +328,7 @@ describe('useColumnDragHandler', () => {
           columnOrder: ['col1', 'col2', 'col3'],
           onColumnOrderChange,
           onColumnMeasure,
-        }),
+        })
       );
 
       // First drag: move right
@@ -392,7 +370,7 @@ describe('useColumnDragHandler', () => {
             onColumnOrderChange,
             onColumnMeasure,
           }),
-        { initialProps: { columnOrder: ['col1', 'col2', 'col3'] } },
+        { initialProps: { columnOrder: ['col1', 'col2', 'col3'] } }
       );
 
       const initialHandleDragMove = result.current.handleDragMove;
@@ -413,7 +391,7 @@ describe('useColumnDragHandler', () => {
             onColumnOrderChange,
             onColumnMeasure,
           }),
-        { initialProps: { columnOrder: ['col1', 'col2', 'col3'] } },
+        { initialProps: { columnOrder: ['col1', 'col2', 'col3'] } }
       );
 
       const initialHandleDragEnd = result.current.handleDragEnd;

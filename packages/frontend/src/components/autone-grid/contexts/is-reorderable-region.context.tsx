@@ -21,7 +21,7 @@ export const useIsReorderableRegion = () => {
   const context = useContext(IsReorderableRegionContext);
   if (context === null) {
     throw new Error(
-      'useIsReorderableRegion must be used within a <IsReorderableRegionContextProvider /> component.',
+      'useIsReorderableRegion must be used within a <IsReorderableRegionContextProvider /> component.'
     );
   }
   return context;

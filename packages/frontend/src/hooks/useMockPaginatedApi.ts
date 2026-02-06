@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 export const useMockPaginatedApi = <Data>(
   data: Data[],
   initialPageSize: number = 10,
-  delay: number = 1000,
+  delay: number = 1000
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
@@ -14,7 +14,7 @@ export const useMockPaginatedApi = <Data>(
 
   const canGetNextPage = useMemo(
     () => (pageIndex + 1) * pageSize < data.length,
-    [pageIndex, pageSize, data.length],
+    [pageIndex, pageSize, data.length]
   );
 
   const canGetPrevPage = useMemo(() => pageIndex > 0, [pageIndex]);
@@ -25,10 +25,7 @@ export const useMockPaginatedApi = <Data>(
     return data.slice(start, end);
   }, [data, pageIndex, pageSize]);
 
-  const totalPages = useMemo(
-    () => Math.ceil(data.length / pageSize),
-    [data.length, pageSize],
-  );
+  const totalPages = useMemo(() => Math.ceil(data.length / pageSize), [data.length, pageSize]);
 
   const getNextPage = useCallback(async () => {
     if (isLoading || !canGetNextPage) return;

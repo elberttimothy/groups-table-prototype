@@ -12,7 +12,7 @@ export type UngroupedColumnDef<TData extends RowData> = ColumnDef<TData> & {
  */
 export const assertNoGroupColumnDefs = <TData extends RowData>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  columns: ColumnDef<TData, any>[],
+  columns: ColumnDef<TData, any>[]
 ) => {
   if (columns.some((column) => 'columns' in column)) {
     const groupedColumnDefs = columns.filter((column) => 'columns' in column);
@@ -20,7 +20,7 @@ export const assertNoGroupColumnDefs = <TData extends RowData>(
       'Expected no group column defs, but got ' +
         groupedColumnDefs.length +
         ' grouped column defs: ' +
-        groupedColumnDefs.map((column) => column.id).join(', '),
+        groupedColumnDefs.map((column) => column.id).join(', ')
     );
   }
 

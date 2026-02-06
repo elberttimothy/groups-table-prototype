@@ -1,8 +1,4 @@
-import {
-  getCoreRowModel,
-  type RowData,
-  useReactTable,
-} from '@tanstack/react-table';
+import { getCoreRowModel, type RowData, useReactTable } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import React, { useMemo } from 'react';
 
@@ -62,15 +58,10 @@ const DEFAULTS = {
  * setting the overscan to the number of columns + 1. Remember to use `DynamicRow` and `DynamicCell` instead
  * of `Row` and `Cell`. The former 2 components internally call the virtualiser to measure their refs.
  */
-export const useDataGrid = <TData extends RowData>(
-  options: UseDataGridOptions<TData>,
-) => {
-  const [scrollElement, setScrollElement] =
-    React.useState<HTMLDivElement | null>(null);
+export const useDataGrid = <TData extends RowData>(options: UseDataGridOptions<TData>) => {
+  const [scrollElement, setScrollElement] = React.useState<HTMLDivElement | null>(null);
 
-  const tableOptionsWithLocalState = useTableOptionsWithLocalState(
-    options.tableOptions,
-  );
+  const tableOptionsWithLocalState = useTableOptionsWithLocalState(options.tableOptions);
 
   const tableOptions = useMemo(() => {
     return {
@@ -111,34 +102,20 @@ export const useDataGrid = <TData extends RowData>(
       leftVisibleLeafHeaders
         .filter((header) => header.column.getIsVisible())
         .reduce((acc, header) => acc + header.getSize(), 0),
-    [leftVisibleLeafHeaders],
+    [leftVisibleLeafHeaders]
   );
   const rightPinnedAreaWidth = useMemo(
-    () =>
-      rightVisibleLeafHeaders.reduce(
-        (acc, header) => acc + header.getSize(),
-        0,
-      ),
-    [rightVisibleLeafHeaders],
+    () => rightVisibleLeafHeaders.reduce((acc, header) => acc + header.getSize(), 0),
+    [rightVisibleLeafHeaders]
   );
 
   // ========================= DYNAMIC COLUMN WIDTHS =========================
   const dynamicColumnWidths = useMemo(() => {
     const centerViewportWidth = scrollElement?.getBoundingClientRect().width
-      ? scrollElement.getBoundingClientRect().width -
-        leftPinnedAreaWidth -
-        rightPinnedAreaWidth
+      ? scrollElement.getBoundingClientRect().width - leftPinnedAreaWidth - rightPinnedAreaWidth
       : null;
-    return getDynamicColumnWidths(
-      centerVisibleLeafHeaders,
-      centerViewportWidth,
-    );
-  }, [
-    centerVisibleLeafHeaders,
-    scrollElement,
-    leftPinnedAreaWidth,
-    rightPinnedAreaWidth,
-  ]);
+    return getDynamicColumnWidths(centerVisibleLeafHeaders, centerViewportWidth);
+  }, [centerVisibleLeafHeaders, scrollElement, leftPinnedAreaWidth, rightPinnedAreaWidth]);
 
   // ========================= VIRTUALISERS =========================
   const headerHeight = options.headerHeight ?? DEFAULTS.headerHeight;
@@ -153,7 +130,7 @@ export const useDataGrid = <TData extends RowData>(
       }
       return DEFAULTS.rowHeight;
     },
-    [options],
+    [options]
   );
 
   const overscanConfig = useMemo(() => {
@@ -220,12 +197,12 @@ export const useDataGrid = <TData extends RowData>(
 
   const centerAreaWidth = React.useMemo(
     () => dynamicColumnWidths.reduce((acc, width) => acc + width, 0),
-    [dynamicColumnWidths],
+    [dynamicColumnWidths]
   );
 
   const rowWidth = React.useMemo(
     () => centerAreaWidth + leftPinnedAreaWidth + rightPinnedAreaWidth,
-    [centerAreaWidth, leftPinnedAreaWidth, rightPinnedAreaWidth],
+    [centerAreaWidth, leftPinnedAreaWidth, rightPinnedAreaWidth]
   );
 
   return useMemo(
@@ -262,6 +239,6 @@ export const useDataGrid = <TData extends RowData>(
       footerHeight,
       leftPinnedAreaWidth,
       rightPinnedAreaWidth,
-    ],
+    ]
   );
 };

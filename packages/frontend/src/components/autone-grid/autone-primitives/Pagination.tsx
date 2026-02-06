@@ -85,5 +85,5 @@ export const Pagination = React.memo(
         </div>
       </div>
     );
-  },
+  }
 );

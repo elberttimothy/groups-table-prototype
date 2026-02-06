@@ -7,9 +7,7 @@ export const GridContext = createContext<GridContextValue | null>(null);
 export const useGridContext = () => {
   const context = useContext(GridContext);
   if (!context) {
-    throw new Error(
-      'useGridContext must be used within a `<Grid.Root />` component.',
-    );
+    throw new Error('useGridContext must be used within a `<Grid.Root />` component.');
   }
   return context;
 };

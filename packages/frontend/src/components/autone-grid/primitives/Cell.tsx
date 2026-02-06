@@ -9,29 +9,28 @@ export interface CellProps {
   colIndex: number;
 }
 
-export const Cell = React.forwardRef<
-  HTMLDivElement,
-  ComponentProps<typeof motion.div> & CellProps
->(({ className, children, cellRect, colIndex, style, ...props }, ref) => {
-  return (
-    <motion.div
-      ref={ref}
-      role="gridcell"
-      aria-colindex={colIndex + 1}
-      className={cn('absolute bg-white', className)}
-      style={{
-        position: cellRect.position,
-        width: cellRect.width,
-        height: cellRect.height,
-        left: cellRect.x,
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </motion.div>
-  );
-});
+export const Cell = React.forwardRef<HTMLDivElement, ComponentProps<typeof motion.div> & CellProps>(
+  ({ className, children, cellRect, colIndex, style, ...props }, ref) => {
+    return (
+      <motion.div
+        ref={ref}
+        role="gridcell"
+        aria-colindex={colIndex + 1}
+        className={cn('absolute bg-white', className)}
+        style={{
+          position: cellRect.position,
+          width: cellRect.width,
+          height: cellRect.height,
+          left: cellRect.x,
+          ...style,
+        }}
+        {...props}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+);
 Cell.displayName = 'Cell';
 
 export interface DynamicCellProps {

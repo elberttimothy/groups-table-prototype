@@ -6,11 +6,7 @@ import { FooterRow } from './FooterRow';
 import { Header } from './Header';
 import { HeaderCell } from './HeaderCell';
 import { HeaderRow } from './HeaderRow';
-import {
-  CenterGroup,
-  LeftPinnedGroup,
-  RightPinnedGroup,
-} from './PinningGroups';
+import { CenterGroup, LeftPinnedGroup, RightPinnedGroup } from './PinningGroups';
 import { Root } from './Root';
 import { DynamicRow, Row } from './Row';
 

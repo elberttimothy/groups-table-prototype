@@ -25,9 +25,7 @@ export const useColumnDragHandler = ({
     (e: DragOverEvent) => {
       // measure mouse x-movement since last event
       const clientRelativeX = e.delta.x;
-      const deltaX = lastClientX.current
-        ? clientRelativeX - lastClientX.current
-        : clientRelativeX;
+      const deltaX = lastClientX.current ? clientRelativeX - lastClientX.current : clientRelativeX;
       lastClientX.current = clientRelativeX;
 
       // if not over anything, short circuit
@@ -42,12 +40,7 @@ export const useColumnDragHandler = ({
 
       // if swap direction does not match the direction of the mouse movement, short circuit
       if (activeIndex === -1 || overIndex === -1) return;
-      if (
-        !(
-          (deltaX > 0 && activeIndex < overIndex) ||
-          (deltaX < 0 && activeIndex > overIndex)
-        )
-      )
+      if (!((deltaX > 0 && activeIndex < overIndex) || (deltaX < 0 && activeIndex > overIndex)))
         return;
 
       const newColumnOrder = arrayMove(columnOrder, activeIndex, overIndex);
@@ -56,7 +49,7 @@ export const useColumnDragHandler = ({
       onColumnOrderChange(newColumnOrder);
       onColumnMeasure();
     },
-    [columnOrder, onColumnOrderChange, onColumnMeasure],
+    [columnOrder, onColumnOrderChange, onColumnMeasure]
   );
 
   const handleDragEnd = React.useCallback(() => {

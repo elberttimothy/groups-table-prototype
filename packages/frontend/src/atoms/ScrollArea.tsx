@@ -15,7 +15,7 @@ export const VerticalScrollbar = React.forwardRef<
     orientation="vertical"
     className={cn(
       'absolute flex flex-col w-2 bg-muted-foreground/5 hover:bg-muted-foreground/10 rounded-full p-[1px] hover:p-[2px] hover:w-3 transition-all',
-      className,
+      className
     )}
     {...props}
   />
@@ -31,7 +31,7 @@ export const HorizontalScrollbar = React.forwardRef<
     orientation="horizontal"
     className={cn(
       'absolute flex flex-row h-2 w-full bg-muted-foreground/5 hover:bg-muted-foreground/10 rounded-full p-[1px] hover:p-[2px] hover:h-3 transition-all',
-      className,
+      className
     )}
     {...props}
   />
@@ -46,7 +46,7 @@ export const ScrollThumb = React.forwardRef<
     ref={ref}
     className={cn(
       'bg-muted-foreground/30 hover:bg-muted-foreground/40 relative rounded-full hover:cursor-pointer transition-colors',
-      className,
+      className
     )}
     {...props}
   />

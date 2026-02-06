@@ -24,7 +24,7 @@ const DndRoot = React.memo(
     const sensors = useSensors(
       useSensor(PointerSensor),
       useSensor(TouchSensor),
-      useSensor(KeyboardSensor),
+      useSensor(KeyboardSensor)
     );
     const { table, columnVirtualiser } = gridConfig;
 
@@ -50,10 +50,7 @@ const DndRoot = React.memo(
             onDragEnd={handleDragEnd}
           >
             <GridPrimitives.Root
-              className={cn(
-                'no-scrollbar min-h-0 h-full w-full border-b',
-                className,
-              )}
+              className={cn('no-scrollbar min-h-0 h-full w-full border-b', className)}
               gridConfig={gridConfig}
               ref={ref}
               {...props}
@@ -62,7 +59,7 @@ const DndRoot = React.memo(
         </IsReorderableRegionContextProvider>
       </HighlightedRowContextProvider>
     );
-  }),
+  })
 );
 DndRoot.displayName = 'AutoneGrid.DndRoot';
 
@@ -78,7 +75,7 @@ const NonDndRoot = React.memo(
         {...props}
       />
     </IsReorderableRegionContextProvider>
-  )),
+  ))
 );
 NonDndRoot.displayName = 'AutoneGrid.NonDndRoot';
 

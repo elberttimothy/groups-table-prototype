@@ -13,8 +13,7 @@ export interface AutoneFooterCellProps {
 export const FooterCell = React.memo(
   React.forwardRef<
     React.ElementRef<typeof GridPrimitives.FooterCell>,
-    React.ComponentPropsWithoutRef<typeof GridPrimitives.FooterCell> &
-      AutoneFooterCellProps
+    React.ComponentPropsWithoutRef<typeof GridPrimitives.FooterCell> & AutoneFooterCellProps
   >(({ className, columnId, footerRect, ...props }, ref) => {
     const dndContext = useDndContext();
     const isDragging = React.useMemo(() => {
@@ -29,7 +28,7 @@ export const FooterCell = React.memo(
         className={cn(
           'py-3 px-4 bg-accent text-sm flex items-center',
           isDragging && `z-[var(--autone-grid-footer-dragging-z-index)]`,
-          className,
+          className
         )}
         style={{
           x,
@@ -38,6 +37,6 @@ export const FooterCell = React.memo(
         {...props}
       />
     );
-  }),
+  })
 );
 FooterCell.displayName = 'AutoneGrid.FooterCell';

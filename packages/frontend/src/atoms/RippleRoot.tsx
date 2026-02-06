@@ -26,10 +26,8 @@ interface RipplePublicParams {
 }
 
 interface RippleRootProps
-  extends Omit<
-      HTMLAttributes<HTMLSpanElement>,
-      'children' | 'onAnimationEnd' | 'onAnimationStart'
-    >,
+  extends
+    Omit<HTMLAttributes<HTMLSpanElement>, 'children' | 'onAnimationEnd' | 'onAnimationStart'>,
     RipplePublicParams {
   pulseDuration?: number;
   pulseOpacity?: number;
@@ -56,14 +54,12 @@ export const RippleRoot = forwardRef<HTMLSpanElement, RippleRootProps>(
         const { clientX, clientY } = isMouseEvent(e)
           ? { clientX: e.clientX, clientY: e.clientY }
           : { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
-        const { width, height, left, top } =
-          rippleRoot.current.getBoundingClientRect();
+        const { width, height, left, top } = rippleRoot.current.getBoundingClientRect();
         const x = clientX - left;
         const y = clientY - top;
         const maxY = Math.max(y, height - y);
         const maxX = Math.max(x, width - x);
-        const targetWidth =
-          Math.sqrt(Math.pow(maxX, 2) + Math.pow(maxY, 2)) * 2;
+        const targetWidth = Math.sqrt(Math.pow(maxX, 2) + Math.pow(maxY, 2)) * 2;
         const rippleId = v4();
 
         setRipples((prev) => [
@@ -82,11 +78,9 @@ export const RippleRoot = forwardRef<HTMLSpanElement, RippleRootProps>(
     const handleEndAnimation = useCallback(
       (rippleId: string) => {
         if (mouseIsDown) return;
-        setRipples((prev) =>
-          prev.filter((ripple) => ripple.rippleId !== rippleId),
-        );
+        setRipples((prev) => prev.filter((ripple) => ripple.rippleId !== rippleId));
       },
-      [mouseIsDown],
+      [mouseIsDown]
     );
 
     const removeAllRipples = useCallback(() => {
@@ -112,7 +106,7 @@ export const RippleRoot = forwardRef<HTMLSpanElement, RippleRootProps>(
               key={rippleId}
               className={cn(
                 'absolute rounded-full -translate-x-[50%] -translate-y-[50%] pointer-events-none',
-                className,
+                className
               )}
               style={{ left: x, top: y }}
               initial={{ width: 0, height: 0, opacity: pulseOpacity * 0.33 }}
@@ -142,5 +136,5 @@ export const RippleRoot = forwardRef<HTMLSpanElement, RippleRootProps>(
         </AnimatePresence>
       </span>
     );
-  },
+  }
 );

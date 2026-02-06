@@ -16,7 +16,7 @@ describe('useDataTableLoadingGuard Testing Suite', () => {
         isLoading: false,
         data: [],
         initialRowCount: 5,
-      }),
+      })
     );
 
     expect(true).toBe(true);
@@ -44,17 +44,13 @@ describe('useDataTableLoadingGuard Testing Suite', () => {
               isUninitialized,
               data: [],
               ...extraProps,
-            }),
+            })
           );
-          expect(result.current.memoisedData).toHaveLength(
-            expectedLoadingRowCount,
+          expect(result.current.memoisedData).toHaveLength(expectedLoadingRowCount);
+          expect(result.current.memoisedData.every((item) => isDataTableLoadingObject(item))).toBe(
+            true
           );
-          expect(
-            result.current.memoisedData.every((item) =>
-              isDataTableLoadingObject(item),
-            ),
-          ).toBe(true);
-        },
+        }
       );
 
       it('should return actual data when isLoading is false', () => {
@@ -63,15 +59,13 @@ describe('useDataTableLoadingGuard Testing Suite', () => {
             isLoading: false,
             data,
             ...extraProps,
-          }),
+          })
         );
 
         expect(result.current.memoisedData).toEqual(data);
-        expect(result.current.memoisedData.every((item) => 'id' in item)).toBe(
-          true,
-        );
+        expect(result.current.memoisedData.every((item) => 'id' in item)).toBe(true);
       });
-    },
+    }
   );
 
   describe('dynamic mode', () => {
@@ -82,15 +76,13 @@ describe('useDataTableLoadingGuard Testing Suite', () => {
           isLoading: true,
           data: [],
           initialRowCount: expectedLoadingRowCount,
-        }),
+        })
       );
 
       expect(result.current.memoisedData).toHaveLength(expectedLoadingRowCount);
-      expect(
-        result.current.memoisedData.every((item) =>
-          isDataTableLoadingObject(item),
-        ),
-      ).toBe(true);
+      expect(result.current.memoisedData.every((item) => isDataTableLoadingObject(item))).toBe(
+        true
+      );
     });
 
     it('should return data length loading objects when data is not empty and isLoading is true', () => {
@@ -100,14 +92,12 @@ describe('useDataTableLoadingGuard Testing Suite', () => {
           isLoading: true,
           data,
           initialRowCount: expectedLoadingRowCount,
-        }),
+        })
       );
       expect(result.current.memoisedData).toHaveLength(data.length);
-      expect(
-        result.current.memoisedData.every((item) =>
-          isDataTableLoadingObject(item),
-        ),
-      ).toBe(true);
+      expect(result.current.memoisedData.every((item) => isDataTableLoadingObject(item))).toBe(
+        true
+      );
     });
   });
 
@@ -119,14 +109,12 @@ describe('useDataTableLoadingGuard Testing Suite', () => {
           isLoading: true,
           data,
           rowCount: expectedLoadingRowCount,
-        }),
+        })
       );
       expect(result.current.memoisedData).toHaveLength(expectedLoadingRowCount);
-      expect(
-        result.current.memoisedData.every((item) =>
-          isDataTableLoadingObject(item),
-        ),
-      ).toBe(true);
+      expect(result.current.memoisedData.every((item) => isDataTableLoadingObject(item))).toBe(
+        true
+      );
     });
   });
 });

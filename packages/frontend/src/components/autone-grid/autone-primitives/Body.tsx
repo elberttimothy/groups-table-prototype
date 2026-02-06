@@ -5,11 +5,7 @@ import { useGridContext } from '../contexts/grid.context';
 import { GridPrimitives } from '../primitives';
 import { cssVariables } from '../utilities/css-variables';
 
-import {
-  CenterBodyGroup,
-  LeftBodyGroup,
-  RightBodyGroup,
-} from './PinningGroups';
+import { CenterBodyGroup, LeftBodyGroup, RightBodyGroup } from './PinningGroups';
 import { DynamicRow, Row } from './Row';
 
 export const Body = React.memo(
@@ -19,11 +15,7 @@ export const Body = React.memo(
   >(({ className, children, ...props }, ref) => {
     return (
       <GridPrimitives.Body
-        className={cn(
-          'no-scrollbar',
-          'z-[var(--autone-grid-body-z-index)]',
-          className,
-        )}
+        className={cn('no-scrollbar', 'z-[var(--autone-grid-body-z-index)]', className)}
         ref={ref}
         {...props}
       >
@@ -31,7 +23,7 @@ export const Body = React.memo(
         <DummyRow />
       </GridPrimitives.Body>
     );
-  }),
+  })
 );
 Body.displayName = 'AutoneGrid.Body';
 
@@ -39,8 +31,7 @@ Body.displayName = 'AutoneGrid.Body';
  * This is a dummy row that is used to fill the space of the grid when total row height is less than the height of the grid.
  */
 const DummyRow = () => {
-  const { mode, rowVirtualiser, leftPinnedAreaWidth, rightPinnedAreaWidth } =
-    useGridContext();
+  const { mode, rowVirtualiser, leftPinnedAreaWidth, rightPinnedAreaWidth } = useGridContext();
   const lastVirtualRow = rowVirtualiser.getVirtualItems().at(-1);
   const lastVirtualRowTop = lastVirtualRow?.start ?? 0;
   const lastVirtualRowHeight = lastVirtualRow?.size ?? 0;
@@ -96,9 +87,6 @@ const RowContent = ({
   <>
     <LeftBodyGroup className="h-full" style={{ width: leftPinnedAreaWidth }} />
     <CenterBodyGroup className="h-full" />
-    <RightBodyGroup
-      className="h-full"
-      style={{ width: rightPinnedAreaWidth }}
-    />
+    <RightBodyGroup className="h-full" style={{ width: rightPinnedAreaWidth }} />
   </>
 );

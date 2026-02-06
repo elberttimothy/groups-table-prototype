@@ -41,7 +41,7 @@ export const VerticalScrollbar = React.forwardRef<
     className={cn(
       'flex touch-none select-none transition-colors',
       'h-full w-2.5 border-l border-l-transparent p-[1px]',
-      className,
+      className
     )}
     {...props}
   />
@@ -58,7 +58,7 @@ export const HorizontalScrollbar = React.forwardRef<
     className={cn(
       'flex touch-none select-none transition-colors',
       'h-2.5 flex-col border-t border-t-transparent p-[1px]',
-      className,
+      className
     )}
     {...props}
   />
@@ -93,4 +93,3 @@ export const ScrollArea = React.forwardRef<
   </ScrollAreaRoot>
 ));
 ScrollArea.displayName = 'ScrollArea';
-

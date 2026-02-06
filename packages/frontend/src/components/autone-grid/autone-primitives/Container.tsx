@@ -12,6 +12,6 @@ export const Container = React.memo(
           {...props}
         />
       );
-    },
-  ),
+    }
+  )
 );

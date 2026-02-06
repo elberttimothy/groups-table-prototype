@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Turborepo
+.turbo/
+
+# Package manager
+pnpm-lock.yaml
+package-lock.json
+
+# Database
+*.db
+*.db-journal
+*.sql
+
+# Generated files
+packages/backend/src/generated/
+
+# Prisma
+packages/backend/prisma/migrations/
+
+# Storybook
+storybook-static/
+
+# Coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/

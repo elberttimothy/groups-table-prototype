@@ -66,10 +66,7 @@ export const FixedHeightRows: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.LeftPinnedGroup>
@@ -81,10 +78,7 @@ export const FixedHeightRows: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.CenterGroup>
@@ -96,10 +90,7 @@ export const FixedHeightRows: Story = {
                   colIndex={header.column.getIndex()}
                   headerRect={headerRect}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.RightPinnedGroup>
@@ -206,10 +197,7 @@ export const DynamicHeightRows: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.LeftPinnedGroup>
@@ -221,10 +209,7 @@ export const DynamicHeightRows: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.CenterGroup>
@@ -236,10 +221,7 @@ export const DynamicHeightRows: Story = {
                   colIndex={header.column.getIndex()}
                   headerRect={headerRect}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.RightPinnedGroup>
@@ -351,10 +333,7 @@ export const DynamicColumnWidths: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.CenterGroup>
@@ -437,10 +416,7 @@ export const WithFooters: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.LeftPinnedGroup>
@@ -452,10 +428,7 @@ export const WithFooters: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.CenterGroup>
@@ -467,10 +440,7 @@ export const WithFooters: Story = {
                   colIndex={header.column.getIndex()}
                   headerRect={headerRect}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.RightPinnedGroup>
@@ -542,10 +512,7 @@ export const WithFooters: Story = {
                   footerRect={footerRect}
                   className="flex items-center px-3 text-sm border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext(),
-                  )}
+                  {flexRender(footer.column.columnDef.footer, footer.getContext())}
                 </GridPrimitives.FooterCell>
               ))}
             </GridPrimitives.LeftPinnedGroup>
@@ -557,10 +524,7 @@ export const WithFooters: Story = {
                   footerRect={footerRect}
                   className="flex items-center px-3 text-sm border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext(),
-                  )}
+                  {flexRender(footer.column.columnDef.footer, footer.getContext())}
                 </GridPrimitives.FooterCell>
               ))}
             </GridPrimitives.CenterGroup>
@@ -572,10 +536,7 @@ export const WithFooters: Story = {
                   colIndex={footer.column.getIndex()}
                   footerRect={footerRect}
                 >
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext(),
-                  )}
+                  {flexRender(footer.column.columnDef.footer, footer.getContext())}
                 </GridPrimitives.FooterCell>
               ))}
             </GridPrimitives.RightPinnedGroup>
@@ -639,10 +600,7 @@ export const WideTableWithPinning: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.LeftPinnedGroup>
@@ -654,10 +612,7 @@ export const WideTableWithPinning: Story = {
                   headerRect={headerRect}
                   className="flex items-center px-3 text-sm border-b border-r last:border-r-0 bg-accent"
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.CenterGroup>
@@ -669,10 +624,7 @@ export const WideTableWithPinning: Story = {
                   colIndex={header.column.getIndex()}
                   headerRect={headerRect}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </GridPrimitives.HeaderCell>
               ))}
             </GridPrimitives.RightPinnedGroup>

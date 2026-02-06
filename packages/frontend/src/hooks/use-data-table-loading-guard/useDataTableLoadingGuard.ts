@@ -1,4 +1,3 @@
-
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -11,18 +10,18 @@ type DataAccessorFn<Data, R> = (data: Data) => R;
 type RowIdAccessor<Data> = DataAccessorFn<Data, string>;
 
 export type GetRowIdLoadingGuard<Data> = (
-  fn: RowIdAccessor<Data>,
+  fn: RowIdAccessor<Data>
 ) => (data: Data | DataTableLoadingObject, index: number) => string;
 
 export type DataLoadingGuard<Data> = {
   <Fn extends DataAccessorFn<Data, unknown>>(
     data: Data | DataTableLoadingObject,
-    fn: Fn,
+    fn: Fn
   ): ReturnType<Fn> | undefined;
   <Fn extends DataAccessorFn<Data, unknown>, Default>(
     data: Data | DataTableLoadingObject,
     fn: Fn,
-    defaultValue: Default,
+    defaultValue: Default
   ): ReturnType<Fn> | Default;
 };
 
@@ -35,12 +34,12 @@ interface UseDataTableLoadingGuardReturn<Data> {
 const createDataLoadingGuard = <Data>() => {
   function dataLoadingGuard<Fn extends DataAccessorFn<Data, unknown>>(
     data: Data | DataTableLoadingObject,
-    fn: Fn,
+    fn: Fn
   ): ReturnType<Fn> | undefined;
   function dataLoadingGuard<Fn extends DataAccessorFn<Data, unknown>, Default>(
     data: Data | DataTableLoadingObject,
     fn: Fn,
-    defaultValue: Default,
+    defaultValue: Default
   ): ReturnType<Fn> | Default;
 
   /**
@@ -49,7 +48,7 @@ const createDataLoadingGuard = <Data>() => {
   function dataLoadingGuard<Fn extends DataAccessorFn<Data, unknown>, Default>(
     data: Data | DataTableLoadingObject,
     fn: Fn,
-    defaultValue?: Default,
+    defaultValue?: Default
   ) {
     if (isDataTableLoadingObject(data)) {
       return defaultValue;
@@ -78,8 +77,9 @@ interface UseTableLoadingGuardBaseProps<Data> {
   data?: Data[];
 }
 
-interface UseTableLoadingGuardWithInitialRowCount<Data>
-  extends UseTableLoadingGuardBaseProps<Data> {
+interface UseTableLoadingGuardWithInitialRowCount<
+  Data,
+> extends UseTableLoadingGuardBaseProps<Data> {
   mode: 'dynamic';
   /**
    * The number of loading rows to show when the table is in a loading state (with no data).
@@ -88,8 +88,7 @@ interface UseTableLoadingGuardWithInitialRowCount<Data>
   initialRowCount: number;
 }
 
-interface UseTableLoadingGuardWithFixedRowCount<Data>
-  extends UseTableLoadingGuardBaseProps<Data> {
+interface UseTableLoadingGuardWithFixedRowCount<Data> extends UseTableLoadingGuardBaseProps<Data> {
   mode: 'fixed';
   /**
    * Always render this many rows while `isFetching/isLoading/isUninitialized` is `true`,
@@ -125,20 +124,14 @@ export const useDataTableLoadingGuard = <Data>({
       const { initialRowCount } = { initialRowCount: 10, ...options };
 
       if (dataIsEmpty) {
-        return Array.from({ length: initialRowCount }).map(() =>
-          createDataTableLoadingObject({}),
-        );
+        return Array.from({ length: initialRowCount }).map(() => createDataTableLoadingObject({}));
       }
 
-      return Array.from({ length: dataRowCount }).map(() =>
-        createDataTableLoadingObject({}),
-      );
+      return Array.from({ length: dataRowCount }).map(() => createDataTableLoadingObject({}));
     } else {
       const { rowCount } = { rowCount: 10, ...options };
 
-      return Array.from({ length: rowCount }).map(() =>
-        createDataTableLoadingObject({}),
-      );
+      return Array.from({ length: rowCount }).map(() => createDataTableLoadingObject({}));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, dataIsEmpty, dataIsFetching, mode, ...optionValues, dataRowCount]);
@@ -146,17 +139,14 @@ export const useDataTableLoadingGuard = <Data>({
   /**
    * Guard the `getRowId` function to prevent it from being called if the row is a loading object.
    */
-  const getRowIdLoadingGuard = useCallback(
-    (fn: DataAccessorFn<Data, string>) => {
-      return (data: Data | DataTableLoadingObject, index: number) => {
-        if (isDataTableLoadingObject(data)) {
-          return index.toString();
-        }
-        return fn(data);
-      };
-    },
-    [],
-  );
+  const getRowIdLoadingGuard = useCallback((fn: DataAccessorFn<Data, string>) => {
+    return (data: Data | DataTableLoadingObject, index: number) => {
+      if (isDataTableLoadingObject(data)) {
+        return index.toString();
+      }
+      return fn(data);
+    };
+  }, []);
 
   const dataLoadingGuard = useCallback(createDataLoadingGuard<Data>(), []); //eslint-disable-line react-hooks/exhaustive-deps
 
@@ -166,6 +156,6 @@ export const useDataTableLoadingGuard = <Data>({
       getRowIdLoadingGuard,
       dataLoadingGuard,
     }),
-    [memoisedData, getRowIdLoadingGuard, dataLoadingGuard],
+    [memoisedData, getRowIdLoadingGuard, dataLoadingGuard]
   );
 };

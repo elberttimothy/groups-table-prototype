@@ -1,8 +1,11 @@
-import { GenericAggregationResponse, HealthResponse, SkuLocationBody } from '@autone/backend/schemas';
+import {
+  GenericAggregationResponse,
+  HealthResponse,
+  SkuLocationBody,
+} from '@autone/backend/schemas';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
-
 
 // Define a base API slice with RTK Query
 // Add endpoints by extending this API using `api.injectEndpoints()`

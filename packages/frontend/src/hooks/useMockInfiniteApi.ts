@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 export const useMockInfiniteApi = <Data>(
   data: Data[],
   pageSize: number = 10,
-  delay: number = 1000,
+  delay: number = 1000
 ) => {
   const [isLoading, setIsLoading] = useState(true);
   const [pages, setPages] = useState<Data[][]>([]);
@@ -19,23 +19,17 @@ export const useMockInfiniteApi = <Data>(
 
   const canLoadNextPage = useMemo(
     () => pages.length * pageSize < data.length,
-    [pages.length, pageSize, data.length],
+    [pages.length, pageSize, data.length]
   );
 
-  const totalPages = useMemo(
-    () => Math.ceil(data.length / pageSize),
-    [data.length, pageSize],
-  );
+  const totalPages = useMemo(() => Math.ceil(data.length / pageSize), [data.length, pageSize]);
 
   const loadNextPage = useCallback(async () => {
     if (isLoading || !canLoadNextPage) return;
 
     setIsLoading(true);
     await sleep(delay);
-    setPages((prev) => [
-      ...prev,
-      data.slice(prev.length * pageSize, (prev.length + 1) * pageSize),
-    ]);
+    setPages((prev) => [...prev, data.slice(prev.length * pageSize, (prev.length + 1) * pageSize)]);
     setIsLoading(false);
   }, [canLoadNextPage, delay, isLoading, data, pageSize]);
 

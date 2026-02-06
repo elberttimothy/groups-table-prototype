@@ -19,9 +19,7 @@ export const ColumnDragHandleContextProvider = ({
 export const useColumnDragHandle = () => {
   const context = useContext(ColumnDragHandleContext);
   if (!context) {
-    throw new Error(
-      'useColumnDragHandle must be used within a ColumnDragHandleContextProvider',
-    );
+    throw new Error('useColumnDragHandle must be used within a ColumnDragHandleContextProvider');
   }
   return context;
 };
