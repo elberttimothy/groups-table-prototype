@@ -29,7 +29,6 @@ model SkuLocation {
   season_desc          String?
   gender_id            String?
   gender_desc          String?
-  product_groups       String[]           @default([])
   location_id          String
   location_desc        String?
   country_id           String?
@@ -38,7 +37,8 @@ model SkuLocation {
   location_type_desc   String?
   region_id            String?
   region_desc          String?
-  location_groups      String[]           @default([])
+  location_groups_map  LocationGroupMap[]
+  product_groups_map   ProductGroupMap[]
   sku_location_metrics SkuLocationMetric?
 
   @@id([sku_id, location_id])
@@ -58,9 +58,28 @@ model SkuLocationMetric {
   user_ia                   Int?
   assortment_recommendation Boolean
   assorted                  Boolean?
-
-  sku_location SkuLocation @relation(fields: [sku_id, location_id], references: [sku_id, location_id])
+  sku_location              SkuLocation @relation(fields: [sku_id, location_id], references: [sku_id, location_id])
 
   @@unique([sku_id, location_id])
   @@map("sku_location_metrics")
+}
+
+model LocationGroupMap {
+  sku_id        String
+  location_id   String
+  name          String
+  sku_locations SkuLocation @relation(fields: [sku_id, location_id], references: [sku_id, location_id], onDelete: NoAction, onUpdate: NoAction, map: "sku_location_fk")
+
+  @@id([sku_id, location_id, name])
+  @@map("location_group_maps")
+}
+
+model ProductGroupMap {
+  sku_id        String
+  location_id   String
+  name          String
+  sku_locations SkuLocation @relation(fields: [sku_id, location_id], references: [sku_id, location_id], onDelete: NoAction, onUpdate: NoAction, map: "sku_location_fk")
+
+  @@id([sku_id, location_id, name])
+  @@map("product_group_maps")
 }

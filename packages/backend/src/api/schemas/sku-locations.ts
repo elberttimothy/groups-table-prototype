@@ -8,12 +8,14 @@ const ProductAggregationEnum = z.enum([
   'style_id',
   'season_id',
   'gender_id',
+  'product_groups',
 ]);
 const LocationAggregationEnum = z.enum([
   'location_id',
   'country_id',
   'location_type_id',
   'region_id',
+  'location_groups',
 ]);
 
 export const SkuLocationSchema = z.object({
@@ -44,8 +46,8 @@ export const SkuLocationSchema = z.object({
 
 // Aggregated response schema for the POST endpoint
 export const SkuLocationAggregatedSchema = z.object({
-  product_aggregation_value: z.string(),
-  location_aggregation_value: z.string(),
+  product_aggregation_value: z.unknown(),
+  location_aggregation_value: z.unknown(),
   sales_l30d: z.coerce.number().nullable(),
   sales_l60d: z.coerce.number().nullable(),
   sales_l90d: z.coerce.number().nullable(),
@@ -87,7 +89,7 @@ export type LocationAggregation = z.infer<typeof LocationAggregationEnum>;
 
 export const GenericAggregationResponseSchema = z.object({
   aggregations: z.array(
-    z.object({ dimension: z.string(), aggregation: z.string(), value: z.string() })
+    z.object({ dimension: z.string(), aggregation: z.string(), value: z.unknown() })
   ),
   aggregated_metrics: z.object({
     sales_l30d: z.coerce.number().nullable(),
