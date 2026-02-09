@@ -6,7 +6,14 @@ import {
 import { flexRender } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './atoms';
+import {
+  ContextMenu,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './atoms';
 import {
   assertNoGroupColumnDefs,
   AutoneGrid,
@@ -16,6 +23,7 @@ import {
 import { createGroupsTableColumns } from './components/groups-table';
 import { useDataTableLoadingGuard } from './hooks/use-data-table-loading-guard';
 import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
+import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
 
 function App() {
   const { data } = useGetHealthQuery();
@@ -143,14 +151,18 @@ function App() {
             {virtualRows.map((virtualRow) => (
               <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
                 {({ cell, cellRect, index }) => (
-                  <AutoneGridPreset.Cell
-                    columnId={cell.column.id}
-                    colIndex={index}
-                    rowIndex={virtualRow.index}
-                    cellRect={cellRect}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </AutoneGridPreset.Cell>
+                  <ContextMenu>
+                    <ContextMenuTrigger>
+                      <AutoneGridPreset.Cell
+                        columnId={cell.column.id}
+                        colIndex={index}
+                        rowIndex={virtualRow.index}
+                        cellRect={cellRect}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </AutoneGridPreset.Cell>
+                    </ContextMenuTrigger>
+                  </ContextMenu>
                 )}
               </AutoneGridPreset.Row>
             ))}

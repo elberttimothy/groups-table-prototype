@@ -3,6 +3,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/atoms';
+import { DrilldownContextMenu } from './components/DrilldownContextMenu';
 
 type AggregationColumns = GenericAggregationResponse['aggregations'];
 
@@ -28,7 +30,16 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => <span>{ctx.getValue()?.value ?? '-'}</span>,
+          renderCell: (ctx) => {
+            const rowId = ctx.row.id;
+
+            return (
+              <>
+                <span>{ctx.getValue()?.value ?? '-'}</span>
+                <DrilldownContextMenu dimension={aggregation.dimension} />
+              </>
+            );
+          },
         }),
     }
   );
