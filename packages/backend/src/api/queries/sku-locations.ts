@@ -5,11 +5,13 @@ import {
   LocationAggregation,
   ProductAggregation,
   SkuLocationAggregatedSchema,
+  SkuLocationBody,
 } from '../schemas/sku-locations';
 
 export const getAggregatedSkuLocations = async (
   product_aggregation: ProductAggregation,
-  location_aggregation: LocationAggregation
+  location_aggregation: LocationAggregation,
+  filters: SkuLocationBody['filters']
 ) => {
   const productCol = Prisma.raw(`slj.${product_aggregation}`);
   const locationCol = Prisma.raw(`slj.${location_aggregation}`);
@@ -46,19 +48,31 @@ export const getAggregatedSkuLocations = async (
     )
 
     SELECT
-      ${productCol} AS product_aggregation,
-      ${locationCol} AS location_aggregation,
-      SUM(slj.sales_l30d)::INT as sales_l30d, 
-        SUM(slj.sales_l60d)::INT as sales_l60d, 
-        SUM(slj.sales_l90d)::INT as sales_l90d, 
-        SUM(slj.inventory)::INT as inventory, 
-        SUM(slj.pending_from_production)::INT as pending_from_production, 
-        SUM(slj.recommended_ia)::INT as recommended_ia, 
-        SUM(slj.unconstrained_ia)::INT as unconstrained_ia, 
-        SUM(slj.user_ia)::INT as user_ia,
+      -- aggregations
+      slj.product_group AS product_aggregation,
+      slj.location_group AS location_aggregation,
+      
+      -- attributes
+      COUNT(DISTINCT slj.department_id)::INT AS num_departments,
+      COUNT(DISTINCT slj.sub_department_id)::INT AS num_sub_departments,
+      COUNT(DISTINCT slj.style_id)::INT AS num_styles,
+      COUNT(DISTINCT slj.season_id)::INT AS num_seasons,
+      COUNT(DISTINCT slj.gender_id)::INT AS num_genders,
+      COUNT(DISTINCT slj.product_id)::INT AS num_products,
+      COUNT(DISTINCT slj.sku_id)::INT AS num_skus,
+
+      -- metrics
+      SUM(slj.sales_l30d)::INT AS sales_l30d, 
+      SUM(slj.sales_l60d)::INT AS sales_l60d, 
+      SUM(slj.sales_l90d)::INT AS sales_l90d, 
+      SUM(slj.inventory)::INT AS inventory, 
+      SUM(slj.pending_from_production)::INT AS pending_from_production, 
+      SUM(slj.recommended_ia)::INT AS recommended_ia, 
+      SUM(slj.unconstrained_ia)::INT AS unconstrained_ia, 
+      SUM(slj.user_ia)::INT AS user_ia,
       COUNT(*) AS num_sku_locations,
       COUNT(*) FILTER (WHERE slj.assorted IS TRUE) AS num_assorted_sku_locations,
-      COUNT(*) FILTER (WHERE slj.assortment_recommendation IS TRUE) AS num_recommend_assort_sku_locations 
+      COUNT(*) FILTER (WHERE slj.assortment_recommendation IS TRUE) AS num_recommend_assort_sku_locations
     FROM sku_locations_joined slj
     GROUP BY
       ${productCol}, ${locationCol}

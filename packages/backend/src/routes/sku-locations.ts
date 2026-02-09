@@ -6,11 +6,12 @@ import { GenericAggregationResponseSchema } from '../api/schemas/sku-locations.j
 export const skuLocationsRouter = zodiosRouter(skuLocationsApi);
 
 skuLocationsRouter.post('/', async (req, res) => {
-  const { product_aggregation, location_aggregation } = req.body;
+  const { product_aggregation, location_aggregation, filters } = req.body;
 
   const skuLocationsAggregated = await getAggregatedSkuLocations(
     product_aggregation,
-    location_aggregation
+    location_aggregation,
+    filters
   );
   const skuLocationsAggregatedResponse = skuLocationsAggregated.map((skuLocation) =>
     GenericAggregationResponseSchema.parse({

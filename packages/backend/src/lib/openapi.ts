@@ -1,7 +1,8 @@
 import { openApiBuilder } from '@zodios/openapi';
+import type { OpenAPIV3 } from 'openapi-types';
 import { healthApi, skuLocationsApi, usersApi } from '../api/contract.js';
 
-export const openApiDocument = openApiBuilder({
+export const openApiDocument: OpenAPIV3.Document = openApiBuilder({
   title: 'Autone Backend API',
   version: '1.0.0',
   description: 'API documentation for the Autone backend service',
