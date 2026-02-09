@@ -14,9 +14,9 @@ const createConditionClause = (alias: string, attributeName: string, ids: string
 const createConditions = (filters: SkuLocationBody['filters']) => {
   const conditions = ['TRUE'];
   if (filters?.product) {
-    const productFilterEntries = Object.entries(filters.product).filter(
-      ([_, ids]) => ids?.length > 0
-    );
+    const productFilterEntries = Object.entries(filters.product)
+      .map(([key, value]) => [key, value?.filter((id) => id !== null) ?? []] as const)
+      .filter(([_, ids]) => ids?.length > 0);
     for (const [attributeName, ids] of productFilterEntries) {
       conditions.push(
         createConditionClause(
@@ -28,9 +28,9 @@ const createConditions = (filters: SkuLocationBody['filters']) => {
     }
   }
   if (filters?.location) {
-    const locationFilterEntries = Object.entries(filters.location).filter(
-      ([_, ids]) => ids?.length > 0
-    );
+    const locationFilterEntries = Object.entries(filters.location)
+      .map(([key, value]) => [key, value?.filter((id) => id !== null) ?? []] as const)
+      .filter(([_, ids]) => ids?.length > 0);
     for (const [attributeName, ids] of locationFilterEntries) {
       conditions.push(
         createConditionClause(
@@ -52,6 +52,8 @@ export const getAggregatedSkuLocations = async (
   const productCol = Prisma.raw(`slj.${product_aggregation}`);
   const locationCol = Prisma.raw(`slj.${location_aggregation}`);
   const conditions = createConditions(filters);
+
+  console.log(conditions);
 
   const skuLocationsAggregatedRaw = await prisma.$queryRaw`
     WITH sku_locations_joined AS (

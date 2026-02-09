@@ -7,7 +7,7 @@ import {
 import { useContext } from 'react';
 
 export const GroupsTableFiltersContext = createContext<
-  [SkuLocationBody['filters'], (filters: SkuLocationBody['filters']) => void] | null
+  [SkuLocationBody['filters'][], (filterStack: SkuLocationBody['filters'][]) => void] | null
 >(null);
 
 export const useGroupsTableFilters = () => {
@@ -19,10 +19,10 @@ export const useGroupsTableFilters = () => {
 };
 
 type GroupsTableAggregationContextValue = {
-  productAggregation: ProductAggregation;
-  setProductAggregation: (productAggregation: ProductAggregation) => void;
-  locationAggregation: LocationAggregation;
-  setLocationAggregation: (locationAggregation: LocationAggregation) => void;
+  productAggregation: ProductAggregation[];
+  setProductAggregation: (productAggregation: ProductAggregation[]) => void;
+  locationAggregation: LocationAggregation[];
+  setLocationAggregation: (locationAggregation: LocationAggregation[]) => void;
 } | null;
 
 export const GroupsTableAggregationContext =

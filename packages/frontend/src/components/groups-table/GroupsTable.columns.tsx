@@ -53,20 +53,23 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
                 <DrilldownContextMenu
                   dimension={aggregation.dimension}
                   onDrilldown={(arg) => {
-                    setFilters({
-                      product: {
-                        ...filters?.product,
-                        [productAggregation]: [rowProductDimValue],
+                    setFilters([
+                      ...filters,
+                      {
+                        product: {
+                          [productAggregation.at(-1)!]: [rowProductDimValue],
+                        },
+                        location: {
+                          [locationAggregation.at(-1)!]: [rowLocationDimValue],
+                        },
                       },
-                      location: {
-                        ...filters?.location,
-                        [locationAggregation]: [rowLocationDimValue],
-                      },
-                    });
+                    ]);
                     if (arg.dimension === 'product') {
-                      setProductAggregation(arg.aggregation);
+                      setProductAggregation([...productAggregation, arg.aggregation]);
+                      setLocationAggregation([...locationAggregation, locationAggregation.at(-1)!]);
                     } else {
-                      setLocationAggregation(arg.aggregation);
+                      setLocationAggregation([...locationAggregation, arg.aggregation]);
+                      setProductAggregation([...productAggregation, productAggregation.at(-1)!]);
                     }
                   }}
                 />
