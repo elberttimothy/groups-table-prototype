@@ -37,6 +37,11 @@ function App() {
   } = useGetSkuLocationsQuery({
     product_aggregation: productAggregation,
     location_aggregation: locationAggregation,
+    filters: {
+      product: {
+        product_group: ['AWM'],
+      },
+    },
   });
 
   // Build columns based on the current aggregations

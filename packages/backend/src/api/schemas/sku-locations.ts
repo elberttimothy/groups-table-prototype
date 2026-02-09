@@ -70,23 +70,23 @@ export const SkuLocationBodySchema = z.object({
     .object({
       product: z
         .object({
-          sku_id: z.array(z.string()),
-          product_id: z.array(z.string()),
-          department_id: z.array(z.string()),
-          sub_department_id: z.array(z.string()),
-          style_id: z.array(z.string()),
-          season_id: z.array(z.string()),
-          gender_id: z.array(z.string()),
-          product_group: z.array(z.string()),
+          sku_id: z.array(z.string()).optional(),
+          product_id: z.array(z.string()).optional(),
+          department_id: z.array(z.string()).optional(),
+          sub_department_id: z.array(z.string()).optional(),
+          style_id: z.array(z.string()).optional(),
+          season_id: z.array(z.string()).optional(),
+          gender_id: z.array(z.string()).optional(),
+          product_group: z.array(z.string()).optional(),
         })
         .optional(),
       location: z
         .object({
-          location_id: z.array(z.string()),
-          country_id: z.array(z.string()),
-          location_type_id: z.array(z.string()),
-          region_id: z.array(z.string()),
-          location_group: z.array(z.string()),
+          location_id: z.array(z.string()).optional(),
+          country_id: z.array(z.string()).optional(),
+          location_type_id: z.array(z.string()).optional(),
+          region_id: z.array(z.string()).optional(),
+          location_group: z.array(z.string()).optional(),
         })
         .optional(),
     })

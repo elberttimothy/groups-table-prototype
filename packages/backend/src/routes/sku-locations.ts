@@ -28,6 +28,16 @@ skuLocationsRouter.post('/', async (req, res) => {
         },
       ],
       aggregated_metrics: {
+        // Attributes
+        num_departments: skuLocation.num_departments,
+        num_sub_departments: skuLocation.num_sub_departments,
+        num_styles: skuLocation.num_styles,
+        num_seasons: skuLocation.num_seasons,
+        num_genders: skuLocation.num_genders,
+        num_products: skuLocation.num_products,
+        num_skus: skuLocation.num_skus,
+
+        // Metrics
         sales_l30d: skuLocation.sales_l30d,
         sales_l60d: skuLocation.sales_l60d,
         sales_l90d: skuLocation.sales_l90d,

@@ -8,6 +8,42 @@ import {
   SkuLocationBody,
 } from '../schemas/sku-locations';
 
+const createConditionClause = (alias: string, attributeName: string, ids: string[]) =>
+  `${alias}.${attributeName} IN (${ids.map((id) => `'${id}'`).join(',')})`;
+
+const createConditions = (filters: SkuLocationBody['filters']) => {
+  const conditions = ['TRUE'];
+  if (filters?.product) {
+    const productFilterEntries = Object.entries(filters.product).filter(
+      ([_, ids]) => ids?.length > 0
+    );
+    for (const [attributeName, ids] of productFilterEntries) {
+      conditions.push(
+        createConditionClause(
+          attributeName === 'product_group' ? 'pgm' : 'sl',
+          attributeName === 'product_group' ? 'name' : attributeName,
+          ids
+        )
+      );
+    }
+  }
+  if (filters?.location) {
+    const locationFilterEntries = Object.entries(filters.location).filter(
+      ([_, ids]) => ids?.length > 0
+    );
+    for (const [attributeName, ids] of locationFilterEntries) {
+      conditions.push(
+        createConditionClause(
+          attributeName === 'location_group' ? 'lgm' : 'sl',
+          attributeName === 'location_group' ? 'name' : attributeName,
+          ids
+        )
+      );
+    }
+  }
+  return Prisma.raw(conditions.join(' AND '));
+};
+
 export const getAggregatedSkuLocations = async (
   product_aggregation: ProductAggregation,
   location_aggregation: LocationAggregation,
@@ -15,6 +51,7 @@ export const getAggregatedSkuLocations = async (
 ) => {
   const productCol = Prisma.raw(`slj.${product_aggregation}`);
   const locationCol = Prisma.raw(`slj.${location_aggregation}`);
+  const conditions = createConditions(filters);
 
   const skuLocationsAggregatedRaw = await prisma.$queryRaw`
     WITH sku_locations_joined AS (
@@ -45,12 +82,13 @@ export const getAggregatedSkuLocations = async (
         sku_id,
         location_id
       )
+      WHERE ${conditions}
     )
 
     SELECT
       -- aggregations
-      slj.product_group AS product_aggregation,
-      slj.location_group AS location_aggregation,
+      ${productCol} AS product_aggregation,
+      ${locationCol} AS location_aggregation,
       
       -- attributes
       COUNT(DISTINCT slj.department_id)::INT AS num_departments,
