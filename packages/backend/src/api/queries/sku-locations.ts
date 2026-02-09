@@ -11,29 +11,58 @@ export const getAggregatedSkuLocations = async (
   product_aggregation: ProductAggregation,
   location_aggregation: LocationAggregation
 ) => {
-  const productCol = Prisma.raw(`sl.${product_aggregation}`);
-  const locationCol = Prisma.raw(`sl.${location_aggregation}`);
+  const productCol = Prisma.raw(`slj.${product_aggregation}`);
+  const locationCol = Prisma.raw(`slj.${location_aggregation}`);
 
   const skuLocationsAggregatedRaw = await prisma.$queryRaw`
-  SELECT 
-    ${productCol} as product_aggregation_value, 
-    ${locationCol} as location_aggregation_value, 
-    SUM(slm.sales_l30d)::int as sales_l30d, 
-    SUM(slm.sales_l60d)::int as sales_l60d, 
-    SUM(slm.sales_l90d)::int as sales_l90d, 
-    SUM(slm.inventory)::int as inventory, 
-    SUM(slm.pending_from_production)::int as pending_from_production, 
-    SUM(slm.recommended_ia)::int as recommended_ia, 
-    SUM(slm.unconstrained_ia)::int as unconstrained_ia, 
-    SUM(slm.user_ia)::int as user_ia, 
-    BOOL_OR(slm.assortment_recommendation) as assortment_recommendation, 
-    BOOL_OR(slm.assorted) as assorted
-  FROM sku_locations sl
-  LEFT JOIN sku_location_metrics slm ON 
-    sl.sku_id = slm.sku_id 
-    AND sl.location_id = slm.location_id
-  GROUP BY ${productCol}, ${locationCol}
-  LIMIT 100
+    WITH sku_locations_joined AS (
+      SELECT
+        sl.*,
+        pgm.name AS product_group,
+        lgm.name AS location_group,
+        slm.sales_l30d,
+        slm.sales_l60d,
+        slm.sales_l90d,
+        slm.inventory,
+        slm.pending_from_production,
+        slm.recommended_ia,
+        slm.unconstrained_ia,
+        slm.user_ia,
+        slm.assorted,
+        slm.assortment_recommendation
+      FROM sku_locations sl
+      LEFT JOIN sku_location_metrics slm USING (
+        sku_id,
+        location_id
+      )
+      LEFT JOIN product_groups_map pgm USING (
+        sku_id, 
+        location_id
+      )
+      LEFT JOIN location_groups_map lgm USING (
+        sku_id,
+        location_id
+      )
+    )
+
+    SELECT
+      ${productCol} AS product_aggregation,
+      ${locationCol} AS location_aggregation,
+      SUM(slj.sales_l30d)::INT as sales_l30d, 
+        SUM(slj.sales_l60d)::INT as sales_l60d, 
+        SUM(slj.sales_l90d)::INT as sales_l90d, 
+        SUM(slj.inventory)::INT as inventory, 
+        SUM(slj.pending_from_production)::INT as pending_from_production, 
+        SUM(slj.recommended_ia)::INT as recommended_ia, 
+        SUM(slj.unconstrained_ia)::INT as unconstrained_ia, 
+        SUM(slj.user_ia)::INT as user_ia,
+      COUNT(*) AS num_sku_locations,
+      COUNT(*) FILTER (WHERE slj.assorted IS TRUE) AS num_assorted_sku_locations,
+      COUNT(*) FILTER (WHERE slj.assortment_recommendation IS TRUE) AS num_recommend_assort_sku_locations 
+    FROM sku_locations_joined slj
+    GROUP BY
+      ${productCol}, ${locationCol}
+    LIMIT 1000
 `;
   return z.array(SkuLocationAggregatedSchema).parse(skuLocationsAggregatedRaw);
 };

@@ -8,14 +8,14 @@ const ProductAggregationEnum = z.enum([
   'style_id',
   'season_id',
   'gender_id',
-  'product_groups',
+  'product_group',
 ]);
 const LocationAggregationEnum = z.enum([
   'location_id',
   'country_id',
   'location_type_id',
   'region_id',
-  'location_groups',
+  'location_group',
 ]);
 
 export const SkuLocationSchema = z.object({
@@ -46,8 +46,8 @@ export const SkuLocationSchema = z.object({
 
 // Aggregated response schema for the POST endpoint
 export const SkuLocationAggregatedSchema = z.object({
-  product_aggregation_value: z.unknown(),
-  location_aggregation_value: z.unknown(),
+  product_aggregation: z.string().nullable(),
+  location_aggregation: z.string().nullable(),
   sales_l30d: z.coerce.number().nullable(),
   sales_l60d: z.coerce.number().nullable(),
   sales_l90d: z.coerce.number().nullable(),
@@ -56,13 +56,14 @@ export const SkuLocationAggregatedSchema = z.object({
   recommended_ia: z.coerce.number().nullable(),
   unconstrained_ia: z.coerce.number().nullable(),
   user_ia: z.coerce.number().nullable(),
-  assortment_recommendation: z.boolean().nullable(),
-  assorted: z.boolean().nullable(),
+  num_sku_locations: z.coerce.number().nullable(),
+  num_assorted_sku_locations: z.coerce.number().nullable(),
+  num_recommend_assort_sku_locations: z.coerce.number().nullable(),
 });
 
 export const SkuLocationAggregatedResponseSchema = SkuLocationAggregatedSchema.omit({
-  product_aggregation_value: true,
-  location_aggregation_value: true,
+  product_aggregation: true,
+  location_aggregation: true,
 }).merge(
   z.object({
     product_dimension: z.object({
@@ -89,7 +90,18 @@ export type LocationAggregation = z.infer<typeof LocationAggregationEnum>;
 
 export const GenericAggregationResponseSchema = z.object({
   aggregations: z.array(
-    z.object({ dimension: z.string(), aggregation: z.string(), value: z.unknown() })
+    z.discriminatedUnion('dimension', [
+      z.object({
+        dimension: z.literal('product'),
+        aggregation: ProductAggregationEnum,
+        value: z.string().nullable(),
+      }),
+      z.object({
+        dimension: z.literal('location'),
+        aggregation: LocationAggregationEnum,
+        value: z.string().nullable(),
+      }),
+    ])
   ),
   aggregated_metrics: z.object({
     sales_l30d: z.coerce.number().nullable(),

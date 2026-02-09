@@ -38,7 +38,7 @@ function App() {
               <SelectItem value="style_id">Style ID</SelectItem>
               <SelectItem value="season_id">Season ID</SelectItem>
               <SelectItem value="gender_id">Gender ID</SelectItem>
-              <SelectItem value="product_groups">Product Groups</SelectItem>
+              <SelectItem value="product_group">Product Group</SelectItem>
             </SelectContent>
           </Select>
           <Select
@@ -53,7 +53,7 @@ function App() {
               <SelectItem value="country_id">Country ID</SelectItem>
               <SelectItem value="location_type_id">Location Type ID</SelectItem>
               <SelectItem value="region_id">Region ID</SelectItem>
-              <SelectItem value="location_groups">Location Groups</SelectItem>
+              <SelectItem value="location_group">Location Group</SelectItem>
             </SelectContent>
           </Select>
         </div>
