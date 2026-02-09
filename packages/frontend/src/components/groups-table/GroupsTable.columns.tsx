@@ -31,7 +31,7 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
         columnCellGuard({
           ctx,
           renderCell: (ctx) => {
-            const rowId = ctx.row.id;
+            const original = ctx.row.original;
 
             return (
               <>
@@ -44,6 +44,163 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
     }
   );
 };
+
+const attributeColumns = [
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_departments),
+    {
+      id: 'num_departments',
+      size: 170,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># Departments</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_sub_departments),
+    {
+      id: 'num_sub_departments',
+      size: 190,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># Sub Departments</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_styles),
+    {
+      id: 'num_styles',
+      size: 150,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># Styles</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_seasons),
+    {
+      id: 'num_seasons',
+      size: 150,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># Seasons</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_genders),
+    {
+      id: 'num_genders',
+      size: 150,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># Genders</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_products),
+    {
+      id: 'num_products',
+      size: 150,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># Products</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.num_skus),
+    {
+      id: 'num_skus',
+      size: 150,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right"># SKUs</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+];
 
 const metricColumns = [
   columnHelper.accessor(
@@ -291,6 +448,20 @@ const metricColumns = [
 ];
 
 /**
+ * Static column display text mapping for attribute columns.
+ * Used by ColumnDragOverlay to show the column name when dragging.
+ */
+const attributeColumnDisplayText: Record<string, string> = {
+  num_departments: '# Departments',
+  num_sub_departments: '# Sub Departments',
+  num_styles: '# Styles',
+  num_seasons: '# Seasons',
+  num_genders: '# Genders',
+  num_products: '# Products',
+  num_skus: '# SKUs',
+};
+
+/**
  * Static column display text mapping for metric columns.
  * Used by ColumnDragOverlay to show the column name when dragging.
  */
@@ -332,11 +503,12 @@ export const createGroupsTableColumns = (aggregations: AggregationColumns) => {
 
   const columnDisplayText = {
     ...aggregationColumnDisplayText,
+    ...attributeColumnDisplayText,
     ...metricColumnDisplayText,
   };
 
   return {
-    columns: [...aggregationColumns, ...metricColumns],
+    columns: [...aggregationColumns, ...attributeColumns, ...metricColumns],
     aggregationColumnIds,
     columnDisplayText,
   };
