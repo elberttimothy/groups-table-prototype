@@ -3,8 +3,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/atoms';
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
+import { useGroupsTableAggregation, useGroupsTableFilters } from './GroupsTable.context';
 
 type AggregationColumns = GenericAggregationResponse['aggregations'];
 
@@ -30,13 +30,46 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: (ctx) => {
+          renderCell: function AggregationCell(ctx) {
             const original = ctx.row.original;
+            const rowProductDimValue = original.aggregations.find(
+              (a) => a.dimension === 'product'
+            )?.value;
+            const rowLocationDimValue = original.aggregations.find(
+              (a) => a.dimension === 'location'
+            )?.value;
+
+            const {
+              productAggregation,
+              locationAggregation,
+              setProductAggregation,
+              setLocationAggregation,
+            } = useGroupsTableAggregation();
+            const [filters, setFilters] = useGroupsTableFilters();
 
             return (
               <>
                 <span>{ctx.getValue()?.value ?? '-'}</span>
-                <DrilldownContextMenu dimension={aggregation.dimension} />
+                <DrilldownContextMenu
+                  dimension={aggregation.dimension}
+                  onDrilldown={(arg) => {
+                    setFilters({
+                      product: {
+                        ...filters?.product,
+                        [productAggregation]: [rowProductDimValue],
+                      },
+                      location: {
+                        ...filters?.location,
+                        [locationAggregation]: [rowLocationDimValue],
+                      },
+                    });
+                    if (arg.dimension === 'product') {
+                      setProductAggregation(arg.aggregation);
+                    } else {
+                      setLocationAggregation(arg.aggregation);
+                    }
+                  }}
+                />
               </>
             );
           },

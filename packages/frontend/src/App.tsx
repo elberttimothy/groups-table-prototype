@@ -2,6 +2,7 @@ import {
   GenericAggregationResponse,
   LocationAggregation,
   ProductAggregation,
+  SkuLocationBody,
 } from '@autone/backend/schemas';
 import { flexRender } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
@@ -24,9 +25,14 @@ import { createGroupsTableColumns } from './components/groups-table';
 import { useDataTableLoadingGuard } from './hooks/use-data-table-loading-guard';
 import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
 import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
+import {
+  GroupsTableAggregationContext,
+  GroupsTableFiltersContext,
+} from './components/groups-table/GroupsTable.context';
 
 function App() {
   const { data } = useGetHealthQuery();
+  const [filters, setFilters] = useState<SkuLocationBody['filters']>({});
   const [productAggregation, setProductAggregation] = useState<ProductAggregation>('product_group');
   const [locationAggregation, setLocationAggregation] =
     useState<LocationAggregation>('location_group');
@@ -37,11 +43,7 @@ function App() {
   } = useGetSkuLocationsQuery({
     product_aggregation: productAggregation,
     location_aggregation: locationAggregation,
-    filters: {
-      product: {
-        product_group: ['AWM'],
-      },
-    },
+    filters: filters,
   });
 
   // Build columns based on the current aggregations
@@ -136,44 +138,55 @@ function App() {
             </SelectContent>
           </Select>
         </div>
-        <AutoneGridPreset.Root
-          className="w-[80vw] h-[60vh] bg-white border rounded-md"
-          gridConfig={gridConfig}
-          ref={scrollElementRef}
-        >
-          <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
-            {({ header, headerRect }) => (
-              <AutoneGrid.HeaderCell
-                columnId={header.column.id}
-                colIndex={header.column.getIndex()}
-                headerRect={headerRect}
-              >
-                {flexRender(header.column.columnDef.header, header.getContext())}
-              </AutoneGrid.HeaderCell>
-            )}
-          </AutoneGridPreset.Header>
-          <AutoneGridPreset.Body>
-            {virtualRows.map((virtualRow) => (
-              <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
-                {({ cell, cellRect, index }) => (
-                  <ContextMenu>
-                    <ContextMenuTrigger>
-                      <AutoneGridPreset.Cell
-                        columnId={cell.column.id}
-                        colIndex={index}
-                        rowIndex={virtualRow.index}
-                        cellRect={cellRect}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </AutoneGridPreset.Cell>
-                    </ContextMenuTrigger>
-                  </ContextMenu>
+        <GroupsTableFiltersContext.Provider value={[filters, setFilters]}>
+          <GroupsTableAggregationContext.Provider
+            value={{
+              productAggregation,
+              setProductAggregation,
+              locationAggregation,
+              setLocationAggregation,
+            }}
+          >
+            <AutoneGridPreset.Root
+              className="w-[80vw] h-[60vh] bg-white border rounded-md"
+              gridConfig={gridConfig}
+              ref={scrollElementRef}
+            >
+              <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
+                {({ header, headerRect }) => (
+                  <AutoneGrid.HeaderCell
+                    columnId={header.column.id}
+                    colIndex={header.column.getIndex()}
+                    headerRect={headerRect}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </AutoneGrid.HeaderCell>
                 )}
-              </AutoneGridPreset.Row>
-            ))}
-          </AutoneGridPreset.Body>
-          <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
-        </AutoneGridPreset.Root>
+              </AutoneGridPreset.Header>
+              <AutoneGridPreset.Body>
+                {virtualRows.map((virtualRow) => (
+                  <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
+                    {({ cell, cellRect, index }) => (
+                      <ContextMenu>
+                        <ContextMenuTrigger>
+                          <AutoneGridPreset.Cell
+                            columnId={cell.column.id}
+                            colIndex={index}
+                            rowIndex={virtualRow.index}
+                            cellRect={cellRect}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </AutoneGridPreset.Cell>
+                        </ContextMenuTrigger>
+                      </ContextMenu>
+                    )}
+                  </AutoneGridPreset.Row>
+                ))}
+              </AutoneGridPreset.Body>
+              <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
+            </AutoneGridPreset.Root>
+          </GroupsTableAggregationContext.Provider>
+        </GroupsTableFiltersContext.Provider>
       </div>
     </div>
   );

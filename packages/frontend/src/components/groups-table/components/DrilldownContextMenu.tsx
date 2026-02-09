@@ -4,47 +4,114 @@ import {
   ContextMenuLabel,
   ContextMenuSeparator,
 } from '@/atoms';
+import { LocationAggregation, ProductAggregation } from '@autone/backend/schemas';
 
 interface DrilldownContextMenuProps {
   dimension: 'product' | 'location';
+  onDrilldown: (
+    arg:
+      | {
+          dimension: 'product';
+          aggregation: ProductAggregation;
+        }
+      | {
+          dimension: 'location';
+          aggregation: LocationAggregation;
+        }
+  ) => void;
 }
 
-export const DrilldownContextMenu = ({ dimension }: DrilldownContextMenuProps) => {
+export const DrilldownContextMenu = ({ dimension, onDrilldown }: DrilldownContextMenuProps) => {
   if (dimension === 'product') {
-    return <ProductDrilldownContextMenu />;
+    return <ProductDrilldownContextMenu onDrilldown={onDrilldown} />;
   }
   if (dimension === 'location') {
-    return <LocationDrilldownContextMenu />;
+    return <LocationDrilldownContextMenu onDrilldown={onDrilldown} />;
   }
   return null;
 };
 
-const ProductDrilldownContextMenu = () => {
+const ProductDrilldownContextMenu = ({
+  onDrilldown,
+}: Omit<DrilldownContextMenuProps, 'dimension'>) => {
   return (
     <ContextMenuContent>
       <ContextMenuLabel>Drilldown product dimension</ContextMenuLabel>
       <ContextMenuSeparator />
-      <ContextMenuItem>Product</ContextMenuItem>
-      <ContextMenuItem>Product Group</ContextMenuItem>
-      <ContextMenuItem>Department</ContextMenuItem>
-      <ContextMenuItem>Sub Department</ContextMenuItem>
-      <ContextMenuItem>Style</ContextMenuItem>
-      <ContextMenuItem>Season</ContextMenuItem>
-      <ContextMenuItem>Gender</ContextMenuItem>
-      <ContextMenuItem>SKU</ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'product_id' })}
+      >
+        Product
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'product_id' })}
+      >
+        Product Group
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'department_id' })}
+      >
+        Department
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'sub_department_id' })}
+      >
+        Sub Department
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'style_id' })}
+      >
+        Style
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'season_id' })}
+      >
+        Season
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'gender_id' })}
+      >
+        Gender
+      </ContextMenuItem>
+      <ContextMenuItem onClick={() => onDrilldown({ dimension: 'product', aggregation: 'sku_id' })}>
+        SKU
+      </ContextMenuItem>
     </ContextMenuContent>
   );
 };
 
-const LocationDrilldownContextMenu = () => {
+const LocationDrilldownContextMenu = ({
+  onDrilldown,
+}: Omit<DrilldownContextMenuProps, 'dimension'>) => {
   return (
     <ContextMenuContent>
       <ContextMenuLabel>Drilldown location dimension</ContextMenuLabel>
       <ContextMenuSeparator />
-      <ContextMenuItem>Location</ContextMenuItem>
-      <ContextMenuItem>Country</ContextMenuItem>
-      <ContextMenuItem>Location Type</ContextMenuItem>
-      <ContextMenuItem>Region</ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'location', aggregation: 'location_id' })}
+      >
+        Location
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'location', aggregation: 'country_id' })}
+      >
+        Country
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'location', aggregation: 'location_type_id' })}
+      >
+        Location Type
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'location', aggregation: 'region_id' })}
+      >
+        Region
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => onDrilldown({ dimension: 'location', aggregation: 'location_group' })}
+      >
+        Location Group
+      </ContextMenuItem>
     </ContextMenuContent>
   );
 };
