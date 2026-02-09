@@ -112,6 +112,9 @@ export const GenericAggregationResponseSchema = z.object({
     recommended_ia: z.coerce.number().nullable(),
     unconstrained_ia: z.coerce.number().nullable(),
     user_ia: z.coerce.number().nullable(),
+    num_sku_locations: z.coerce.number().nullable(),
+    num_assorted_sku_locations: z.coerce.number().nullable(),
+    num_recommend_assort_sku_locations: z.coerce.number().nullable(),
   }),
 });
 

@@ -35,6 +35,9 @@ skuLocationsRouter.post('/', async (req, res) => {
         recommended_ia: skuLocation.recommended_ia,
         unconstrained_ia: skuLocation.unconstrained_ia,
         user_ia: skuLocation.user_ia,
+        num_sku_locations: skuLocation.num_sku_locations,
+        num_assorted_sku_locations: skuLocation.num_assorted_sku_locations,
+        num_recommend_assort_sku_locations: skuLocation.num_recommend_assort_sku_locations,
       },
     })
   );

@@ -94,3 +94,4 @@ export const Root = React.forwardRef<
   }
   return <DndRoot ref={ref} {...props} />;
 });
+Root.displayName = 'AutoneGrid.Root';
