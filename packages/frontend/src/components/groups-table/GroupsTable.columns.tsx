@@ -7,50 +7,56 @@ import { DrilldownContextMenu } from './components/DrilldownContextMenu';
 import { useDrilldownContext } from './GroupsTable.context';
 import { GroupsTableParameters } from '@/App';
 
-type AggregationColumns = GenericAggregationResponse['aggregations'];
+type DimensionColumns = GenericAggregationResponse['dimensions'];
 
 const { columnCellGuard, accessorFnGuard } =
   createColumnLoadingGuards<GenericAggregationResponse>();
 const columnHelper = createColumnHelper<GenericAggregationResponse | DataTableLoadingObject>();
 
 /**
- * Creates an aggregation column that displays the dimension value.
+ * Creates a dimension column that displays the dimension value.
  * The column id includes the aggregation type to ensure uniqueness (e.g., 'product-product_group').
  */
-const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
+const createDimensionColumn = (dimension: DimensionColumns[number]) => {
   return columnHelper.accessor(
-    accessorFnGuard((row) => row.aggregations.find((a) => a.dimension === aggregation.dimension)),
+    accessorFnGuard((row) => row.dimensions.find((d) => d.dimension === dimension.dimension)),
     {
-      id: `${aggregation.dimension}-${aggregation.aggregation}`,
+      id: `${dimension.dimension}-${dimension.aggregation.type}`,
       size: 150,
       header: () => (
         <div className="flex items-center gap-2">
-          <span className="capitalize">{aggregation.aggregation.replace(/_/g, ' ')}</span>
+          <span className="capitalize">{dimension.aggregation.type.replace(/_/g, ' ')}</span>
         </div>
       ),
       cell: (ctx) =>
         columnCellGuard({
           ctx,
-          renderCell: function AggregationCell(ctx) {
+          renderCell: function DimensionCell(ctx) {
             const original = ctx.row.original;
-            const rowProductDim = original.aggregations.find((a) => a.dimension === 'product');
-            const rowLocationDim = original.aggregations.find((a) => a.dimension === 'location');
+            const rowProductDim = original.dimensions.find((d) => d.dimension === 'product');
+            const rowLocationDim = original.dimensions.find((d) => d.dimension === 'location');
 
             const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
 
             return (
               <>
-                <span>{ctx.getValue()?.value ?? '-'}</span>
+                <span>{ctx.getValue()?.aggregation.value ?? '-'}</span>
                 <DrilldownContextMenu
-                  dimension={aggregation.dimension}
+                  dimension={dimension.dimension}
                   onDrilldown={(arg) => {
                     if (arg.dimension === 'product') {
                       pushPartial({
                         productAggregation: arg.aggregation,
                         filter: {
-                          product: { [rowProductDim?.aggregation ?? '']: [rowProductDim?.value] },
+                          product: {
+                            [rowProductDim?.aggregation.type ?? '']: [
+                              rowProductDim?.aggregation.value,
+                            ],
+                          },
                           location: {
-                            [rowLocationDim?.aggregation ?? '']: [rowLocationDim?.value],
+                            [rowLocationDim?.aggregation.type ?? '']: [
+                              rowLocationDim?.aggregation.value,
+                            ],
                           },
                         },
                       });
@@ -58,9 +64,15 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
                       pushPartial({
                         locationAggregation: arg.aggregation,
                         filter: {
-                          product: { [rowProductDim?.aggregation ?? '']: [rowProductDim?.value] },
+                          product: {
+                            [rowProductDim?.aggregation.type ?? '']: [
+                              rowProductDim?.aggregation.value,
+                            ],
+                          },
                           location: {
-                            [rowLocationDim?.aggregation ?? '']: [rowLocationDim?.value],
+                            [rowLocationDim?.aggregation.type ?? '']: [
+                              rowLocationDim?.aggregation.value,
+                            ],
                           },
                         },
                       });
@@ -510,19 +522,19 @@ const metricColumnDisplayText: Record<string, string> = {
 };
 
 /**
- * Creates the columns for the groups table, with aggregation columns followed by metric columns.
- * Returns the column IDs for the aggregation columns to be used for left pinning.
+ * Creates the columns for the groups table, with dimension columns followed by metric columns.
+ * Returns the column IDs for the dimension columns to be used for left pinning.
  */
-export const createGroupsTableColumns = (aggregations: AggregationColumns) => {
-  const aggregationColumns = aggregations.map(createAggregationColumn);
-  const aggregationColumnIds = aggregations.map((a) => `${a.dimension}-${a.aggregation}`);
+export const createGroupsTableColumns = (dimensions: DimensionColumns) => {
+  const dimensionColumns = dimensions.map(createDimensionColumn);
+  const dimensionColumnIds = dimensions.map((d) => `${d.dimension}-${d.aggregation.type}`);
 
-  // Build display text mapping including dynamic aggregation columns
-  const aggregationColumnDisplayText = aggregations.reduce(
-    (acc, a) => {
-      const columnId = `${a.dimension}-${a.aggregation}`;
-      // Format the aggregation name nicely (e.g., 'product_group' -> 'Product Group')
-      acc[columnId] = a.aggregation
+  // Build display text mapping including dynamic dimension columns
+  const dimensionColumnDisplayText = dimensions.reduce(
+    (acc, d) => {
+      const columnId = `${d.dimension}-${d.aggregation.type}`;
+      // Format the aggregation type nicely (e.g., 'product_group' -> 'Product Group')
+      acc[columnId] = d.aggregation.type
         .split('_')
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
@@ -532,14 +544,14 @@ export const createGroupsTableColumns = (aggregations: AggregationColumns) => {
   );
 
   const columnDisplayText = {
-    ...aggregationColumnDisplayText,
+    ...dimensionColumnDisplayText,
     ...attributeColumnDisplayText,
     ...metricColumnDisplayText,
   };
 
   return {
-    columns: [...aggregationColumns, ...attributeColumns, ...metricColumns],
-    aggregationColumnIds,
+    columns: [...dimensionColumns, ...attributeColumns, ...metricColumns],
+    dimensionColumnIds,
     columnDisplayText,
   };
 };

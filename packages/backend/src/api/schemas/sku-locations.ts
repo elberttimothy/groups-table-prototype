@@ -99,17 +99,21 @@ export type ProductAggregation = z.infer<typeof ProductAggregationEnum>;
 export type LocationAggregation = z.infer<typeof LocationAggregationEnum>;
 
 export const GenericAggregationResponseSchema = z.object({
-  aggregations: z.array(
+  dimensions: z.array(
     z.discriminatedUnion('dimension', [
       z.object({
         dimension: z.literal('product'),
-        aggregation: ProductAggregationEnum,
-        value: z.string().nullable(),
+        aggregation: z.object({
+          type: ProductAggregationEnum,
+          value: z.string().nullable(),
+        }),
       }),
       z.object({
         dimension: z.literal('location'),
-        aggregation: LocationAggregationEnum,
-        value: z.string().nullable(),
+        aggregation: z.object({
+          type: LocationAggregationEnum,
+          value: z.string().nullable(),
+        }),
       }),
     ])
   ),

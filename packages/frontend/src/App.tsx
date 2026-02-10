@@ -79,16 +79,16 @@ function App() {
     filters: mergedFilters,
   });
 
-  // Build columns based on the current aggregations
-  const { columns, aggregationColumnIds, columnDisplayText } = useMemo(() => {
-    // Default aggregations when data is not yet available
-    const defaultAggregations: GenericAggregationResponse['aggregations'] = [
-      { dimension: 'product', aggregation: current.productAggregation, value: null },
-      { dimension: 'location', aggregation: current.locationAggregation, value: null },
+  // Build columns based on the current dimensions
+  const { columns, dimensionColumnIds, columnDisplayText } = useMemo(() => {
+    // Default dimensions when data is not yet available
+    const defaultDimensions: GenericAggregationResponse['dimensions'] = [
+      { dimension: 'product', aggregation: { type: current.productAggregation, value: null } },
+      { dimension: 'location', aggregation: { type: current.locationAggregation, value: null } },
     ];
 
-    const aggregations = skuLocations?.[0]?.aggregations ?? defaultAggregations;
-    return createGroupsTableColumns(aggregations);
+    const dimensions = skuLocations?.[0]?.dimensions ?? defaultDimensions;
+    return createGroupsTableColumns(dimensions);
   }, [skuLocations, current]);
 
   // Use loading guard to manage loading states
@@ -108,13 +108,13 @@ function App() {
       columns: assertNoGroupColumnDefs(columns),
       state: {
         columnPinning: {
-          left: aggregationColumnIds,
+          left: dimensionColumnIds,
         },
       },
       getRowId: getRowIdLoadingGuard((row: GenericAggregationResponse) => {
-        // Create a unique ID from the aggregation values
-        const aggregationValues = row.aggregations.map((a) => a.value ?? 'null').join('-');
-        return aggregationValues;
+        // Create a unique ID from the dimension values
+        const dimensionValues = row.dimensions.map((d) => d.aggregation.value ?? 'null').join('-');
+        return dimensionValues;
       }),
     },
     headerHeight: 40,
