@@ -33,12 +33,15 @@ import {
   useDrilldownManager,
 } from './components/groups-table/hooks/useDrilldownManager';
 import { deepMerge } from './utils';
+import { GroupsTableConfig } from './components/groups-table/GroupsTable.types';
 
 export interface GroupsTableParameters {
   productAggregation: ProductAggregation;
   locationAggregation: LocationAggregation;
   filter: SkuLocationBody['filters'];
 }
+
+type X = GroupsTableConfig<GenericAggregationResponse>;
 
 function App() {
   const { data } = useGetHealthQuery();

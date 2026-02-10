@@ -2,17 +2,17 @@ import { ColumnDef } from '@tanstack/react-table';
 import { SimplifyDeep } from 'type-fest';
 
 // expected shape of type from backend API
-type Aggregation<T extends string = string, V = unknown> = {
+export type Aggregation<T extends string = string, V = unknown> = {
   type: T;
   value: V;
 };
 
-type Dimension<D extends string = string> = {
+export type Dimension<D extends string = string> = {
   dimension: D;
   aggregation: Aggregation;
 };
 
-type GroupsTableResponse = {
+export type GroupsTableResponse = {
   dimensions: Dimension[];
   aggregated_metrics: Record<string, unknown>;
 };
@@ -57,14 +57,15 @@ type DistributeTaggedUnion<U, Tag extends keyof U> = U[Tag] extends infer Varian
   : never;
 
 // generic helpers to infer the available dimensions and aggregations from the response
-type InferAvailableDimensions<T extends GroupsTableResponse> = T['dimensions'][number]['dimension'];
+export type InferAvailableDimensions<T extends GroupsTableResponse> =
+  T['dimensions'][number]['dimension'];
 
 type GetDimension<T extends GroupsTableResponse, D extends InferAvailableDimensions<T>> = Extract<
   DistributeTaggedUnion<T['dimensions'][number], 'dimension'>,
   { dimension: D }
 >;
 
-type InferDimensionAggregations<
+export type InferDimensionAggregations<
   T extends GroupsTableResponse,
   D extends InferAvailableDimensions<T>,
 > = GetDimension<T, D>['aggregation']['type'];
@@ -75,7 +76,12 @@ type InferDimensionAggregationValue<
   A extends InferDimensionAggregations<T, D>,
 > = Extract<DistributeTaggedUnion<GetDimension<T, D>['aggregation'], 'type'>, { type: A }>['value'];
 
-type GroupsTableConfig<T extends GroupsTableResponse> = {
+/**
+ * Generic type to infer the configuration for the GroupsTable component based on the response from the backend API.
+ *
+ * This enforces that all possible dimensions and aggregations are handled by the table.
+ */
+export type GroupsTableConfig<T extends GroupsTableResponse> = {
   dimensionColumns: {
     [K in InferAvailableDimensions<T>]: {
       [A in InferDimensionAggregations<T, K>]: ColumnDef<
@@ -86,46 +92,3 @@ type GroupsTableConfig<T extends GroupsTableResponse> = {
   };
   metricColumns: ColumnDef<T['aggregated_metrics'], any>[];
 };
-
-type ExampleGroupsTableResponse = {
-  dimensions: (
-    | {
-        dimension: 'product';
-        aggregation:
-          | {
-              type: 'count' | 'product_group';
-              value: string;
-            }
-          | {
-              type: 'department_id';
-              value: number;
-            }
-          | {
-              type: 'product';
-              value: {
-                color: string;
-                name: string;
-              };
-            };
-      }
-    | {
-        dimension: 'location';
-        aggregation:
-          | {
-              type: 'count';
-              value: string;
-            }
-          | {
-              type: 'location_id' | 'country_id' | 'location_type_id';
-              value: number;
-            };
-      }
-  )[];
-  aggregated_metrics: {
-    num_departments: number;
-    total_sales: number;
-    total_inventory: number;
-  };
-};
-
-type ExampleGroupsTableConfig = GroupsTableConfig<ExampleGroupsTableResponse>;
