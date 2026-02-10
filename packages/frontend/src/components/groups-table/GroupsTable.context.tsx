@@ -1,39 +1,31 @@
 import { createContext } from 'react';
-import {
-  ProductAggregation,
-  LocationAggregation,
-  type SkuLocationBody,
-} from '@autone/backend/schemas';
 import { useContext } from 'react';
+import { useDrilldownManager } from './hooks/useDrilldownManager';
 
-export const GroupsTableFiltersContext = createContext<
-  [SkuLocationBody['filters'][], (filterStack: SkuLocationBody['filters'][]) => void] | null
->(null);
+type DrilldownManager<T> = ReturnType<typeof useDrilldownManager<T>>;
 
-export const useGroupsTableFilters = () => {
-  const context = useContext(GroupsTableFiltersContext);
-  if (!context) {
-    throw new Error('useGroupsTableFilters must be used within a GroupsTableFiltersProvider');
-  }
-  return context;
+const DrilldownContext = createContext<DrilldownManager<unknown> | null>(null);
+
+interface DrilldownContextProviderProps<T> {
+  children: React.ReactNode;
+  drilldownManager: DrilldownManager<T>;
+}
+
+export const DrilldownContextProvider = <T,>({
+  children,
+  drilldownManager,
+}: DrilldownContextProviderProps<T>) => {
+  return (
+    <DrilldownContext.Provider value={drilldownManager as DrilldownManager<unknown>}>
+      {children}
+    </DrilldownContext.Provider>
+  );
 };
 
-type GroupsTableAggregationContextValue = {
-  productAggregation: ProductAggregation[];
-  setProductAggregation: (productAggregation: ProductAggregation[]) => void;
-  locationAggregation: LocationAggregation[];
-  setLocationAggregation: (locationAggregation: LocationAggregation[]) => void;
-} | null;
-
-export const GroupsTableAggregationContext =
-  createContext<GroupsTableAggregationContextValue>(null);
-
-export const useGroupsTableAggregation = () => {
-  const context = useContext(GroupsTableAggregationContext);
+export const useDrilldownContext = <T,>() => {
+  const context = useContext(DrilldownContext);
   if (!context) {
-    throw new Error(
-      'useGroupsTableAggregation must be used within a GroupsTableAggregationProvider'
-    );
+    throw new Error('useDrilldownContext must be used within a DrilldownContextProvider');
   }
-  return context;
+  return context as DrilldownManager<T>;
 };

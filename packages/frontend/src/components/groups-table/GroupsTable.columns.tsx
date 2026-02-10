@@ -4,7 +4,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
-import { useGroupsTableAggregation, useGroupsTableFilters } from './GroupsTable.context';
+import { useDrilldownContext } from './GroupsTable.context';
+import { GroupsTableParameters } from '@/App';
 
 type AggregationColumns = GenericAggregationResponse['aggregations'];
 
@@ -32,20 +33,10 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
           ctx,
           renderCell: function AggregationCell(ctx) {
             const original = ctx.row.original;
-            const rowProductDimValue = original.aggregations.find(
-              (a) => a.dimension === 'product'
-            )?.value;
-            const rowLocationDimValue = original.aggregations.find(
-              (a) => a.dimension === 'location'
-            )?.value;
+            const rowProductDim = original.aggregations.find((a) => a.dimension === 'product');
+            const rowLocationDim = original.aggregations.find((a) => a.dimension === 'location');
 
-            const {
-              productAggregation,
-              locationAggregation,
-              setProductAggregation,
-              setLocationAggregation,
-            } = useGroupsTableAggregation();
-            const [filters, setFilters] = useGroupsTableFilters();
+            const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
 
             return (
               <>
@@ -53,23 +44,26 @@ const createAggregationColumn = (aggregation: AggregationColumns[number]) => {
                 <DrilldownContextMenu
                   dimension={aggregation.dimension}
                   onDrilldown={(arg) => {
-                    setFilters([
-                      ...filters,
-                      {
-                        product: {
-                          [productAggregation.at(-1)!]: [rowProductDimValue],
-                        },
-                        location: {
-                          [locationAggregation.at(-1)!]: [rowLocationDimValue],
-                        },
-                      },
-                    ]);
                     if (arg.dimension === 'product') {
-                      setProductAggregation([...productAggregation, arg.aggregation]);
-                      setLocationAggregation([...locationAggregation, locationAggregation.at(-1)!]);
+                      pushPartial({
+                        productAggregation: arg.aggregation,
+                        filter: {
+                          product: { [rowProductDim?.aggregation ?? '']: [rowProductDim?.value] },
+                          location: {
+                            [rowLocationDim?.aggregation ?? '']: [rowLocationDim?.value],
+                          },
+                        },
+                      });
                     } else {
-                      setLocationAggregation([...locationAggregation, arg.aggregation]);
-                      setProductAggregation([...productAggregation, productAggregation.at(-1)!]);
+                      pushPartial({
+                        locationAggregation: arg.aggregation,
+                        filter: {
+                          product: { [rowProductDim?.aggregation ?? '']: [rowProductDim?.value] },
+                          location: {
+                            [rowLocationDim?.aggregation ?? '']: [rowLocationDim?.value],
+                          },
+                        },
+                      });
                     }
                   }}
                 />

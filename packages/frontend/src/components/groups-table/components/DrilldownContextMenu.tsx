@@ -44,7 +44,7 @@ const ProductDrilldownContextMenu = ({
         Product
       </ContextMenuItem>
       <ContextMenuItem
-        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'product_id' })}
+        onClick={() => onDrilldown({ dimension: 'product', aggregation: 'product_group' })}
       >
         Product Group
       </ContextMenuItem>

@@ -26,48 +26,70 @@ import { createGroupsTableColumns } from './components/groups-table';
 import { useDataTableLoadingGuard } from './hooks/use-data-table-loading-guard';
 import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
 import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
+import { DrilldownContextProvider } from './components/groups-table/GroupsTable.context';
+import { ChevronLeftIcon } from 'lucide-react';
 import {
-  GroupsTableAggregationContext,
-  GroupsTableFiltersContext,
-} from './components/groups-table/GroupsTable.context';
+  DrilldownStack,
+  useDrilldownManager,
+} from './components/groups-table/hooks/useDrilldownManager';
 import { deepMerge } from './utils';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+
+export interface GroupsTableParameters {
+  productAggregation: ProductAggregation;
+  locationAggregation: LocationAggregation;
+  filter: SkuLocationBody['filters'];
+}
 
 function App() {
   const { data } = useGetHealthQuery();
-  const [filterStack, setFilterStack] = useState<SkuLocationBody['filters'][]>([]);
-  const [productAggregation, setProductAggregation] = useState<ProductAggregation[]>([
-    'product_group',
+  const [drilldownStack, setDrilldownStack] = useState<DrilldownStack<GroupsTableParameters>>([
+    {
+      productAggregation: 'product_group',
+      locationAggregation: 'location_group',
+      filter: {},
+    },
   ]);
-  const [locationAggregation, setLocationAggregation] = useState<LocationAggregation[]>([
-    'location_group',
-  ]);
-  const filters = useMemo(
-    () => filterStack.reduce((acc, curr) => deepMerge(acc, curr), {}),
-    [filterStack]
-  );
+
+  const drilldownManager = useDrilldownManager({
+    stackValue: drilldownStack,
+    setStackValue: setDrilldownStack,
+  });
+
+  const [current, { back, changeTopPartial }] = drilldownManager;
+
+  const mergedFilters = useMemo(() => {
+    const filters = drilldownStack
+      .map((stack) => stack.filter)
+      .reduce(
+        (acc, curr) => {
+          return deepMerge(acc, curr);
+        },
+        {} as SkuLocationBody['filters']
+      );
+    return filters;
+  }, [drilldownStack]);
 
   const {
     data: skuLocations,
     isLoading: isLoadingSkuLocations,
     isFetching: isFetchingSkuLocations,
   } = useGetSkuLocationsQuery({
-    product_aggregation: productAggregation.at(-1)!,
-    location_aggregation: locationAggregation.at(-1)!,
-    filters: filters,
+    product_aggregation: current.productAggregation,
+    location_aggregation: current.locationAggregation,
+    filters: mergedFilters,
   });
 
   // Build columns based on the current aggregations
   const { columns, aggregationColumnIds, columnDisplayText } = useMemo(() => {
     // Default aggregations when data is not yet available
     const defaultAggregations: GenericAggregationResponse['aggregations'] = [
-      { dimension: 'product', aggregation: productAggregation.at(-1)!, value: null },
-      { dimension: 'location', aggregation: locationAggregation.at(-1)!, value: null },
+      { dimension: 'product', aggregation: current.productAggregation, value: null },
+      { dimension: 'location', aggregation: current.locationAggregation, value: null },
     ];
 
     const aggregations = skuLocations?.[0]?.aggregations ?? defaultAggregations;
     return createGroupsTableColumns(aggregations);
-  }, [skuLocations, productAggregation, locationAggregation]);
+  }, [skuLocations, current]);
 
   // Use loading guard to manage loading states
   const { memoisedData, getRowIdLoadingGuard } = useDataTableLoadingGuard({
@@ -116,12 +138,9 @@ function App() {
         <h2 className="text-lg font-semibold mb-2">SKU Locations</h2>
         <div className="flex gap-2 mb-4">
           <Select
-            value={productAggregation.at(-1)!}
+            value={current.productAggregation}
             onValueChange={(value) =>
-              setProductAggregation((prev) => {
-                prev.pop();
-                return [...prev, value as ProductAggregation];
-              })
+              changeTopPartial({ productAggregation: value as ProductAggregation })
             }
           >
             <SelectTrigger aria-label="Product Aggregation" id="product-aggregation">
@@ -139,12 +158,9 @@ function App() {
             </SelectContent>
           </Select>
           <Select
-            value={locationAggregation.at(-1)!}
+            value={current.locationAggregation}
             onValueChange={(value) =>
-              setLocationAggregation((prev) => {
-                prev.pop();
-                return [...prev, value as LocationAggregation];
-              })
+              changeTopPartial({ locationAggregation: value as LocationAggregation })
             }
           >
             <SelectTrigger aria-label="Location Aggregation" id="location-aggregation">
@@ -160,67 +176,56 @@ function App() {
           </Select>
         </div>
         <div className="flex flex-row gap-6 w-fit">
-          <GroupsTableFiltersContext.Provider value={[filterStack, setFilterStack]}>
-            <GroupsTableAggregationContext.Provider
-              value={{
-                productAggregation,
-                setProductAggregation,
-                locationAggregation,
-                setLocationAggregation,
-              }}
+          <DrilldownContextProvider drilldownManager={drilldownManager}>
+            <AutoneGridPreset.Root
+              className="w-[80vw] h-[60vh] bg-white border rounded-md"
+              gridConfig={gridConfig}
+              ref={scrollElementRef}
             >
-              <AutoneGridPreset.Root
-                className="w-[80vw] h-[60vh] bg-white border rounded-md"
-                gridConfig={gridConfig}
-                ref={scrollElementRef}
-              >
-                <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
-                  {({ header, headerRect }) => (
-                    <AutoneGrid.HeaderCell
-                      columnId={header.column.id}
-                      colIndex={header.column.getIndex()}
-                      headerRect={headerRect}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </AutoneGrid.HeaderCell>
-                  )}
-                </AutoneGridPreset.Header>
-                <AutoneGridPreset.Body>
-                  {virtualRows.map((virtualRow) => (
-                    <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
-                      {({ cell, cellRect, index }) => (
-                        <ContextMenu>
-                          <ContextMenuTrigger>
-                            <AutoneGridPreset.Cell
-                              columnId={cell.column.id}
-                              colIndex={index}
-                              rowIndex={virtualRow.index}
-                              cellRect={cellRect}
-                            >
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </AutoneGridPreset.Cell>
-                          </ContextMenuTrigger>
-                        </ContextMenu>
-                      )}
-                    </AutoneGridPreset.Row>
-                  ))}
-                </AutoneGridPreset.Body>
-                <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
-              </AutoneGridPreset.Root>
-            </GroupsTableAggregationContext.Provider>
-          </GroupsTableFiltersContext.Provider>
+              <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
+                {({ header, headerRect }) => (
+                  <AutoneGrid.HeaderCell
+                    columnId={header.column.id}
+                    colIndex={header.column.getIndex()}
+                    headerRect={headerRect}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </AutoneGrid.HeaderCell>
+                )}
+              </AutoneGridPreset.Header>
+              <AutoneGridPreset.Body>
+                {virtualRows.map((virtualRow) => (
+                  <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
+                    {({ cell, cellRect, index }) => (
+                      <ContextMenu>
+                        <ContextMenuTrigger>
+                          <AutoneGridPreset.Cell
+                            columnId={cell.column.id}
+                            colIndex={index}
+                            rowIndex={virtualRow.index}
+                            cellRect={cellRect}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </AutoneGridPreset.Cell>
+                        </ContextMenuTrigger>
+                      </ContextMenu>
+                    )}
+                  </AutoneGridPreset.Row>
+                ))}
+              </AutoneGridPreset.Body>
+              <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
+            </AutoneGridPreset.Root>
+          </DrilldownContextProvider>
           <div className="flex flex-col gap-4 w-[200px]">
             <span>Filters</span>
-            <pre className="text-xs">{JSON.stringify(filters, null, 2)}</pre>
+            <pre className="text-xs">{JSON.stringify(current.filter, null, 2)}</pre>
           </div>
         </div>
         <div className="flex flex-row gap-2">
           <Button
-            disabled={productAggregation.length <= 1 && locationAggregation.length <= 1}
+            disabled={drilldownStack.length <= 1}
             onClick={() => {
-              setFilterStack((prev) => prev.slice(0, -1));
-              setProductAggregation((prev) => prev.slice(0, -1));
-              setLocationAggregation((prev) => prev.slice(0, -1));
+              back();
             }}
             aria-label="Previous Filters"
             id="previous-filters"
@@ -229,8 +234,12 @@ function App() {
             Previous
           </Button>
           <div className="flex flex-col gap-2">
-            <pre className="text-xs">{JSON.stringify(productAggregation)}</pre>
-            <pre className="text-xs">{JSON.stringify(locationAggregation)}</pre>
+            <pre className="text-xs">
+              {JSON.stringify(drilldownStack.map((stack) => stack.productAggregation))}
+            </pre>
+            <pre className="text-xs">
+              {JSON.stringify(drilldownStack.map((stack) => stack.locationAggregation))}
+            </pre>
           </div>
         </div>
       </div>

@@ -53,8 +53,6 @@ export const getAggregatedSkuLocations = async (
   const locationCol = Prisma.raw(`slj.${location_aggregation}`);
   const conditions = createConditions(filters);
 
-  console.log(conditions);
-
   const skuLocationsAggregatedRaw = await prisma.$queryRaw`
     WITH sku_locations_joined AS (
       SELECT
@@ -116,7 +114,7 @@ export const getAggregatedSkuLocations = async (
     FROM sku_locations_joined slj
     GROUP BY
       ${productCol}, ${locationCol}
-    LIMIT 1000
+    -- LIMIT 1000
 `;
   return z.array(SkuLocationAggregatedSchema).parse(skuLocationsAggregatedRaw);
 };
