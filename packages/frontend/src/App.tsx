@@ -18,7 +18,6 @@ import {
   groupsTableColumns,
   dimensionColumnIds,
   columnDisplayText,
-  GroupDimensionAggregationContextProvider,
 } from './components/groups-table';
 import { useDataTableLoadingGuard } from './hooks/use-data-table-loading-guard';
 import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
@@ -123,48 +122,46 @@ function App() {
       <div className="flex flex-col gap-4 items-center grow min-h-0">
         <h2 className="text-lg font-semibold mb-2">SKU Locations</h2>
         <div className="flex flex-row gap-6 w-fit">
-          <GroupDimensionAggregationContextProvider data={skuLocations ?? []}>
-            <DrilldownContextProvider drilldownManager={drilldownManager}>
-              <AutoneGridPreset.Root
-                className="w-[80vw] h-[60vh] bg-white border rounded-md"
-                gridConfig={gridConfig}
-                ref={scrollElementRef}
-              >
-                <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
-                  {({ header, headerRect }) => (
-                    <AutoneGrid.HeaderCell
-                      columnId={header.column.id}
-                      colIndex={header.column.getIndex()}
-                      headerRect={headerRect}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </AutoneGrid.HeaderCell>
-                  )}
-                </AutoneGridPreset.Header>
-                <AutoneGridPreset.Body>
-                  {virtualRows.map((virtualRow) => (
-                    <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
-                      {({ cell, cellRect, index }) => (
-                        <ContextMenu>
-                          <ContextMenuTrigger>
-                            <AutoneGridPreset.Cell
-                              columnId={cell.column.id}
-                              colIndex={index}
-                              rowIndex={virtualRow.index}
-                              cellRect={cellRect}
-                            >
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </AutoneGridPreset.Cell>
-                          </ContextMenuTrigger>
-                        </ContextMenu>
-                      )}
-                    </AutoneGridPreset.Row>
-                  ))}
-                </AutoneGridPreset.Body>
-                <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
-              </AutoneGridPreset.Root>
-            </DrilldownContextProvider>
-          </GroupDimensionAggregationContextProvider>
+          <DrilldownContextProvider drilldownManager={drilldownManager}>
+            <AutoneGridPreset.Root
+              className="w-[80vw] h-[60vh] bg-white border rounded-md"
+              gridConfig={gridConfig}
+              ref={scrollElementRef}
+            >
+              <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
+                {({ header, headerRect }) => (
+                  <AutoneGrid.HeaderCell
+                    columnId={header.column.id}
+                    colIndex={header.column.getIndex()}
+                    headerRect={headerRect}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </AutoneGrid.HeaderCell>
+                )}
+              </AutoneGridPreset.Header>
+              <AutoneGridPreset.Body>
+                {virtualRows.map((virtualRow) => (
+                  <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
+                    {({ cell, cellRect, index }) => (
+                      <ContextMenu>
+                        <ContextMenuTrigger>
+                          <AutoneGridPreset.Cell
+                            columnId={cell.column.id}
+                            colIndex={index}
+                            rowIndex={virtualRow.index}
+                            cellRect={cellRect}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </AutoneGridPreset.Cell>
+                        </ContextMenuTrigger>
+                      </ContextMenu>
+                    )}
+                  </AutoneGridPreset.Row>
+                ))}
+              </AutoneGridPreset.Body>
+              <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
+            </AutoneGridPreset.Root>
+          </DrilldownContextProvider>
           <div className="flex flex-col gap-4 w-[200px]">
             <span>Filters</span>
             <pre className="text-xs">{JSON.stringify(current.filter, null, 2)}</pre>

@@ -1,5 +1,5 @@
 import { LocationAggregation, ProductAggregation } from '@autone/backend/schemas';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/atoms';
 import { useDrilldownContext } from '../GroupsTable.context';
@@ -26,22 +26,17 @@ const locationAggregationOptions: { value: LocationAggregation; label: string }[
 
 interface DimensionHeaderCellProps {
   dimension: 'product' | 'location';
-  currentAggregationType: string;
+  defaultAggregation: string;
 }
 
 export const DimensionHeaderCell = ({
   dimension,
-  currentAggregationType,
+  defaultAggregation,
 }: DimensionHeaderCellProps) => {
   const [_, { changeTopPartial }] = useDrilldownContext<GroupsTableParameters>();
 
   // Local state for optimistic updates
-  const [localValue, setLocalValue] = useState(currentAggregationType);
-
-  // Sync local state when context aggregation changes
-  useEffect(() => {
-    setLocalValue(currentAggregationType);
-  }, [currentAggregationType]);
+  const [localValue, setLocalValue] = useState(defaultAggregation);
 
   const options = dimension === 'product' ? productAggregationOptions : locationAggregationOptions;
 

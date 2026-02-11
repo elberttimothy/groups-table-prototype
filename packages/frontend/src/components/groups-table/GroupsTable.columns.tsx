@@ -4,24 +4,14 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
-import { DimensionHeaderCell } from './components/DimensionHeaderCell';
+import { DimensionHeaderCell } from './components/GroupDimensionAggregationHeaderCell';
 import { useDrilldownContext } from './GroupsTable.context';
 import { GroupsTableParameters } from '@/App';
-import { createGroupDimensionAggregationContext } from './factories/create-group-dimension-aggregation-context';
+import { GroupDimensionAggregationCell } from './components/GroupDimensionAggregationCell';
 
 const { columnCellGuard, accessorFnGuard } =
   createColumnLoadingGuards<GenericAggregationResponse>();
 const columnHelper = createColumnHelper<GenericAggregationResponse | DataTableLoadingObject>();
-
-// Create the dimension aggregation context
-export const {
-  GroupDimensionAggregationContextProvider,
-  GroupDimensionAggregationCell,
-  useGroupDimensionAggregationContext,
-} = createGroupDimensionAggregationContext<GenericAggregationResponse>({
-  product: 'product_group',
-  location: 'location_group',
-});
 
 // Product dimension column
 const productDimensionColumn = columnHelper.accessor(
@@ -30,8 +20,7 @@ const productDimensionColumn = columnHelper.accessor(
     id: 'product',
     size: 180,
     header: function ProductDimensionHeader() {
-      const aggregation = useGroupDimensionAggregationContext('product');
-      return <DimensionHeaderCell dimension="product" currentAggregationType={aggregation} />;
+      return <DimensionHeaderCell dimension="product" defaultAggregation="product_group" />;
     },
     cell: (ctx) =>
       columnCellGuard({
@@ -41,35 +30,27 @@ const productDimensionColumn = columnHelper.accessor(
           const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
 
           return (
-            <GroupDimensionAggregationCell
-              row={row}
-              dimension="product"
-              renderAggregation={(_aggregation, value) => (
-                <>
-                  <span>{value ?? '-'}</span>
-                  <DrilldownContextMenu
-                    dimension="product"
-                    onDrilldown={(arg) => {
-                      if (arg.dimension === 'product') {
-                        pushPartial({
-                          productAggregation: arg.aggregation,
-                          filter: {
-                            product: {
-                              [row.dimensions.product.aggregation]: [row.dimensions.product.value],
-                            },
-                            location: {
-                              [row.dimensions.location.aggregation]: [
-                                row.dimensions.location.value,
-                              ],
-                            },
-                          },
-                        });
-                      }
-                    }}
-                  />
-                </>
-              )}
-            />
+            <>
+              <span>{aggregation.value ?? '-'}</span>
+              <DrilldownContextMenu
+                dimension="product"
+                onDrilldown={(arg) => {
+                  if (arg.dimension === 'product') {
+                    pushPartial({
+                      productAggregation: arg.aggregation,
+                      filter: {
+                        product: {
+                          [row.dimensions.product.aggregation]: [row.dimensions.product.value],
+                        },
+                        location: {
+                          [row.dimensions.location.aggregation]: [row.dimensions.location.value],
+                        },
+                      },
+                    });
+                  }
+                }}
+              />
+            </>
           );
         },
       }),
@@ -83,8 +64,7 @@ const locationDimensionColumn = columnHelper.accessor(
     id: 'location',
     size: 180,
     header: function LocationDimensionHeader() {
-      const aggregation = useGroupDimensionAggregationContext('location');
-      return <DimensionHeaderCell dimension="location" currentAggregationType={aggregation} />;
+      return <DimensionHeaderCell dimension="location" defaultAggregation={'location_group'} />;
     },
     cell: (ctx) =>
       columnCellGuard({
@@ -97,7 +77,7 @@ const locationDimensionColumn = columnHelper.accessor(
             <GroupDimensionAggregationCell
               row={row}
               dimension="location"
-              renderAggregation={(_aggregation, value) => (
+              renderAggregation={(aggregation) => (
                 <>
                   <span>{value ?? '-'}</span>
                   <DrilldownContextMenu
