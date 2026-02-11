@@ -15,22 +15,16 @@ skuLocationsRouter.post('/', async (req, res) => {
   );
   const skuLocationsAggregatedResponse = skuLocationsAggregated.map((skuLocation) =>
     GenericAggregationResponseSchema.parse({
-      dimensions: [
-        {
-          dimension: 'product',
-          aggregation: {
-            type: product_aggregation,
-            value: skuLocation.product_aggregation,
-          },
+      dimensions: {
+        product: {
+          aggregation: product_aggregation,
+          value: skuLocation.product_aggregation,
         },
-        {
-          dimension: 'location',
-          aggregation: {
-            type: location_aggregation,
-            value: skuLocation.location_aggregation,
-          },
+        location: {
+          aggregation: location_aggregation,
+          value: skuLocation.location_aggregation,
         },
-      ],
+      },
       aggregated_metrics: {
         // Attributes
         num_departments: skuLocation.num_departments,

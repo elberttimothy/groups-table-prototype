@@ -7,15 +7,7 @@ import {
 import { flexRender } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import {
-  Button,
-  ContextMenu,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './atoms';
+import { Button, ContextMenu } from './atoms';
 import {
   assertNoGroupColumnDefs,
   AutoneGrid,
@@ -33,7 +25,7 @@ import {
   useDrilldownManager,
 } from './components/groups-table/hooks/useDrilldownManager';
 import { deepMerge } from './utils';
-import { GroupsTableConfig } from './components/groups-table/GroupsTable.types';
+import { createGroupDimensionAggregationContext } from './components/groups-table/factories/create-group-dimension-aggregation-context';
 
 export interface GroupsTableParameters {
   productAggregation: ProductAggregation;
@@ -41,7 +33,11 @@ export interface GroupsTableParameters {
   filter: SkuLocationBody['filters'];
 }
 
-type X = GroupsTableConfig<GenericAggregationResponse>;
+const { GroupDimensionAggregationContextProvider, GroupDimensionAggregationCell } =
+  createGroupDimensionAggregationContext<GenericAggregationResponse>({
+    product: 'product_group',
+    location: 'location_group',
+  });
 
 function App() {
   const { data } = useGetHealthQuery();
@@ -58,7 +54,7 @@ function App() {
     setStackValue: setDrilldownStack,
   });
 
-  const [current, { back, changeTopPartial }] = drilldownManager;
+  const [current, { back }] = drilldownManager;
 
   const mergedFilters = useMemo(() => {
     const filters = drilldownStack
@@ -85,10 +81,10 @@ function App() {
   // Build columns based on the current dimensions
   const { columns, dimensionColumnIds, columnDisplayText } = useMemo(() => {
     // Default dimensions when data is not yet available
-    const defaultDimensions: GenericAggregationResponse['dimensions'] = [
-      { dimension: 'product', aggregation: { type: current.productAggregation, value: null } },
-      { dimension: 'location', aggregation: { type: current.locationAggregation, value: null } },
-    ];
+    const defaultDimensions: GenericAggregationResponse['dimensions'] = {
+      product: { aggregation: current.productAggregation, value: null },
+      location: { aggregation: current.locationAggregation, value: null },
+    };
 
     const dimensions = skuLocations?.[0]?.dimensions ?? defaultDimensions;
     return createGroupsTableColumns(dimensions);
@@ -116,8 +112,9 @@ function App() {
       },
       getRowId: getRowIdLoadingGuard((row: GenericAggregationResponse) => {
         // Create a unique ID from the dimension values
-        const dimensionValues = row.dimensions.map((d) => d.aggregation.value ?? 'null').join('-');
-        return dimensionValues;
+        const productValue = row.dimensions.product.value ?? 'null';
+        const locationValue = row.dimensions.location.value ?? 'null';
+        return `${productValue}-${locationValue}`;
       }),
     },
     headerHeight: 40,
@@ -139,45 +136,6 @@ function App() {
       </div>
       <div className="flex flex-col gap-4 items-center grow min-h-0">
         <h2 className="text-lg font-semibold mb-2">SKU Locations</h2>
-        <div className="flex gap-2 mb-4">
-          <Select
-            value={current.productAggregation}
-            onValueChange={(value) =>
-              changeTopPartial({ productAggregation: value as ProductAggregation })
-            }
-          >
-            <SelectTrigger aria-label="Product Aggregation" id="product-aggregation">
-              <SelectValue placeholder="Select Product Aggregation" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="sku_id">SKU ID</SelectItem>
-              <SelectItem value="product_id">Product ID</SelectItem>
-              <SelectItem value="department_id">Department ID</SelectItem>
-              <SelectItem value="sub_department_id">Sub Department ID</SelectItem>
-              <SelectItem value="style_id">Style ID</SelectItem>
-              <SelectItem value="season_id">Season ID</SelectItem>
-              <SelectItem value="gender_id">Gender ID</SelectItem>
-              <SelectItem value="product_group">Product Group</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={current.locationAggregation}
-            onValueChange={(value) =>
-              changeTopPartial({ locationAggregation: value as LocationAggregation })
-            }
-          >
-            <SelectTrigger aria-label="Location Aggregation" id="location-aggregation">
-              <SelectValue placeholder="Select Location Aggregation" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="location_id">Location ID</SelectItem>
-              <SelectItem value="country_id">Country ID</SelectItem>
-              <SelectItem value="location_type_id">Location Type ID</SelectItem>
-              <SelectItem value="region_id">Region ID</SelectItem>
-              <SelectItem value="location_group">Location Group</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
         <div className="flex flex-row gap-6 w-fit">
           <DrilldownContextProvider drilldownManager={drilldownManager}>
             <AutoneGridPreset.Root

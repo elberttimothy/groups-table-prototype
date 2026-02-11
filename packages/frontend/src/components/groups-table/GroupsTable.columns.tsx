@@ -4,10 +4,12 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
+import { DimensionHeaderCell } from './components/DimensionHeaderCell';
 import { useDrilldownContext } from './GroupsTable.context';
 import { GroupsTableParameters } from '@/App';
 
-type DimensionColumns = GenericAggregationResponse['dimensions'];
+type Dimensions = GenericAggregationResponse['dimensions'];
+type DimensionKey = keyof Dimensions;
 
 const { columnCellGuard, accessorFnGuard } =
   createColumnLoadingGuards<GenericAggregationResponse>();
@@ -17,46 +19,43 @@ const columnHelper = createColumnHelper<GenericAggregationResponse | DataTableLo
  * Creates a dimension column that displays the dimension value.
  * The column id includes the aggregation type to ensure uniqueness (e.g., 'product-product_group').
  */
-const createDimensionColumn = (dimension: DimensionColumns[number]) => {
+const createDimensionColumn = (dimensionKey: DimensionKey, dimension: Dimensions[DimensionKey]) => {
   return columnHelper.accessor(
-    accessorFnGuard((row) => row.dimensions.find((d) => d.dimension === dimension.dimension)),
+    accessorFnGuard((row) => row.dimensions[dimensionKey]),
     {
-      id: `${dimension.dimension}-${dimension.aggregation.type}`,
-      size: 150,
+      id: `${dimensionKey}-${dimension.aggregation}`,
+      size: 180,
       header: () => (
-        <div className="flex items-center gap-2">
-          <span className="capitalize">{dimension.aggregation.type.replace(/_/g, ' ')}</span>
-        </div>
+        <DimensionHeaderCell
+          dimension={dimensionKey}
+          currentAggregationType={dimension.aggregation}
+        />
       ),
       cell: (ctx) =>
         columnCellGuard({
           ctx,
           renderCell: function DimensionCell(ctx) {
             const original = ctx.row.original;
-            const rowProductDim = original.dimensions.find((d) => d.dimension === 'product');
-            const rowLocationDim = original.dimensions.find((d) => d.dimension === 'location');
+            const rowProductDim = original.dimensions.product;
+            const rowLocationDim = original.dimensions.location;
 
             const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
 
             return (
               <>
-                <span>{ctx.getValue()?.aggregation.value ?? '-'}</span>
+                <span>{ctx.getValue()?.value ?? '-'}</span>
                 <DrilldownContextMenu
-                  dimension={dimension.dimension}
+                  dimension={dimensionKey}
                   onDrilldown={(arg) => {
                     if (arg.dimension === 'product') {
                       pushPartial({
                         productAggregation: arg.aggregation,
                         filter: {
                           product: {
-                            [rowProductDim?.aggregation.type ?? '']: [
-                              rowProductDim?.aggregation.value,
-                            ],
+                            [rowProductDim.aggregation]: [rowProductDim.value],
                           },
                           location: {
-                            [rowLocationDim?.aggregation.type ?? '']: [
-                              rowLocationDim?.aggregation.value,
-                            ],
+                            [rowLocationDim.aggregation]: [rowLocationDim.value],
                           },
                         },
                       });
@@ -65,14 +64,10 @@ const createDimensionColumn = (dimension: DimensionColumns[number]) => {
                         locationAggregation: arg.aggregation,
                         filter: {
                           product: {
-                            [rowProductDim?.aggregation.type ?? '']: [
-                              rowProductDim?.aggregation.value,
-                            ],
+                            [rowProductDim.aggregation]: [rowProductDim.value],
                           },
                           location: {
-                            [rowLocationDim?.aggregation.type ?? '']: [
-                              rowLocationDim?.aggregation.value,
-                            ],
+                            [rowLocationDim.aggregation]: [rowLocationDim.value],
                           },
                         },
                       });
@@ -525,16 +520,18 @@ const metricColumnDisplayText: Record<string, string> = {
  * Creates the columns for the groups table, with dimension columns followed by metric columns.
  * Returns the column IDs for the dimension columns to be used for left pinning.
  */
-export const createGroupsTableColumns = (dimensions: DimensionColumns) => {
-  const dimensionColumns = dimensions.map(createDimensionColumn);
-  const dimensionColumnIds = dimensions.map((d) => `${d.dimension}-${d.aggregation.type}`);
+export const createGroupsTableColumns = (dimensions: Dimensions) => {
+  // Create dimension columns for product and location
+  const dimensionEntries = Object.entries(dimensions) as [DimensionKey, Dimensions[DimensionKey]][];
+  const dimensionColumns = dimensionEntries.map(([key, dim]) => createDimensionColumn(key, dim));
+  const dimensionColumnIds = dimensionEntries.map(([key, dim]) => `${key}-${dim.aggregation}`);
 
   // Build display text mapping including dynamic dimension columns
-  const dimensionColumnDisplayText = dimensions.reduce(
-    (acc, d) => {
-      const columnId = `${d.dimension}-${d.aggregation.type}`;
+  const dimensionColumnDisplayText = dimensionEntries.reduce(
+    (acc, [key, dim]) => {
+      const columnId = `${key}-${dim.aggregation}`;
       // Format the aggregation type nicely (e.g., 'product_group' -> 'Product Group')
-      acc[columnId] = d.aggregation.type
+      acc[columnId] = dim.aggregation
         .split('_')
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
