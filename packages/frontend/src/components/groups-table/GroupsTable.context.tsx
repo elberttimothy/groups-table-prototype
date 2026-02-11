@@ -1,31 +1,31 @@
 import { createContext } from 'react';
 import { useContext } from 'react';
-import { useDrilldownManager } from './hooks/useDrilldownManager';
+import { useStackManager } from './hooks/useStackManager';
 
-type DrilldownManager<T> = ReturnType<typeof useDrilldownManager<T>>;
+type StackManager<T> = ReturnType<typeof useStackManager<T>>;
 
-const DrilldownContext = createContext<DrilldownManager<unknown> | null>(null);
+const StackContext = createContext<StackManager<unknown> | null>(null);
 
-interface DrilldownContextProviderProps<T> {
+interface StackContextProviderProps<T> {
   children: React.ReactNode;
-  drilldownManager: DrilldownManager<T>;
+  stackManager: StackManager<T>;
 }
 
-export const DrilldownContextProvider = <T,>({
+export const StackContextProvider = <T,>({
   children,
-  drilldownManager,
-}: DrilldownContextProviderProps<T>) => {
+  stackManager,
+}: StackContextProviderProps<T>) => {
   return (
-    <DrilldownContext.Provider value={drilldownManager as DrilldownManager<unknown>}>
+    <StackContext.Provider value={stackManager as StackManager<unknown>}>
       {children}
-    </DrilldownContext.Provider>
+    </StackContext.Provider>
   );
 };
 
-export const useDrilldownContext = <T,>() => {
-  const context = useContext(DrilldownContext);
+export const useStackContext = <T,>() => {
+  const context = useContext(StackContext);
   if (!context) {
-    throw new Error('useDrilldownContext must be used within a DrilldownContextProvider');
+    throw new Error('useStackContext must be used within a StackContextProvider');
   }
-  return context as DrilldownManager<T>;
+  return context as StackManager<T>;
 };

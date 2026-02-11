@@ -1,17 +1,41 @@
-import { GenericAggregationResponse } from '@autone/backend/schemas';
+import {
+  GenericAggregationResponse,
+  ProductAggregation,
+  LocationAggregation,
+} from '@autone/backend/schemas';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
-import { DimensionHeaderCell } from './components/GroupDimensionAggregationHeaderCell';
-import { useDrilldownContext } from './GroupsTable.context';
 import { GroupsTableParameters } from '@/App';
 import { GroupDimensionAggregationCell } from './components/GroupDimensionAggregationCell';
+import { useStackContext } from './GroupsTable.context';
+import { inferCurrentAggregation } from './utilities/infer-current-aggregation';
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/atoms';
 
-const { columnCellGuard, accessorFnGuard } =
+const { columnCellGuard, columnHeaderGuard, accessorFnGuard } =
   createColumnLoadingGuards<GenericAggregationResponse>();
 const columnHelper = createColumnHelper<GenericAggregationResponse | DataTableLoadingObject>();
+
+const productAggregationOptions: { value: ProductAggregation; label: string }[] = [
+  { value: 'sku_id', label: 'SKU ID' },
+  { value: 'product_id', label: 'Product ID' },
+  { value: 'department_id', label: 'Department ID' },
+  { value: 'sub_department_id', label: 'Sub Department ID' },
+  { value: 'style_id', label: 'Style ID' },
+  { value: 'season_id', label: 'Season ID' },
+  { value: 'gender_id', label: 'Gender ID' },
+  { value: 'product_group', label: 'Product Group' },
+];
+
+const locationAggregationOptions: { value: LocationAggregation; label: string }[] = [
+  { value: 'location_id', label: 'Location ID' },
+  { value: 'country_id', label: 'Country ID' },
+  { value: 'location_type_id', label: 'Location Type ID' },
+  { value: 'region_id', label: 'Region ID' },
+  { value: 'location_group', label: 'Location Group' },
+];
 
 // Product dimension column
 const productDimensionColumn = columnHelper.accessor(
@@ -19,33 +43,93 @@ const productDimensionColumn = columnHelper.accessor(
   {
     id: 'product',
     size: 180,
-    header: function ProductDimensionHeader() {
-      return <DimensionHeaderCell dimension="product" defaultAggregation="product_group" />;
-    },
+    header: (ctx) =>
+      columnHeaderGuard({
+        ctx,
+        renderCell: function ProductDimensionHeader({ table }) {
+          const [_, { updateTop }] = useStackContext<GroupsTableParameters>();
+
+          const rows = table.getRowModel().rows.map((row) => row.original);
+          const aggregation = inferCurrentAggregation(rows, 'product');
+
+          const handleValueChange = (value: typeof aggregation) => {
+            updateTop((draft) => {
+              draft.productAggregation = value;
+            });
+          };
+
+          return (
+            <Select value={aggregation} onValueChange={handleValueChange}>
+              <SelectTrigger
+                aria-label={'Product Aggregation'}
+                id={'product-aggregation'}
+                className="shadow-none hover:bg-muted/50 focus:ring-0 capitalize"
+              >
+                <SelectValue placeholder={'Select Product Aggregation'} />
+              </SelectTrigger>
+              <SelectContent>
+                {productAggregationOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          );
+        },
+        renderLoader: function ProductDimensionHeaderLoader() {
+          const [stack] = useStackContext<GroupsTableParameters>();
+          const current = stack.at(-1);
+          if (!current) return null;
+          return (
+            <span>
+              {productAggregationOptions.find(
+                (option) => option.value === current.productAggregation
+              )?.label ?? '-'}
+            </span>
+          );
+        },
+      }),
     cell: (ctx) =>
       columnCellGuard({
         ctx,
         renderCell: function ProductDimensionCell(ctx) {
           const row = ctx.row.original;
-          const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
+          const [_, { updatePush }] = useStackContext<GroupsTableParameters>();
 
           return (
             <>
-              <span>{aggregation.value ?? '-'}</span>
+              <span>{row.dimensions.product.value ?? '-'}</span>
               <DrilldownContextMenu
                 dimension="product"
                 onDrilldown={(arg) => {
                   if (arg.dimension === 'product') {
-                    pushPartial({
-                      productAggregation: arg.aggregation,
-                      filter: {
-                        product: {
-                          [row.dimensions.product.aggregation]: [row.dimensions.product.value],
-                        },
-                        location: {
-                          [row.dimensions.location.aggregation]: [row.dimensions.location.value],
-                        },
-                      },
+                    updatePush((draft) => {
+                      draft.productAggregation = arg.aggregation;
+
+                      if (draft.filter.product) {
+                        const productFilter =
+                          draft.filter.product[row.dimensions.product.aggregation];
+                        if (productFilter) {
+                          productFilter.push(row.dimensions.product.value);
+                        } else {
+                          draft.filter.product[row.dimensions.product.aggregation] = [
+                            row.dimensions.product.value,
+                          ];
+                        }
+                      }
+
+                      if (draft.filter.location) {
+                        const locationFilter =
+                          draft.filter.location[row.dimensions.location.aggregation];
+                        if (locationFilter) {
+                          locationFilter.push(row.dimensions.location.value);
+                        } else {
+                          draft.filter.location[row.dimensions.location.aggregation] = [
+                            row.dimensions.location.value,
+                          ];
+                        }
+                      }
                     });
                   }
                 }}
@@ -63,39 +147,95 @@ const locationDimensionColumn = columnHelper.accessor(
   {
     id: 'location',
     size: 180,
-    header: function LocationDimensionHeader() {
-      return <DimensionHeaderCell dimension="location" defaultAggregation={'location_group'} />;
-    },
+    header: (ctx) =>
+      columnHeaderGuard({
+        ctx,
+        renderCell: function LocationDimensionHeader({ table }) {
+          const [_, { updateTop }] = useStackContext<GroupsTableParameters>();
+
+          const rows = table.getRowModel().rows.map((row) => row.original);
+          const aggregation = inferCurrentAggregation(rows, 'location');
+
+          const handleValueChange = (value: typeof aggregation) => {
+            updateTop((draft) => {
+              draft.locationAggregation = value;
+            });
+          };
+          return (
+            <Select value={aggregation} onValueChange={handleValueChange}>
+              <SelectTrigger
+                aria-label={'Location Aggregation'}
+                id={'location-aggregation'}
+                className="shadow-none hover:bg-muted/50 focus:ring-0 capitalize"
+              >
+                <SelectValue placeholder={'Select Location Aggregation'} />
+              </SelectTrigger>
+              <SelectContent>
+                {locationAggregationOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          );
+        },
+        renderLoader: function LocationDimensionHeaderLoader() {
+          const [stack] = useStackContext<GroupsTableParameters>();
+          const current = stack.at(-1);
+          if (!current) return null;
+          return (
+            <span>
+              {locationAggregationOptions.find(
+                (option) => option.value === current.locationAggregation
+              )?.label ?? '-'}
+            </span>
+          );
+        },
+      }),
     cell: (ctx) =>
       columnCellGuard({
         ctx,
         renderCell: function LocationDimensionCell(ctx) {
           const row = ctx.row.original;
-          const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
-
+          const [_, { updatePush }] = useStackContext<GroupsTableParameters>();
           return (
             <GroupDimensionAggregationCell
               row={row}
               dimension="location"
               renderAggregation={(aggregation) => (
                 <>
-                  <span>{value ?? '-'}</span>
+                  <span>{row.dimensions.location.value ?? '-'}</span>
                   <DrilldownContextMenu
                     dimension="location"
                     onDrilldown={(arg) => {
                       if (arg.dimension === 'location') {
-                        pushPartial({
-                          locationAggregation: arg.aggregation,
-                          filter: {
-                            product: {
-                              [row.dimensions.product.aggregation]: [row.dimensions.product.value],
-                            },
-                            location: {
-                              [row.dimensions.location.aggregation]: [
+                        updatePush((draft) => {
+                          draft.locationAggregation = arg.aggregation;
+
+                          if (draft.filter.product) {
+                            const productFilter =
+                              draft.filter.product[row.dimensions.product.aggregation];
+                            if (productFilter) {
+                              productFilter.push(row.dimensions.product.value);
+                            } else {
+                              draft.filter.product[row.dimensions.product.aggregation] = [
+                                row.dimensions.product.value,
+                              ];
+                            }
+                          }
+
+                          if (draft.filter.location) {
+                            const locationFilter =
+                              draft.filter.location[row.dimensions.location.aggregation];
+                            if (locationFilter) {
+                              locationFilter.push(row.dimensions.location.value);
+                            } else {
+                              draft.filter.location[row.dimensions.location.aggregation] = [
                                 row.dimensions.location.value,
-                              ],
-                            },
-                          },
+                              ];
+                            }
+                          }
                         });
                       }
                     }}

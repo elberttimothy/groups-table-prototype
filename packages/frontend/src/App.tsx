@@ -5,7 +5,7 @@ import {
   SkuLocationBody,
 } from '@autone/backend/schemas';
 import { flexRender } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { Button, ContextMenu } from './atoms';
 import {
@@ -22,48 +22,36 @@ import {
 import { useDataTableLoadingGuard } from './hooks/use-data-table-loading-guard';
 import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
 import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
-import { DrilldownContextProvider } from './components/groups-table/GroupsTable.context';
 import { ChevronLeftIcon } from 'lucide-react';
-import {
-  DrilldownStack,
-  useDrilldownManager,
-} from './components/groups-table/hooks/useDrilldownManager';
-import { deepMerge } from './utils';
+import { useStackManager } from './components/groups-table/hooks/useStackManager';
+import { StackContextProvider } from './components/groups-table/GroupsTable.context';
 
 export interface GroupsTableParameters {
   productAggregation: ProductAggregation;
   locationAggregation: LocationAggregation;
-  filter: SkuLocationBody['filters'];
+  filter: NonNullable<Required<SkuLocationBody['filters']>>;
 }
 
 function App() {
   const { data } = useGetHealthQuery();
-  const [drilldownStack, setDrilldownStack] = useState<DrilldownStack<GroupsTableParameters>>([
+  const [drilldownStack, setDrilldownStack] = useState<GroupsTableParameters[]>([
     {
       productAggregation: 'product_group',
       locationAggregation: 'location_group',
-      filter: {},
+      filter: {
+        product: {},
+        location: {},
+      },
     },
   ]);
 
-  const drilldownManager = useDrilldownManager({
-    stackValue: drilldownStack,
-    setStackValue: setDrilldownStack,
+  const stackManager = useStackManager({
+    stack: drilldownStack,
+    onStackChange: setDrilldownStack,
   });
 
-  const [current, { back }] = drilldownManager;
-
-  const mergedFilters = useMemo(() => {
-    const filters = drilldownStack
-      .map((stack) => stack.filter)
-      .reduce(
-        (acc, curr) => {
-          return deepMerge(acc, curr);
-        },
-        {} as SkuLocationBody['filters']
-      );
-    return filters;
-  }, [drilldownStack]);
+  const [stack, { pop }] = stackManager;
+  const current = stack.at(-1)!;
 
   const {
     data: skuLocations,
@@ -72,7 +60,7 @@ function App() {
   } = useGetSkuLocationsQuery({
     product_aggregation: current.productAggregation,
     location_aggregation: current.locationAggregation,
-    filters: mergedFilters,
+    filters: current.filter,
   });
 
   // Use loading guard to manage loading states
@@ -102,7 +90,7 @@ function App() {
         return `${productValue}-${locationValue}`;
       }),
     },
-    headerHeight: 40,
+    headerHeight: 64,
     rowHeight: 52,
     overscan: {
       row: 5,
@@ -122,7 +110,7 @@ function App() {
       <div className="flex flex-col gap-4 items-center grow min-h-0">
         <h2 className="text-lg font-semibold mb-2">SKU Locations</h2>
         <div className="flex flex-row gap-6 w-fit">
-          <DrilldownContextProvider drilldownManager={drilldownManager}>
+          <StackContextProvider stackManager={stackManager}>
             <AutoneGridPreset.Root
               className="w-[80vw] h-[60vh] bg-white border rounded-md"
               gridConfig={gridConfig}
@@ -161,7 +149,7 @@ function App() {
               </AutoneGridPreset.Body>
               <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
             </AutoneGridPreset.Root>
-          </DrilldownContextProvider>
+          </StackContextProvider>
           <div className="flex flex-col gap-4 w-[200px]">
             <span>Filters</span>
             <pre className="text-xs">{JSON.stringify(current.filter, null, 2)}</pre>
@@ -171,7 +159,7 @@ function App() {
           <Button
             disabled={drilldownStack.length <= 1}
             onClick={() => {
-              back();
+              pop();
             }}
             aria-label="Previous Filters"
             id="previous-filters"

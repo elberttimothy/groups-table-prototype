@@ -2,7 +2,7 @@ import { LocationAggregation, ProductAggregation } from '@autone/backend/schemas
 import { useState } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/atoms';
-import { useDrilldownContext } from '../GroupsTable.context';
+import { useStackContext } from '../GroupsTable.context';
 import { GroupsTableParameters } from '@/App';
 
 const productAggregationOptions: { value: ProductAggregation; label: string }[] = [
@@ -33,7 +33,7 @@ export const DimensionHeaderCell = ({
   dimension,
   defaultAggregation,
 }: DimensionHeaderCellProps) => {
-  const [_, { changeTopPartial }] = useDrilldownContext<GroupsTableParameters>();
+  const [_, { updateTop }] = useStackContext<GroupsTableParameters>();
 
   // Local state for optimistic updates
   const [localValue, setLocalValue] = useState(defaultAggregation);
@@ -47,9 +47,13 @@ export const DimensionHeaderCell = ({
     // Then update the context
     setTimeout(() => {
       if (dimension === 'product') {
-        changeTopPartial({ productAggregation: value as ProductAggregation });
+        updateTop((draft) => {
+          draft.productAggregation = value as ProductAggregation;
+        });
       } else {
-        changeTopPartial({ locationAggregation: value as LocationAggregation });
+        updateTop((draft) => {
+          draft.locationAggregation = value as LocationAggregation;
+        });
       }
     });
   };
@@ -59,7 +63,7 @@ export const DimensionHeaderCell = ({
       <SelectTrigger
         aria-label={`${dimension} Aggregation`}
         id={`${dimension}-aggregation`}
-        className="h-7 border-none shadow-none bg-transparent hover:bg-muted/50 focus:ring-0 capitalize"
+        className="shadow-none hover:bg-muted/50 focus:ring-0 capitalize"
       >
         <SelectValue placeholder={`Select ${dimension} Aggregation`} />
       </SelectTrigger>

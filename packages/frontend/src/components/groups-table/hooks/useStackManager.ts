@@ -33,6 +33,7 @@ export const useStackManager = <T>({ stack, onStackChange }: StackManagerProps<T
       const stackTop = stack.at(-1);
       if (!stackTop) return;
       const newStackTop = produce(stackTop, recipe);
+      console.log('updatePush', newStackTop);
       onStackChange([...stack, newStackTop]);
     },
     [stack, onStackChange]
