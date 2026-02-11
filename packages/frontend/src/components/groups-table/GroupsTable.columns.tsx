@@ -7,80 +7,130 @@ import { DrilldownContextMenu } from './components/DrilldownContextMenu';
 import { DimensionHeaderCell } from './components/DimensionHeaderCell';
 import { useDrilldownContext } from './GroupsTable.context';
 import { GroupsTableParameters } from '@/App';
-
-type Dimensions = GenericAggregationResponse['dimensions'];
-type DimensionKey = keyof Dimensions;
+import { createGroupDimensionAggregationContext } from './factories/create-group-dimension-aggregation-context';
 
 const { columnCellGuard, accessorFnGuard } =
   createColumnLoadingGuards<GenericAggregationResponse>();
 const columnHelper = createColumnHelper<GenericAggregationResponse | DataTableLoadingObject>();
 
-/**
- * Creates a dimension column that displays the dimension value.
- * The column id includes the aggregation type to ensure uniqueness (e.g., 'product-product_group').
- */
-const createDimensionColumn = (dimensionKey: DimensionKey, dimension: Dimensions[DimensionKey]) => {
-  return columnHelper.accessor(
-    accessorFnGuard((row) => row.dimensions[dimensionKey]),
-    {
-      id: `${dimensionKey}-${dimension.aggregation}`,
-      size: 180,
-      header: () => (
-        <DimensionHeaderCell
-          dimension={dimensionKey}
-          currentAggregationType={dimension.aggregation}
-        />
-      ),
-      cell: (ctx) =>
-        columnCellGuard({
-          ctx,
-          renderCell: function DimensionCell(ctx) {
-            const original = ctx.row.original;
-            const rowProductDim = original.dimensions.product;
-            const rowLocationDim = original.dimensions.location;
+// Create the dimension aggregation context
+export const {
+  GroupDimensionAggregationContextProvider,
+  GroupDimensionAggregationCell,
+  useGroupDimensionAggregationContext,
+} = createGroupDimensionAggregationContext<GenericAggregationResponse>({
+  product: 'product_group',
+  location: 'location_group',
+});
 
-            const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
+// Product dimension column
+const productDimensionColumn = columnHelper.accessor(
+  accessorFnGuard((row) => row.dimensions.product),
+  {
+    id: 'product',
+    size: 180,
+    header: function ProductDimensionHeader() {
+      const aggregation = useGroupDimensionAggregationContext('product');
+      return <DimensionHeaderCell dimension="product" currentAggregationType={aggregation} />;
+    },
+    cell: (ctx) =>
+      columnCellGuard({
+        ctx,
+        renderCell: function ProductDimensionCell(ctx) {
+          const row = ctx.row.original;
+          const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
 
-            return (
-              <>
-                <span>{ctx.getValue()?.value ?? '-'}</span>
-                <DrilldownContextMenu
-                  dimension={dimensionKey}
-                  onDrilldown={(arg) => {
-                    if (arg.dimension === 'product') {
-                      pushPartial({
-                        productAggregation: arg.aggregation,
-                        filter: {
-                          product: {
-                            [rowProductDim.aggregation]: [rowProductDim.value],
+          return (
+            <GroupDimensionAggregationCell
+              row={row}
+              dimension="product"
+              renderAggregation={(_aggregation, value) => (
+                <>
+                  <span>{value ?? '-'}</span>
+                  <DrilldownContextMenu
+                    dimension="product"
+                    onDrilldown={(arg) => {
+                      if (arg.dimension === 'product') {
+                        pushPartial({
+                          productAggregation: arg.aggregation,
+                          filter: {
+                            product: {
+                              [row.dimensions.product.aggregation]: [row.dimensions.product.value],
+                            },
+                            location: {
+                              [row.dimensions.location.aggregation]: [
+                                row.dimensions.location.value,
+                              ],
+                            },
                           },
-                          location: {
-                            [rowLocationDim.aggregation]: [rowLocationDim.value],
+                        });
+                      }
+                    }}
+                  />
+                </>
+              )}
+            />
+          );
+        },
+      }),
+  }
+);
+
+// Location dimension column
+const locationDimensionColumn = columnHelper.accessor(
+  accessorFnGuard((row) => row.dimensions.location),
+  {
+    id: 'location',
+    size: 180,
+    header: function LocationDimensionHeader() {
+      const aggregation = useGroupDimensionAggregationContext('location');
+      return <DimensionHeaderCell dimension="location" currentAggregationType={aggregation} />;
+    },
+    cell: (ctx) =>
+      columnCellGuard({
+        ctx,
+        renderCell: function LocationDimensionCell(ctx) {
+          const row = ctx.row.original;
+          const [_, { pushPartial }] = useDrilldownContext<GroupsTableParameters>();
+
+          return (
+            <GroupDimensionAggregationCell
+              row={row}
+              dimension="location"
+              renderAggregation={(_aggregation, value) => (
+                <>
+                  <span>{value ?? '-'}</span>
+                  <DrilldownContextMenu
+                    dimension="location"
+                    onDrilldown={(arg) => {
+                      if (arg.dimension === 'location') {
+                        pushPartial({
+                          locationAggregation: arg.aggregation,
+                          filter: {
+                            product: {
+                              [row.dimensions.product.aggregation]: [row.dimensions.product.value],
+                            },
+                            location: {
+                              [row.dimensions.location.aggregation]: [
+                                row.dimensions.location.value,
+                              ],
+                            },
                           },
-                        },
-                      });
-                    } else {
-                      pushPartial({
-                        locationAggregation: arg.aggregation,
-                        filter: {
-                          product: {
-                            [rowProductDim.aggregation]: [rowProductDim.value],
-                          },
-                          location: {
-                            [rowLocationDim.aggregation]: [rowLocationDim.value],
-                          },
-                        },
-                      });
-                    }
-                  }}
-                />
-              </>
-            );
-          },
-        }),
-    }
-  );
-};
+                        });
+                      }
+                    }}
+                  />
+                </>
+              )}
+            />
+          );
+        },
+      }),
+  }
+);
+
+const dimensionColumns = [productDimensionColumn, locationDimensionColumn];
+const dimensionColumnIds = ['product', 'location'];
 
 const attributeColumns = [
   columnHelper.accessor(
@@ -517,38 +567,28 @@ const metricColumnDisplayText: Record<string, string> = {
 };
 
 /**
- * Creates the columns for the groups table, with dimension columns followed by metric columns.
- * Returns the column IDs for the dimension columns to be used for left pinning.
+ * Static column display text mapping for dimension columns.
  */
-export const createGroupsTableColumns = (dimensions: Dimensions) => {
-  // Create dimension columns for product and location
-  const dimensionEntries = Object.entries(dimensions) as [DimensionKey, Dimensions[DimensionKey]][];
-  const dimensionColumns = dimensionEntries.map(([key, dim]) => createDimensionColumn(key, dim));
-  const dimensionColumnIds = dimensionEntries.map(([key, dim]) => `${key}-${dim.aggregation}`);
-
-  // Build display text mapping including dynamic dimension columns
-  const dimensionColumnDisplayText = dimensionEntries.reduce(
-    (acc, [key, dim]) => {
-      const columnId = `${key}-${dim.aggregation}`;
-      // Format the aggregation type nicely (e.g., 'product_group' -> 'Product Group')
-      acc[columnId] = dim.aggregation
-        .split('_')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-      return acc;
-    },
-    {} as Record<string, string>
-  );
-
-  const columnDisplayText = {
-    ...dimensionColumnDisplayText,
-    ...attributeColumnDisplayText,
-    ...metricColumnDisplayText,
-  };
-
-  return {
-    columns: [...dimensionColumns, ...attributeColumns, ...metricColumns],
-    dimensionColumnIds,
-    columnDisplayText,
-  };
+const dimensionColumnDisplayText: Record<string, string> = {
+  product: 'Product',
+  location: 'Location',
 };
+
+/**
+ * Combined column display text for all columns.
+ */
+export const columnDisplayText = {
+  ...dimensionColumnDisplayText,
+  ...attributeColumnDisplayText,
+  ...metricColumnDisplayText,
+};
+
+/**
+ * All columns for the groups table.
+ */
+export const groupsTableColumns = [...dimensionColumns, ...attributeColumns, ...metricColumns];
+
+/**
+ * Column IDs for the dimension columns (used for left pinning).
+ */
+export { dimensionColumnIds };

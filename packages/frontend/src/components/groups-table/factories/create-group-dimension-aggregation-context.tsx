@@ -1,8 +1,6 @@
 import { createContext, PropsWithChildren, ReactNode, useContext, useMemo } from 'react';
 import { GroupsTableResponse } from '../GroupsTable.types';
 
-type DimensionAggregationMap = Record<string, string>;
-
 type InferGroupDimensionAggregations<R extends GroupsTableResponse> = {
   [K in keyof R['dimensions']]: R['dimensions'][K]['aggregation'];
 };
@@ -14,13 +12,22 @@ export interface GroupDimensionAggregationContextProviderProps<
 }
 
 export interface GroupDimensionAggregationCellProps<
-  DAMap extends DimensionAggregationMap,
-  Dimension extends keyof DAMap,
+  R extends GroupsTableResponse,
+  Dimension extends keyof R['dimensions'],
 > {
+  row: R;
   dimension: Dimension;
-  renderAggregation: (aggregation: DAMap[Dimension]) => ReactNode;
+  renderAggregation: (
+    aggregation: R['dimensions'][Dimension]['aggregation'],
+    value: R['dimensions'][Dimension]['value']
+  ) => ReactNode;
 }
 
+/**
+ * Creates a context for a group table's dimension aggregations.
+ *
+ * This context is scoped for a single group table and strongly typed for its expected dimensions and aggregations.
+ */
 export const createGroupDimensionAggregationContext = <R extends GroupsTableResponse>(
   defaultAggregations: InferGroupDimensionAggregations<R>
 ) => {
@@ -48,16 +55,21 @@ export const createGroupDimensionAggregationContext = <R extends GroupsTableResp
     return context[dimension];
   };
 
+  /**
+   * A cell component that renders the aggregation value for a given dimension.
+   */
   const GroupDimensionAggregationCell = <Dimension extends string>({
+    row,
     dimension,
     renderAggregation,
-  }: GroupDimensionAggregationCellProps<DimensionAggregationMap, Dimension>) => {
+  }: GroupDimensionAggregationCellProps<R, Dimension>) => {
     const aggregation = useGroupDimensionAggregationContext<Dimension>(dimension);
-    return renderAggregation(aggregation);
+    const aggregationValue = row.dimensions[dimension].value;
+    return renderAggregation(aggregation, aggregationValue);
   };
 
   /**
-   * Infers the current aggregation value for each dimension of your data.
+   * Given your current data, this context will infer the current aggregation value for each dimension.
    */
   const GroupDimensionAggregationContextProvider = ({
     children,

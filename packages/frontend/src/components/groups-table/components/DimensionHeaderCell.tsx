@@ -38,6 +38,11 @@ export const DimensionHeaderCell = ({
   // Local state for optimistic updates
   const [localValue, setLocalValue] = useState(currentAggregationType);
 
+  // Sync local state when context aggregation changes
+  useEffect(() => {
+    setLocalValue(currentAggregationType);
+  }, [currentAggregationType]);
+
   const options = dimension === 'product' ? productAggregationOptions : locationAggregationOptions;
 
   const handleValueChange = (value: string) => {
