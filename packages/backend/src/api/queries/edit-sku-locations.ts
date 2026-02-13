@@ -11,6 +11,9 @@ const SkuLocationSchema = z.object({
 
 type SkuLocation = z.infer<typeof SkuLocationSchema>;
 
+/**
+ * Get all SKU-Locations under the current drilldown and edited aggregation.
+ */
 const getSkuLocations = async (
   product_aggregation: ProductDimension,
   location_aggregation: LocationDimension,
@@ -52,6 +55,19 @@ const getSkuLocations = async (
 
 type IADistribution = (SkuLocation & { user_ia: number })[];
 
+/**
+ * Create the IA distribution for the SKU-Locations.
+ *
+ * This is a simple distribution algorithm that ensures the total IA is equal to the initial allocation set in bulk.
+ *
+ * We handle 2 cases:
+ * 1. The total available initial allocation is less than the number of SKU-Locations.
+ * 2. The total available initial allocation is greater than the number of SKU-Locations.
+ *
+ * In the first case, we allocate 1 to the first N SKU-Locations, and 0 to the remaining SKU-Locations we cannot fulfill.
+ *
+ * In the second case, we distribute the initial allocation evenly across the SKU-Locations, anything remaining is allocated to the last SKU-Location.
+ */
 const createIADistribution = (
   skuLocations: SkuLocation[],
   bulkInitialAllocation: number
@@ -79,6 +95,9 @@ const createIADistribution = (
   });
 };
 
+/**
+ * Given the IA distribution we calculated, generate the SQL to update the IA metrics for each SKU-Location.
+ */
 const updateSkuLocationMetrics = async (iaDistribution: IADistribution) => {
   const values = iaDistribution.map(
     ({ sku_id, location_id, user_ia }) => `('${sku_id}', '${location_id}', ${user_ia})`
@@ -97,6 +116,9 @@ const updateSkuLocationMetrics = async (iaDistribution: IADistribution) => {
   return result;
 };
 
+/**
+ * Edit the initial allocation for a SKU-Location.
+ */
 export const editSkuLocationInitialAllocation = async (
   product_aggregation: ProductDimension,
   location_aggregation: LocationDimension,
