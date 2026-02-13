@@ -1,5 +1,5 @@
 import {
-  GenericAggregationResponse,
+  SkuLocationResponse,
   ProductAggregation,
   LocationAggregation,
 } from '@autone/backend/schemas';
@@ -9,14 +9,13 @@ import { ColumnDragHandle } from '@/components/autone-grid';
 import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils';
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
 import { GroupsTableParameters } from '@/App';
-import { GroupDimensionAggregationCell } from './components/GroupDimensionAggregationCell';
-import { useStackContext } from './GroupsTable.context';
 import { inferCurrentAggregation } from './utilities/infer-current-aggregation';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/atoms';
+import { useGroupsTableContext } from './GroupsTable.context';
 
 const { columnCellGuard, columnHeaderGuard, accessorFnGuard } =
-  createColumnLoadingGuards<GenericAggregationResponse>();
-const columnHelper = createColumnHelper<GenericAggregationResponse | DataTableLoadingObject>();
+  createColumnLoadingGuards<SkuLocationResponse>();
+const columnHelper = createColumnHelper<SkuLocationResponse | DataTableLoadingObject>();
 
 const productAggregationOptions: { value: ProductAggregation; label: string }[] = [
   { value: 'sku_id', label: 'SKU ID' },
@@ -47,15 +46,14 @@ const productDimensionColumn = columnHelper.accessor(
       columnHeaderGuard({
         ctx,
         renderCell: function ProductDimensionHeader({ table }) {
-          const [_, { updateTop }] = useStackContext<GroupsTableParameters>();
+          const { changeCurrentDimensionAggregation } =
+            useGroupsTableContext<GroupsTableParameters>();
 
           const rows = table.getRowModel().rows.map((row) => row.original);
           const aggregation = inferCurrentAggregation(rows, 'product');
 
           const handleValueChange = (value: typeof aggregation) => {
-            updateTop((draft) => {
-              draft.productAggregation = value;
-            });
+            changeCurrentDimensionAggregation('product', value);
           };
 
           return (
@@ -78,13 +76,11 @@ const productDimensionColumn = columnHelper.accessor(
           );
         },
         renderLoader: function ProductDimensionHeaderLoader() {
-          const [stack] = useStackContext<GroupsTableParameters>();
-          const current = stack.at(-1);
-          if (!current) return null;
+          const { stackTop } = useGroupsTableContext<GroupsTableParameters>();
           return (
             <span>
               {productAggregationOptions.find(
-                (option) => option.value === current.productAggregation
+                (option) => option.value === stackTop.dimension_aggregations.product
               )?.label ?? '-'}
             </span>
           );
@@ -95,41 +91,28 @@ const productDimensionColumn = columnHelper.accessor(
         ctx,
         renderCell: function ProductDimensionCell(ctx) {
           const row = ctx.row.original;
-          const [_, { updatePush }] = useStackContext<GroupsTableParameters>();
+          const { dimensions } = row;
+          const { drilldownTo } = useGroupsTableContext<GroupsTableParameters>();
 
           return (
             <>
-              <span>{row.dimensions.product.value ?? '-'}</span>
+              <div>
+                <span className="text-xs text-muted-foreground">
+                  {row.dimensions.product.aggregation}
+                </span>
+                <p>{row.dimensions.product.value ?? '-'}</p>
+              </div>
               <DrilldownContextMenu
                 dimension="product"
                 onDrilldown={(arg) => {
                   if (arg.dimension === 'product') {
-                    updatePush((draft) => {
-                      draft.productAggregation = arg.aggregation;
-
-                      if (draft.filter.product) {
-                        const productFilter =
-                          draft.filter.product[row.dimensions.product.aggregation];
-                        if (productFilter) {
-                          productFilter.push(row.dimensions.product.value);
-                        } else {
-                          draft.filter.product[row.dimensions.product.aggregation] = [
-                            row.dimensions.product.value,
-                          ];
-                        }
-                      }
-
-                      if (draft.filter.location) {
-                        const locationFilter =
-                          draft.filter.location[row.dimensions.location.aggregation];
-                        if (locationFilter) {
-                          locationFilter.push(row.dimensions.location.value);
-                        } else {
-                          draft.filter.location[row.dimensions.location.aggregation] = [
-                            row.dimensions.location.value,
-                          ];
-                        }
-                      }
+                    drilldownTo('product', arg.aggregation, {
+                      product: {
+                        [dimensions.product.aggregation]: [row.dimensions.product.value],
+                      },
+                      location: {
+                        [dimensions.location.aggregation]: [row.dimensions.location.value],
+                      },
                     });
                   }
                 }}
@@ -151,16 +134,16 @@ const locationDimensionColumn = columnHelper.accessor(
       columnHeaderGuard({
         ctx,
         renderCell: function LocationDimensionHeader({ table }) {
-          const [_, { updateTop }] = useStackContext<GroupsTableParameters>();
+          const { changeCurrentDimensionAggregation } =
+            useGroupsTableContext<GroupsTableParameters>();
 
           const rows = table.getRowModel().rows.map((row) => row.original);
           const aggregation = inferCurrentAggregation(rows, 'location');
 
           const handleValueChange = (value: typeof aggregation) => {
-            updateTop((draft) => {
-              draft.locationAggregation = value;
-            });
+            changeCurrentDimensionAggregation('location', value);
           };
+
           return (
             <Select value={aggregation} onValueChange={handleValueChange}>
               <SelectTrigger
@@ -181,13 +164,11 @@ const locationDimensionColumn = columnHelper.accessor(
           );
         },
         renderLoader: function LocationDimensionHeaderLoader() {
-          const [stack] = useStackContext<GroupsTableParameters>();
-          const current = stack.at(-1);
-          if (!current) return null;
+          const { stackTop } = useGroupsTableContext<GroupsTableParameters>();
           return (
             <span>
               {locationAggregationOptions.find(
-                (option) => option.value === current.locationAggregation
+                (option) => option.value === stackTop.dimension_aggregations.location
               )?.label ?? '-'}
             </span>
           );
@@ -198,51 +179,32 @@ const locationDimensionColumn = columnHelper.accessor(
         ctx,
         renderCell: function LocationDimensionCell(ctx) {
           const row = ctx.row.original;
-          const [_, { updatePush }] = useStackContext<GroupsTableParameters>();
+          const { drilldownTo } = useGroupsTableContext<GroupsTableParameters>();
+          const { dimensions } = row;
           return (
-            <GroupDimensionAggregationCell
-              row={row}
-              dimension="location"
-              renderAggregation={(aggregation) => (
-                <>
-                  <span>{row.dimensions.location.value ?? '-'}</span>
-                  <DrilldownContextMenu
-                    dimension="location"
-                    onDrilldown={(arg) => {
-                      if (arg.dimension === 'location') {
-                        updatePush((draft) => {
-                          draft.locationAggregation = arg.aggregation;
-
-                          if (draft.filter.product) {
-                            const productFilter =
-                              draft.filter.product[row.dimensions.product.aggregation];
-                            if (productFilter) {
-                              productFilter.push(row.dimensions.product.value);
-                            } else {
-                              draft.filter.product[row.dimensions.product.aggregation] = [
-                                row.dimensions.product.value,
-                              ];
-                            }
-                          }
-
-                          if (draft.filter.location) {
-                            const locationFilter =
-                              draft.filter.location[row.dimensions.location.aggregation];
-                            if (locationFilter) {
-                              locationFilter.push(row.dimensions.location.value);
-                            } else {
-                              draft.filter.location[row.dimensions.location.aggregation] = [
-                                row.dimensions.location.value,
-                              ];
-                            }
-                          }
-                        });
-                      }
-                    }}
-                  />
-                </>
-              )}
-            />
+            <>
+              <div>
+                <span className="text-xs text-muted-foreground">
+                  {dimensions.location.aggregation}
+                </span>
+                <p>{dimensions.location.value ?? '-'}</p>
+              </div>
+              <DrilldownContextMenu
+                dimension="location"
+                onDrilldown={(arg) => {
+                  if (arg.dimension === 'location') {
+                    drilldownTo('location', arg.aggregation, {
+                      product: {
+                        [dimensions.product.aggregation]: [row.dimensions.product.value],
+                      },
+                      location: {
+                        [dimensions.location.aggregation]: [row.dimensions.location.value],
+                      },
+                    });
+                  }
+                }}
+              />
+            </>
           );
         },
       }),

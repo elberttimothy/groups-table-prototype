@@ -1,31 +1,34 @@
-import { createContext } from 'react';
-import { useContext } from 'react';
-import { useStackManager } from './hooks/useStackManager';
+import { createContext, useContext } from 'react';
+import { GroupsTableDrilldownState, useDrilldownManager } from './hooks/useDrilldownManager';
 
-type StackManager<T> = ReturnType<typeof useStackManager<T>>;
+type DrilldownManager<State extends GroupsTableDrilldownState> = ReturnType<
+  typeof useDrilldownManager<State>
+>;
 
-const StackContext = createContext<StackManager<unknown> | null>(null);
+const GroupsTableContext = createContext<DrilldownManager<GroupsTableDrilldownState> | null>(null);
 
-interface StackContextProviderProps<T> {
+interface GroupsTableContextProviderProps<State extends GroupsTableDrilldownState> {
   children: React.ReactNode;
-  stackManager: StackManager<T>;
+  drilldownManager: DrilldownManager<State>;
 }
 
-export const StackContextProvider = <T,>({
+export const GroupsTableContextProvider = <State extends GroupsTableDrilldownState>({
   children,
-  stackManager,
-}: StackContextProviderProps<T>) => {
+  drilldownManager,
+}: GroupsTableContextProviderProps<State>) => {
   return (
-    <StackContext.Provider value={stackManager as StackManager<unknown>}>
+    <GroupsTableContext.Provider
+      value={drilldownManager as unknown as DrilldownManager<GroupsTableDrilldownState>}
+    >
       {children}
-    </StackContext.Provider>
+    </GroupsTableContext.Provider>
   );
 };
 
-export const useStackContext = <T,>() => {
-  const context = useContext(StackContext);
+export const useGroupsTableContext = <State extends GroupsTableDrilldownState>() => {
+  const context = useContext(GroupsTableContext);
   if (!context) {
-    throw new Error('useStackContext must be used within a StackContextProvider');
+    throw new Error('useGroupsTableContext must be used within a GroupsTableContextProvider');
   }
-  return context as StackManager<T>;
+  return context as unknown as DrilldownManager<State>;
 };

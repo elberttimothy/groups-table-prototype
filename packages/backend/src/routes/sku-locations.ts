@@ -1,27 +1,28 @@
 import { zodiosRouter } from '@zodios/express';
 import { skuLocationsApi } from '../api/contract.js';
+import { editSkuLocationInitialAllocation } from '../api/queries/edit-sku-locations.js';
 import { getAggregatedSkuLocations } from '../api/queries/index.js';
-import { GenericAggregationResponseSchema } from '../api/schemas/sku-locations.js';
+import { SkuLocationResponseSchema } from '../api/schemas/sku-locations.js';
 
 export const skuLocationsRouter = zodiosRouter(skuLocationsApi);
 
 skuLocationsRouter.post('/', async (req, res) => {
-  const { product_aggregation, location_aggregation, filters } = req.body;
+  const { dimension_aggregations, filters } = req.body;
 
   const skuLocationsAggregated = await getAggregatedSkuLocations(
-    product_aggregation,
-    location_aggregation,
+    dimension_aggregations.product,
+    dimension_aggregations.location,
     filters
   );
   const skuLocationsAggregatedResponse = skuLocationsAggregated.map((skuLocation) =>
-    GenericAggregationResponseSchema.parse({
+    SkuLocationResponseSchema.parse({
       dimensions: {
         product: {
-          aggregation: product_aggregation,
+          aggregation: dimension_aggregations.product,
           value: skuLocation.product_aggregation,
         },
         location: {
-          aggregation: location_aggregation,
+          aggregation: dimension_aggregations.location,
           value: skuLocation.location_aggregation,
         },
       },
@@ -52,4 +53,15 @@ skuLocationsRouter.post('/', async (req, res) => {
   );
 
   res.json(skuLocationsAggregatedResponse);
+});
+
+skuLocationsRouter.patch('/initial-allocation', async (req, res) => {
+  const { dimension_aggregations, payload } = req.body;
+
+  const updatedCount = await editSkuLocationInitialAllocation(
+    dimension_aggregations.product,
+    dimension_aggregations.location,
+    payload.initial_allocation
+  );
+  res.json({ updated_count: updatedCount });
 });

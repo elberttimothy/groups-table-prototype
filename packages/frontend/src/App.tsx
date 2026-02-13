@@ -1,5 +1,5 @@
 import {
-  GenericAggregationResponse,
+  SkuLocationResponse,
   LocationAggregation,
   ProductAggregation,
   SkuLocationBody,
@@ -20,47 +20,96 @@ import {
   columnDisplayText,
 } from './components/groups-table';
 import { useDataTableLoadingGuard } from './hooks/use-data-table-loading-guard';
-import { useGetHealthQuery, useGetSkuLocationsQuery } from './store/api';
+import { useGetSkuLocationsQuery } from './store/api';
 import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
 import { ChevronLeftIcon } from 'lucide-react';
-import { useStackManager } from './components/groups-table/hooks/useStackManager';
-import { StackContextProvider } from './components/groups-table/GroupsTable.context';
+import {
+  GroupsTableContextProvider,
+  useGroupsTableContext,
+} from './components/groups-table/GroupsTable.context';
+import {
+  GroupsTableDrilldownState,
+  useDrilldownManager,
+} from './components/groups-table/hooks/useDrilldownManager';
 
-export interface GroupsTableParameters {
-  productAggregation: ProductAggregation;
-  locationAggregation: LocationAggregation;
-  filter: NonNullable<Required<SkuLocationBody['filters']>>;
+export interface GroupsTableParameters extends GroupsTableDrilldownState {
+  dimension_aggregations: {
+    product: ProductAggregation;
+    location: LocationAggregation;
+  };
+  filters: NonNullable<SkuLocationBody['filters']>;
 }
 
 function App() {
-  const { data } = useGetHealthQuery();
   const [drilldownStack, setDrilldownStack] = useState<GroupsTableParameters[]>([
     {
-      productAggregation: 'product_group',
-      locationAggregation: 'location_group',
-      filter: {
-        product: {},
-        location: {},
+      dimension_aggregations: {
+        product: 'product_group',
+        location: 'location_group',
       },
+      filters: {},
     },
   ]);
 
-  const stackManager = useStackManager({
+  const drilldownManager = useDrilldownManager({
     stack: drilldownStack,
     onStackChange: setDrilldownStack,
   });
 
-  const [stack, { pop }] = stackManager;
-  const current = stack.at(-1)!;
+  const { stack } = drilldownManager;
+
+  return (
+    <div className="flex flex-col h-screen gap-4 p-4">
+      <div className="flex flex-col gap-4 items-center grow min-h-0">
+        <h2 className="text-lg font-semibold mb-2">SKU Locations</h2>
+        <div className="flex flex-row gap-6 w-fit">
+          <GroupsTableContextProvider drilldownManager={drilldownManager}>
+            <GroupsTable />
+          </GroupsTableContextProvider>
+          <pre className="text-xs">{JSON.stringify(drilldownManager.stack, null, 2)}</pre>
+        </div>
+        <div className="flex flex-row gap-2">
+          <Button
+            disabled={stack.length <= 1}
+            onClick={() => {
+              drilldownManager.popDrilldown();
+            }}
+            aria-label="Previous Filters"
+            id="previous-filters"
+          >
+            <ChevronLeftIcon className="w-4 h-4" />
+            Previous
+          </Button>
+          <div className="flex flex-col gap-2">
+            <pre className="text-xs">
+              {JSON.stringify(stack.map((s) => s.dimension_aggregations.product))}
+            </pre>
+            <pre className="text-xs">
+              {JSON.stringify(stack.map((s) => s.dimension_aggregations.location))}
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+const GroupsTable = () => {
+  const { stackTop, getMergedFilters } = useGroupsTableContext<GroupsTableParameters>();
 
   const {
     data: skuLocations,
     isLoading: isLoadingSkuLocations,
     isFetching: isFetchingSkuLocations,
+    refetch,
   } = useGetSkuLocationsQuery({
-    product_aggregation: current.productAggregation,
-    location_aggregation: current.locationAggregation,
-    filters: current.filter,
+    dimension_aggregations: {
+      product: stackTop.dimension_aggregations.product,
+      location: stackTop.dimension_aggregations.location,
+    },
+    filters: getMergedFilters(),
   });
 
   // Use loading guard to manage loading states
@@ -83,7 +132,7 @@ function App() {
           left: dimensionColumnIds,
         },
       },
-      getRowId: getRowIdLoadingGuard((row: GenericAggregationResponse) => {
+      getRowId: getRowIdLoadingGuard((row: SkuLocationResponse) => {
         // Create a unique ID from the dimension values
         const productValue = row.dimensions.product.value ?? 'null';
         const locationValue = row.dimensions.location.value ?? 'null';
@@ -93,8 +142,8 @@ function App() {
     headerHeight: 64,
     rowHeight: 52,
     overscan: {
-      row: 5,
-      col: 2,
+      row: 0,
+      col: 0,
     },
   });
 
@@ -102,83 +151,52 @@ function App() {
   const virtualRows = gridState.getVirtualRows();
 
   return (
-    <div className="flex flex-col h-screen gap-4 p-4">
-      <div className="flex flex-col">
-        <h1 className="text-lg font-semibold">Health: {data?.status}</h1>
-        <p className="text-sm text-muted-foreground">Database: {data?.database}</p>
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-2">
+        <Button className="w-fit" onClick={() => refetch()} aria-label="Refetch" id="refetch">
+          Refetch
+        </Button>
+        <div>Count: {skuLocations?.length}</div>
       </div>
-      <div className="flex flex-col gap-4 items-center grow min-h-0">
-        <h2 className="text-lg font-semibold mb-2">SKU Locations</h2>
-        <div className="flex flex-row gap-6 w-fit">
-          <StackContextProvider stackManager={stackManager}>
-            <AutoneGridPreset.Root
-              className="w-[80vw] h-[60vh] bg-white border rounded-md"
-              gridConfig={gridConfig}
-              ref={scrollElementRef}
+      <AutoneGridPreset.Root
+        style={{ width: '60vw' }}
+        className="h-[60vh] bg-white border rounded-md shadow-md overflow-auto"
+        gridConfig={gridConfig}
+        ref={scrollElementRef}
+      >
+        <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
+          {({ header, headerRect }) => (
+            <AutoneGrid.HeaderCell
+              columnId={header.column.id}
+              colIndex={header.column.getIndex()}
+              headerRect={headerRect}
             >
-              <AutoneGridPreset.Header virtualHeaders={virtualHeaders}>
-                {({ header, headerRect }) => (
-                  <AutoneGrid.HeaderCell
-                    columnId={header.column.id}
-                    colIndex={header.column.getIndex()}
-                    headerRect={headerRect}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </AutoneGrid.HeaderCell>
-                )}
-              </AutoneGridPreset.Header>
-              <AutoneGridPreset.Body>
-                {virtualRows.map((virtualRow) => (
-                  <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
-                    {({ cell, cellRect, index }) => (
-                      <ContextMenu>
-                        <ContextMenuTrigger>
-                          <AutoneGridPreset.Cell
-                            columnId={cell.column.id}
-                            colIndex={index}
-                            rowIndex={virtualRow.index}
-                            cellRect={cellRect}
-                          >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </AutoneGridPreset.Cell>
-                        </ContextMenuTrigger>
-                      </ContextMenu>
-                    )}
-                  </AutoneGridPreset.Row>
-                ))}
-              </AutoneGridPreset.Body>
-              <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
-            </AutoneGridPreset.Root>
-          </StackContextProvider>
-          <div className="flex flex-col gap-4 w-[200px]">
-            <span>Filters</span>
-            <pre className="text-xs">{JSON.stringify(current.filter, null, 2)}</pre>
-          </div>
-        </div>
-        <div className="flex flex-row gap-2">
-          <Button
-            disabled={drilldownStack.length <= 1}
-            onClick={() => {
-              pop();
-            }}
-            aria-label="Previous Filters"
-            id="previous-filters"
-          >
-            <ChevronLeftIcon className="w-4 h-4" />
-            Previous
-          </Button>
-          <div className="flex flex-col gap-2">
-            <pre className="text-xs">
-              {JSON.stringify(drilldownStack.map((stack) => stack.productAggregation))}
-            </pre>
-            <pre className="text-xs">
-              {JSON.stringify(drilldownStack.map((stack) => stack.locationAggregation))}
-            </pre>
-          </div>
-        </div>
-      </div>
+              {flexRender(header.column.columnDef.header, header.getContext())}
+            </AutoneGrid.HeaderCell>
+          )}
+        </AutoneGridPreset.Header>
+        <AutoneGridPreset.Body>
+          {virtualRows.map((virtualRow) => (
+            <AutoneGridPreset.Row key={virtualRow.key} virtualRow={virtualRow}>
+              {({ cell, cellRect, index }) => (
+                <ContextMenu>
+                  <ContextMenuTrigger>
+                    <AutoneGridPreset.Cell
+                      columnId={cell.column.id}
+                      colIndex={index}
+                      rowIndex={virtualRow.index}
+                      cellRect={cellRect}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </AutoneGridPreset.Cell>
+                  </ContextMenuTrigger>
+                </ContextMenu>
+              )}
+            </AutoneGridPreset.Row>
+          ))}
+        </AutoneGridPreset.Body>
+        <AutoneGridPreset.ColumnDragOverlay columnDisplayText={columnDisplayText} />
+      </AutoneGridPreset.Root>
     </div>
   );
-}
-
-export default App;
+};

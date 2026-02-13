@@ -7,42 +7,7 @@ import {
   SkuLocationAggregatedSchema,
   SkuLocationBody,
 } from '../schemas/sku-locations';
-
-const createConditionClause = (alias: string, attributeName: string, ids: string[]) =>
-  `${alias}.${attributeName} IN (${ids.map((id) => `'${id}'`).join(',')})`;
-
-const createConditions = (filters: SkuLocationBody['filters']) => {
-  const conditions = ['TRUE'];
-  if (filters?.product) {
-    const productFilterEntries = Object.entries(filters.product)
-      .map(([key, value]) => [key, value?.filter((id) => id !== null) ?? []] as const)
-      .filter(([_, ids]) => ids?.length > 0);
-    for (const [attributeName, ids] of productFilterEntries) {
-      conditions.push(
-        createConditionClause(
-          attributeName === 'product_group' ? 'pgm' : 'sl',
-          attributeName === 'product_group' ? 'name' : attributeName,
-          ids
-        )
-      );
-    }
-  }
-  if (filters?.location) {
-    const locationFilterEntries = Object.entries(filters.location)
-      .map(([key, value]) => [key, value?.filter((id) => id !== null) ?? []] as const)
-      .filter(([_, ids]) => ids?.length > 0);
-    for (const [attributeName, ids] of locationFilterEntries) {
-      conditions.push(
-        createConditionClause(
-          attributeName === 'location_group' ? 'lgm' : 'sl',
-          attributeName === 'location_group' ? 'name' : attributeName,
-          ids
-        )
-      );
-    }
-  }
-  return Prisma.raw(conditions.join(' AND '));
-};
+import { createConditions } from './conditions';
 
 export const getAggregatedSkuLocations = async (
   product_aggregation: ProductAggregation,

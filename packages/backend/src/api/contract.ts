@@ -2,11 +2,12 @@ import { makeApi } from '@zodios/core';
 import { z } from 'zod';
 import {
   CreateUserSchema,
+  EditSkuLocationInitialAllocationBodySchema,
   ErrorSchema,
-  GenericAggregationResponseSchema,
   HealthResponseSchema,
   IdParamSchema,
   SkuLocationBodySchema,
+  SkuLocationResponseSchema,
   UpdateUserSchema,
   UserSchema,
 } from './schemas/index.js';
@@ -162,7 +163,7 @@ export const skuLocationsApi = makeApi([
     path: '/',
     alias: 'getSkuLocations',
     description: 'Get aggregated SKU location metrics',
-    response: z.array(GenericAggregationResponseSchema),
+    response: z.array(SkuLocationResponseSchema),
     parameters: [
       {
         name: 'body',
@@ -180,6 +181,22 @@ export const skuLocationsApi = makeApi([
         status: 500,
         description: 'Internal server error',
         schema: ErrorSchema,
+      },
+    ],
+  },
+  {
+    method: 'patch',
+    path: '/initial-allocation',
+    alias: 'editSkuLocationInitialAllocation',
+    description: 'Edit the initial allocation for a SKU location',
+    response: z.object({
+      updated_count: z.number(),
+    }),
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: EditSkuLocationInitialAllocationBodySchema,
       },
     ],
   },

@@ -1,7 +1,7 @@
 import { Draft, produce } from 'immer';
 import { useCallback, useMemo } from 'react';
 
-interface StackManagerProps<T> {
+export interface StackManagerProps<T> {
   stack: T[];
   onStackChange: (stack: T[]) => void;
 }
@@ -33,7 +33,6 @@ export const useStackManager = <T>({ stack, onStackChange }: StackManagerProps<T
       const stackTop = stack.at(-1);
       if (!stackTop) return;
       const newStackTop = produce(stackTop, recipe);
-      console.log('updatePush', newStackTop);
       onStackChange([...stack, newStackTop]);
     },
     [stack, onStackChange]
@@ -53,6 +52,19 @@ export const useStackManager = <T>({ stack, onStackChange }: StackManagerProps<T
   );
 
   /**
+   * Immutably update the value of an item in the stack.
+   */
+  const updateItem = useCallback(
+    (index: number, recipe: (prev: Draft<T>) => void) => {
+      const item = stack.at(index);
+      if (!item) return;
+      const newItem = produce(item, recipe);
+      onStackChange([...stack.slice(0, index), newItem, ...stack.slice(index + 1)]);
+    },
+    [stack, onStackChange]
+  );
+
+  /**
    * Clear the stack.
    */
   const clear = useCallback(() => {
@@ -60,7 +72,7 @@ export const useStackManager = <T>({ stack, onStackChange }: StackManagerProps<T
   }, [onStackChange]);
 
   return useMemo(
-    () => [stack, { push, pop, updatePush, updateTop, clear }] as const,
-    [stack, push, pop, updatePush, updateTop, clear]
+    () => [stack, { push, pop, updatePush, updateTop, updateItem, clear }] as const,
+    [stack, push, pop, updatePush, updateTop, updateItem, clear]
   );
 };
