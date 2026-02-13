@@ -118,24 +118,24 @@ export const EditSkuLocationInitialAllocationBodySchema = z.object({
     product: ProductDimensionSchema,
     location: LocationDimensionSchema,
   }),
-  // filters: z.object({
-  //   // Product filters
-  //   sku_id: NullableFilterArray,
-  //   product_id: NullableFilterArray,
-  //   department_id: NullableFilterArray,
-  //   sub_department_id: NullableFilterArray,
-  //   style_id: NullableFilterArray,
-  //   season_id: NullableFilterArray,
-  //   gender_id: NullableFilterArray,
-  //   product_group: NullableFilterArray,
+  filters: z.object({
+    // Product filters
+    sku_id: NullableFilterArray,
+    product_id: NullableFilterArray,
+    department_id: NullableFilterArray,
+    sub_department_id: NullableFilterArray,
+    style_id: NullableFilterArray,
+    season_id: NullableFilterArray,
+    gender_id: NullableFilterArray,
+    product_group: NullableFilterArray,
 
-  //   // Location filters
-  //   location_id: NullableFilterArray,
-  //   country_id: NullableFilterArray,
-  //   location_type_id: NullableFilterArray,
-  //   region_id: NullableFilterArray,
-  //   location_group: NullableFilterArray,
-  // }),
+    // Location filters
+    location_id: NullableFilterArray,
+    country_id: NullableFilterArray,
+    location_type_id: NullableFilterArray,
+    region_id: NullableFilterArray,
+    location_group: NullableFilterArray,
+  }),
   payload: z.object({
     initial_allocation: z.coerce.number(),
   }),

@@ -10,8 +10,11 @@ import { createColumnLoadingGuards, type DataTableLoadingObject } from '@/utils'
 import { DrilldownContextMenu } from './components/DrilldownContextMenu';
 import { GroupsTableParameters } from '@/App';
 import { inferCurrentAggregation } from './utilities/infer-current-aggregation';
-import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/atoms';
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue, Button } from '@/atoms';
 import { useGroupsTableContext } from './GroupsTable.context';
+import { useEditSkuLocationInitialAllocationMutation } from '@/store/api';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const { columnCellGuard, columnHeaderGuard, accessorFnGuard } =
   createColumnLoadingGuards<SkuLocationResponse>();
@@ -373,6 +376,109 @@ const attributeColumns = [
 
 const metricColumns = [
   columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.recommended_ia),
+    {
+      id: 'recommended_ia',
+      size: 190,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right">Recommended IA</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.unconstrained_ia),
+    {
+      id: 'unconstrained_ia',
+      size: 190,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right">Unconstrained IA</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: (ctx) => (
+            <span className="block w-full text-right">
+              {ctx.getValue()?.toLocaleString() ?? '-'}
+            </span>
+          ),
+        }),
+    }
+  ),
+  columnHelper.accessor(
+    accessorFnGuard((row) => row.aggregated_metrics.user_ia),
+    {
+      id: 'user_ia',
+      size: 250,
+      header: () => (
+        <div className="flex items-center gap-2 justify-between">
+          <ColumnDragHandle />
+          <span className="flex-1 text-right">User IA</span>
+        </div>
+      ),
+      cell: (ctx) =>
+        columnCellGuard({
+          ctx,
+          renderCell: function UserIACell(ctx) {
+            const {
+              dimensions: { product, location },
+              aggregated_metrics: { user_ia },
+            } = ctx.row.original;
+            const { getMergedFilters } = useGroupsTableContext<GroupsTableParameters>();
+            const [userIaCandidate, setUserIaCandidate] = useState(user_ia ?? 0);
+            const [editSkuLocationInitialAllocation, { isLoading }] =
+              useEditSkuLocationInitialAllocationMutation();
+
+            const handleConfirm = () => {
+              editSkuLocationInitialAllocation({
+                dimension_aggregations: {
+                  product,
+                  location,
+                },
+                filters: getMergedFilters(),
+                payload: {
+                  initial_allocation: userIaCandidate,
+                },
+              });
+            };
+
+            return (
+              <div className="flex w-full gap-2">
+                <input
+                  className="p-1 self-stretch border rounded-sm shadow-sm w-[100px]"
+                  type="number"
+                  value={userIaCandidate}
+                  onChange={(e) => setUserIaCandidate(Number(e.target.value))}
+                />
+                <Button
+                  className="w-fit"
+                  aria-label="Confirm"
+                  id="confirm-user-ia"
+                  onClick={handleConfirm}
+                >
+                  {isLoading ? <Loader2 className="animate-spin" /> : 'Confirm'}
+                </Button>
+              </div>
+            );
+          },
+        }),
+    }
+  ),
+  columnHelper.accessor(
     accessorFnGuard((row) => row.aggregated_metrics.sales_l30d),
     {
       id: 'sales_l30d',
@@ -482,72 +588,7 @@ const metricColumns = [
         }),
     }
   ),
-  columnHelper.accessor(
-    accessorFnGuard((row) => row.aggregated_metrics.recommended_ia),
-    {
-      id: 'recommended_ia',
-      size: 190,
-      header: () => (
-        <div className="flex items-center gap-2 justify-between">
-          <ColumnDragHandle />
-          <span className="flex-1 text-right">Recommended IA</span>
-        </div>
-      ),
-      cell: (ctx) =>
-        columnCellGuard({
-          ctx,
-          renderCell: (ctx) => (
-            <span className="block w-full text-right">
-              {ctx.getValue()?.toLocaleString() ?? '-'}
-            </span>
-          ),
-        }),
-    }
-  ),
-  columnHelper.accessor(
-    accessorFnGuard((row) => row.aggregated_metrics.unconstrained_ia),
-    {
-      id: 'unconstrained_ia',
-      size: 190,
-      header: () => (
-        <div className="flex items-center gap-2 justify-between">
-          <ColumnDragHandle />
-          <span className="flex-1 text-right">Unconstrained IA</span>
-        </div>
-      ),
-      cell: (ctx) =>
-        columnCellGuard({
-          ctx,
-          renderCell: (ctx) => (
-            <span className="block w-full text-right">
-              {ctx.getValue()?.toLocaleString() ?? '-'}
-            </span>
-          ),
-        }),
-    }
-  ),
-  columnHelper.accessor(
-    accessorFnGuard((row) => row.aggregated_metrics.user_ia),
-    {
-      id: 'user_ia',
-      size: 150,
-      header: () => (
-        <div className="flex items-center gap-2 justify-between">
-          <ColumnDragHandle />
-          <span className="flex-1 text-right">User IA</span>
-        </div>
-      ),
-      cell: (ctx) =>
-        columnCellGuard({
-          ctx,
-          renderCell: (ctx) => (
-            <span className="block w-full text-right">
-              {ctx.getValue()?.toLocaleString() ?? '-'}
-            </span>
-          ),
-        }),
-    }
-  ),
+
   columnHelper.accessor(
     accessorFnGuard((row) => row.aggregated_metrics.num_sku_locations),
     {
@@ -668,7 +709,7 @@ export const columnDisplayText = {
 /**
  * All columns for the groups table.
  */
-export const groupsTableColumns = [...dimensionColumns, ...attributeColumns, ...metricColumns];
+export const groupsTableColumns = [...dimensionColumns, ...metricColumns, ...attributeColumns];
 
 /**
  * Column IDs for the dimension columns (used for left pinning).

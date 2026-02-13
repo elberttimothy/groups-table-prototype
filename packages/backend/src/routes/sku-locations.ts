@@ -56,11 +56,12 @@ skuLocationsRouter.post('/', async (req, res) => {
 });
 
 skuLocationsRouter.patch('/initial-allocation', async (req, res) => {
-  const { dimension_aggregations, payload } = req.body;
+  const { dimension_aggregations, filters, payload } = req.body;
 
   const updatedCount = await editSkuLocationInitialAllocation(
     dimension_aggregations.product,
     dimension_aggregations.location,
+    filters,
     payload.initial_allocation
   );
   res.json({ updated_count: updatedCount });
